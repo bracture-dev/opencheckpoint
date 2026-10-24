@@ -1,0 +1,26 @@
+name: Specification issue
+description: Something in the specification or schema is ambiguous, contradictory, or unimplementable.
+labels: [spec]
+body:
+  - type: input
+    id: section
+    attributes:
+      label: Section or schema path
+      placeholder: "§6.6 Operations, or #/$defs/operation"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or unclear
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example checkpoint or fixture
+      render: json
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed resolution

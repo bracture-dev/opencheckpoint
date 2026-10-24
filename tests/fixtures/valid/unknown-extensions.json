@@ -1,0 +1,36 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e06",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Reconcile the October vendor invoices against purchase orders.",
+    "status": "active",
+    "extensions": {
+      "com.example.tracker": {
+        "ticket": "FIN-221"
+      }
+    }
+  },
+  "extensions": {
+    "com.example.crm/v2": {
+      "pipeline": "enterprise",
+      "stage": 3
+    },
+    "org.example.labels": ["q4", "close"]
+  },
+  "continuation": {
+    "requirements": [
+      {
+        "id": "req-ext",
+        "kind": "extension",
+        "name": "com.example.crm/v2",
+        "necessity": "optional"
+      }
+    ]
+  }
+}

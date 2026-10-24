@@ -1,0 +1,330 @@
+{
+  "$comment": "Language-neutral conformance cases for OpenCheckpoints v0.1. See README.md.",
+  "version": "0.1",
+  "cases": [
+    {
+      "id": "valid/minimal",
+      "description": "Only the required fields.",
+      "file": "../fixtures/valid/minimal.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/provenance",
+      "description": "Every statement kind, verification states, supersession, and a resolved question; external content with an embedded directive stays external.",
+      "file": "../fixtures/valid/provenance.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/pending-approval",
+      "description": "An approval awaiting a person, and a decided approval whose record points to a system of record.",
+      "file": "../fixtures/valid/pending-approval.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/uncertain-operation",
+      "description": "A non-idempotent action with unknown outcome and resume: verify_first.",
+      "file": "../fixtures/valid/uncertain-operation.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/stale-resources",
+      "description": "A stale verification, an unavailable resource, a precondition, and a degradable access requirement.",
+      "file": "../fixtures/valid/stale-resources.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/unknown-extensions",
+      "description": "Unknown namespaced extensions at the top level and in a nested object. Consumers accept them and preserve them on round trip.",
+      "file": "../fixtures/valid/unknown-extensions.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/application-context",
+      "description": "Application state that did not come from chat: a focused range, a selected record, filters, and an unsaved draft.",
+      "file": "../fixtures/valid/application-context.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/compacted",
+      "description": "A compacted checkpoint with parent digest, session reference, omissions, and transformations.",
+      "file": "../fixtures/valid/compacted.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/blocked-without-cause",
+      "description": "Valid, but a blocked task that records no blocker produces warning OCP-W001.",
+      "file": "../fixtures/valid/blocked-without-cause.json",
+      "expect": {
+        "result": "valid",
+        "warnings": ["OCP-W001"]
+      }
+    },
+    {
+      "id": "valid/transition-parent",
+      "description": "Parent of a valid transition pair.",
+      "file": "../fixtures/valid/transition-parent.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/transition-child",
+      "description": "A child that keeps a terminal operation terminal.",
+      "file": "../fixtures/valid/transition-child.json",
+      "parent": "../fixtures/valid/transition-parent.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "schema/missing-version",
+      "description": "The opencheckpoints version field is required.",
+      "file": "../fixtures/invalid/missing-version.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/unsupported-version",
+      "description": "A version this schema does not define is rejected.",
+      "file": "../fixtures/invalid/unsupported-version.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/missing-objective",
+      "description": "task.objective is required.",
+      "file": "../fixtures/invalid/missing-objective.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/bad-task-status",
+      "description": "task.status must be one of the defined values.",
+      "file": "../fixtures/invalid/bad-task-status.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/timestamp-without-offset",
+      "description": "Timestamps carry an explicit UTC offset.",
+      "file": "../fixtures/invalid/timestamp-without-offset.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/unknown-top-level-property",
+      "description": "Core objects reject undefined properties; extension data goes in extensions.",
+      "file": "../fixtures/invalid/unknown-top-level-property.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/bad-extension-key",
+      "description": "Extension keys are namespaced (reverse-DNS).",
+      "file": "../fixtures/invalid/bad-extension-key.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/instruction-from-tool",
+      "description": "An instruction cannot originate from a tool.",
+      "file": "../fixtures/invalid/instruction-from-tool.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/external-attributed-to-user",
+      "description": "External content cannot be attributed to the user.",
+      "file": "../fixtures/invalid/external-attributed-to-user.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/verified-hypothesis",
+      "description": "A hypothesis cannot be verified; it must become an observation.",
+      "file": "../fixtures/invalid/verified-hypothesis.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/decision-without-rationale",
+      "description": "A decision records its rationale.",
+      "file": "../fixtures/invalid/decision-without-rationale.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/resolved-non-question",
+      "description": "Only questions are resolved.",
+      "file": "../fixtures/invalid/resolved-non-question.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/superseded-without-replacement",
+      "description": "A superseded statement names its replacement.",
+      "file": "../fixtures/invalid/superseded-without-replacement.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/approved-without-evidence",
+      "description": "A decided approval cites at least one evidence resource.",
+      "file": "../fixtures/invalid/approved-without-evidence.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/approved-non-approval",
+      "description": "Only operations of kind approval can be approved.",
+      "file": "../fixtures/invalid/approved-non-approval.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/uncertain-retry",
+      "description": "An uncertain non-idempotent operation cannot recommend retry.",
+      "file": "../fixtures/invalid/uncertain-retry.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/uncertain-without-effect-or-resume",
+      "description": "An uncertain operation with no declared effect must say how to resume, and not by retry.",
+      "file": "../fixtures/invalid/uncertain-without-effect-or-resume.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/resource-without-identifier",
+      "description": "A resource needs a uri or a locator.",
+      "file": "../fixtures/invalid/resource-without-identifier.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/bad-local-id",
+      "description": "Local identifiers follow the defined pattern.",
+      "file": "../fixtures/invalid/bad-local-id.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "semantic/duplicate-id",
+      "description": "Local ids are unique across the whole document.",
+      "file": "../fixtures/invalid/duplicate-id.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S001"]
+      }
+    },
+    {
+      "id": "semantic/dangling-reference",
+      "description": "References resolve to an object in the document.",
+      "file": "../fixtures/invalid/dangling-reference.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S002"]
+      }
+    },
+    {
+      "id": "semantic/wrong-reference-type",
+      "description": "Evidence must reference a resource.",
+      "file": "../fixtures/invalid/wrong-reference-type.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S003"]
+      }
+    },
+    {
+      "id": "semantic/self-parent",
+      "description": "A checkpoint cannot be its own parent.",
+      "file": "../fixtures/invalid/self-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S004"]
+      }
+    },
+    {
+      "id": "semantic/timestamp-after-creation",
+      "description": "Observations cannot postdate the checkpoint.",
+      "file": "../fixtures/invalid/timestamp-after-creation.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S005"]
+      }
+    },
+    {
+      "id": "semantic/completed-with-open-operation",
+      "description": "A completed task has no planned, awaiting, or uncertain operations.",
+      "file": "../fixtures/invalid/completed-with-open-operation.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S006"]
+      }
+    },
+    {
+      "id": "semantic/superseded-by-other-kind",
+      "description": "A statement is superseded by another statement of the same kind.",
+      "file": "../fixtures/invalid/superseded-by-other-kind.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S007"]
+      }
+    },
+    {
+      "id": "semantic/credential-in-uri",
+      "description": "URIs do not carry credentials.",
+      "file": "../fixtures/invalid/credential-in-uri.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S008"]
+      }
+    },
+    {
+      "id": "transition/terminal-reopened",
+      "description": "An operation completed in the parent cannot be planned again in the child.",
+      "file": "../fixtures/invalid/transition-terminal-reopened.json",
+      "parent": "../fixtures/valid/transition-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T001"]
+      }
+    }
+  ]
+}

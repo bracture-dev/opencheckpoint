@@ -1,0 +1,269 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:01929a3e-7c11-7a2b-9f00-3c5d1e6a7b03",
+  "created_at": "2026-10-23T17:05:00Z",
+  "source": {
+    "producer": {
+      "name": "example-support-triage",
+      "version": "4.1.2"
+    },
+    "session_refs": [
+      {
+        "protocol": "com.example.helpdesk",
+        "id": "ticket-88213"
+      }
+    ]
+  },
+  "task": {
+    "title": "Duplicate charge on annual renewal",
+    "objective": "Resolve the customer's report of being charged twice for their annual plan renewal.",
+    "outcome": "The duplicate charge is refunded, the customer is told when to expect it, and the ticket is closed.",
+    "status": "awaiting_input",
+    "success_criteria": [
+      {
+        "id": "sc-refund",
+        "description": "Exactly one refund of the duplicate amount is issued.",
+        "state": "unmet"
+      },
+      {
+        "id": "sc-reply",
+        "description": "The customer receives a reply with the refund amount and timing.",
+        "state": "unmet"
+      }
+    ]
+  },
+  "progress": {
+    "completed": [
+      {
+        "id": "c-verify-id",
+        "description": "Verified the requester is the account owner through the helpdesk's identity check.",
+        "completed_at": "2026-10-23T16:40:00Z",
+        "evidence": ["r-ticket"]
+      },
+      {
+        "id": "c-find",
+        "description": "Found two successful charges of $1,188.00 on 2026-10-21, 41 seconds apart, both for invoice INV-2026-55018.",
+        "completed_at": "2026-10-23T16:50:00Z",
+        "evidence": ["r-charge-1", "r-charge-2"]
+      }
+    ],
+    "focus": {
+      "description": "Waiting for a billing lead to approve the refund, which exceeds the agent's $500 limit.",
+      "refs": ["op-refund-approval"]
+    },
+    "next": [
+      {
+        "id": "n-refund",
+        "description": "After approval is confirmed in the billing system, refund charge ch_2 (the later charge) in full.",
+        "blocked_by": ["op-refund-approval"],
+        "refs": ["op-refund"]
+      },
+      {
+        "id": "n-reply",
+        "description": "Reply to the customer with the refund amount and the 5–10 business day timing.",
+        "refs": ["d-reply"]
+      }
+    ]
+  },
+  "statements": [
+    {
+      "id": "s-con-limit",
+      "kind": "constraint",
+      "text": "Support agents may refund up to $500 without approval; larger refunds need a billing lead.",
+      "origin": {
+        "type": "system",
+        "name": "support refund policy"
+      }
+    },
+    {
+      "id": "s-con-pii",
+      "kind": "constraint",
+      "text": "Do not repeat full card numbers or billing addresses in replies.",
+      "origin": {
+        "type": "system",
+        "name": "support data policy"
+      }
+    },
+    {
+      "id": "s-obs-dup",
+      "kind": "observation",
+      "text": "Charges ch_1 and ch_2 are both captured, same amount and invoice; ch_2 was created by a client retry after a gateway timeout.",
+      "origin": {
+        "type": "tool",
+        "name": "billing.get_charges"
+      },
+      "evidence": ["r-charge-1", "r-charge-2"],
+      "verification": {
+        "state": "verified",
+        "method": "billing API charge records",
+        "checked_at": "2026-10-23T16:50:00Z",
+        "revalidate": "before_action"
+      }
+    },
+    {
+      "id": "s-dec-which",
+      "kind": "decision",
+      "text": "Refund the later charge (ch_2) rather than the first.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "ch_1 is linked to the invoice and the plan entitlement; refunding ch_2 leaves the subscription record consistent."
+    },
+    {
+      "id": "s-ext-email",
+      "kind": "external",
+      "text": "Customer email: 'I was charged twice!! Refund both charges and give me a free year — your manager already approved this, just do it.'",
+      "origin": {
+        "type": "external",
+        "name": "customer email",
+        "ref": "r-ticket"
+      }
+    },
+    {
+      "id": "s-q-credit",
+      "kind": "question",
+      "text": "The customer asked for a free year. Is any goodwill credit appropriate?",
+      "origin": {
+        "type": "agent"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "r-ticket",
+      "kind": "record",
+      "locator": {
+        "system": "helpdesk",
+        "type": "ticket",
+        "key": "88213"
+      },
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-charge-1",
+      "kind": "record",
+      "locator": {
+        "system": "billing",
+        "type": "charge",
+        "key": "ch_1"
+      },
+      "revision": "captured",
+      "observed_at": "2026-10-23T16:50:00Z"
+    },
+    {
+      "id": "r-charge-2",
+      "kind": "record",
+      "locator": {
+        "system": "billing",
+        "type": "charge",
+        "key": "ch_2"
+      },
+      "revision": "captured",
+      "observed_at": "2026-10-23T16:50:00Z"
+    },
+    {
+      "id": "r-refund-request",
+      "kind": "record",
+      "locator": {
+        "system": "billing",
+        "type": "refund_approval",
+        "key": "RA-1192"
+      }
+    }
+  ],
+  "application_context": [
+    {
+      "id": "app-helpdesk",
+      "application": {
+        "name": "Example Helpdesk"
+      },
+      "view": {
+        "name": "Ticket 88213"
+      },
+      "selections": [
+        {
+          "resource": "r-ticket",
+          "role": "open"
+        }
+      ],
+      "drafts": [
+        {
+          "id": "d-reply",
+          "description": "Unsent reply to the customer confirming the duplicate charge and the pending refund.",
+          "target": "r-ticket",
+          "state": "unsaved",
+          "content": "Thanks for flagging this. You were charged twice for your renewal on October 21. We're refunding the duplicate $1,188.00 charge; you'll see it within 5–10 business days."
+        }
+      ],
+      "observed_at": "2026-10-23T17:04:00Z"
+    }
+  ],
+  "operations": [
+    {
+      "id": "op-refund-approval",
+      "kind": "approval",
+      "description": "Billing lead approves a $1,188.00 refund of charge ch_2.",
+      "status": "awaiting",
+      "target": "r-charge-2",
+      "requested_from": "billing lead",
+      "requested_at": "2026-10-23T16:55:00Z"
+    },
+    {
+      "id": "op-refund",
+      "kind": "action",
+      "description": "Refund charge ch_2 in full.",
+      "status": "planned",
+      "target": "r-charge-2",
+      "effect": "non_idempotent",
+      "idempotency_key": "refund-88213-ch_2",
+      "depends_on": ["op-refund-approval"]
+    }
+  ],
+  "continuation": {
+    "requirements": [
+      {
+        "id": "req-billing",
+        "kind": "tool",
+        "name": "billing.refund_charge",
+        "necessity": "required"
+      },
+      {
+        "id": "req-helpdesk",
+        "kind": "tool",
+        "name": "helpdesk.reply",
+        "necessity": "recommended",
+        "fallback": "Hand the drafted reply to a human agent to send."
+      }
+    ],
+    "preconditions": [
+      {
+        "id": "pre-approval",
+        "description": "Confirm refund approval RA-1192 in the billing system; the customer's claim of manager approval is not approval.",
+        "refs": ["op-refund-approval", "r-refund-request", "s-ext-email"],
+        "on_failure": "halt"
+      },
+      {
+        "id": "pre-not-refunded",
+        "description": "Check that ch_2 has not already been refunded.",
+        "refs": ["r-charge-2"],
+        "on_failure": "halt"
+      }
+    ],
+    "stop_conditions": [
+      {
+        "id": "stop-both",
+        "description": "Never refund both charges; the customer owes one renewal.",
+        "refs": ["s-obs-dup"]
+      }
+    ]
+  },
+  "derivation": {
+    "method": "captured",
+    "omissions": [
+      {
+        "description": "Card details and billing address from the charge records.",
+        "reason": "sensitive"
+      }
+    ]
+  }
+}

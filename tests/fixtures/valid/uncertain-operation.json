@@ -1,0 +1,47 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e04",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Reconcile the October vendor invoices against purchase orders.",
+    "status": "active"
+  },
+  "resources": [
+    {
+      "id": "r-payment",
+      "kind": "record",
+      "locator": {
+        "system": "bank",
+        "type": "payment",
+        "key": "batch-1027"
+      }
+    }
+  ],
+  "operations": [
+    {
+      "id": "op-pay",
+      "kind": "action",
+      "description": "Submit payment batch 1027 to the bank.",
+      "status": "uncertain",
+      "effect": "non_idempotent",
+      "idempotency_key": "batch-1027-v1",
+      "last_attempt_at": "2026-10-20T18:29:40Z",
+      "target": "r-payment",
+      "resume": "verify_first"
+    }
+  ],
+  "continuation": {
+    "stop_conditions": [
+      {
+        "id": "stop-dup",
+        "description": "Do not resubmit the batch until the bank confirms it was not received.",
+        "refs": ["op-pay"]
+      }
+    ]
+  }
+}

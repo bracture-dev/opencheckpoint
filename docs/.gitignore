@@ -1,0 +1,12 @@
+dist/
+.astro/
+node_modules/
+# Generated from the repository by scripts/sync.mjs
+src/content/docs/specification/
+src/content/docs/reference/
+src/content/docs/rfcs/
+src/content/docs/examples/
+src/content/docs/conformance/
+src/content/docs/project/
+public/schema/
+public/examples/

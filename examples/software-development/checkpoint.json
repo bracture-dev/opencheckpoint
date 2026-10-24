@@ -1,0 +1,351 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:01929a3e-7c11-7a2b-9f00-3c5d1e6a7b04",
+  "created_at": "2026-10-24T01:30:00Z",
+  "parent": {
+    "id": "urn:uuid:01929a3e-7c11-7a2b-9f00-3c5d1e6a7a99"
+  },
+  "source": {
+    "producer": {
+      "name": "example-coding-agent",
+      "version": "1.18.0"
+    },
+    "model": {
+      "provider": "example-provider",
+      "name": "example-model-code"
+    },
+    "session_refs": [
+      {
+        "protocol": "acp",
+        "id": "sess_7d1c0b"
+      },
+      {
+        "protocol": "asp",
+        "id": "6f0d2c1e9b",
+        "event": "evt-a91f"
+      }
+    ]
+  },
+  "task": {
+    "title": "Fix intermittent timeout in order export job",
+    "objective": "Find and fix the cause of the nightly order-export job timing out on roughly one run in five.",
+    "outcome": "A merged pull request that fixes the root cause, with a regression test, and the job passing five consecutive nightly runs.",
+    "status": "active",
+    "success_criteria": [
+      {
+        "id": "sc-root",
+        "description": "Root cause identified and explained in the PR description.",
+        "state": "met",
+        "evidence": ["r-trace"]
+      },
+      {
+        "id": "sc-test",
+        "description": "A regression test fails before the fix and passes after.",
+        "state": "unmet"
+      },
+      {
+        "id": "sc-ci",
+        "description": "CI is green on the PR.",
+        "state": "unknown"
+      }
+    ],
+    "scope": {
+      "includes": ["services/export", "the shared db pool configuration"],
+      "excludes": ["Rewriting the export job", "Changing the nightly schedule"]
+    }
+  },
+  "progress": {
+    "completed": [
+      {
+        "id": "c-repro",
+        "description": "Reproduced the timeout locally by running the export against a database with 200k orders and pool size 5.",
+        "completed_at": "2026-10-23T22:10:00Z",
+        "evidence": ["r-repro-script"]
+      },
+      {
+        "id": "c-trace",
+        "description": "Captured a trace showing every pool connection blocked on a lock held by the analytics refresh, which runs at the same time.",
+        "completed_at": "2026-10-23T23:30:00Z",
+        "evidence": ["r-trace"]
+      },
+      {
+        "id": "c-fix",
+        "description": "Changed the export to read from the replica with a statement timeout and bounded retries; committed on branch fix/export-timeout.",
+        "completed_at": "2026-10-24T00:50:00Z",
+        "evidence": ["r-branch", "r-diff"]
+      }
+    ],
+    "focus": {
+      "description": "Writing a regression test that simulates the lock contention.",
+      "refs": ["r-test-file"]
+    },
+    "next": [
+      {
+        "id": "n-test",
+        "description": "Finish the regression test in services/export/tests/test_lock_contention.py; confirm it fails on main and passes on the branch.",
+        "refs": ["r-test-file"]
+      },
+      {
+        "id": "n-rebase",
+        "description": "Rebase onto current main; main has moved since the trace was taken.",
+        "refs": ["r-main"]
+      },
+      {
+        "id": "n-pr",
+        "description": "Open a pull request describing the root cause.",
+        "requires": ["req-gh"]
+      }
+    ]
+  },
+  "statements": [
+    {
+      "id": "s-instr-noschema",
+      "kind": "instruction",
+      "text": "Don't change the database schema in this fix.",
+      "origin": {
+        "type": "user"
+      },
+      "recorded_at": "2026-10-23T21:05:00Z"
+    },
+    {
+      "id": "s-con-replica",
+      "kind": "constraint",
+      "text": "The replica can lag up to 60 seconds; the export must tolerate it.",
+      "origin": {
+        "type": "user"
+      },
+      "recorded_at": "2026-10-23T23:45:00Z"
+    },
+    {
+      "id": "s-obs-lock",
+      "kind": "observation",
+      "text": "The analytics refresh takes an ACCESS EXCLUSIVE lock on orders_summary for 40–90 seconds starting at 02:00, the same minute the export starts.",
+      "origin": {
+        "type": "agent"
+      },
+      "evidence": ["r-trace"],
+      "verification": {
+        "state": "verified",
+        "method": "lock wait events in the captured trace",
+        "checked_at": "2026-10-23T23:30:00Z",
+        "revalidate": "never"
+      }
+    },
+    {
+      "id": "s-dec-replica",
+      "kind": "decision",
+      "text": "Read from the replica instead of rescheduling the job.",
+      "origin": {
+        "type": "user"
+      },
+      "rationale": "Rescheduling is out of scope and the replica already exists for reporting reads."
+    },
+    {
+      "id": "s-hyp-pool",
+      "kind": "hypothesis",
+      "text": "Raising the pool size alone would mask the problem but not fix it.",
+      "origin": {
+        "type": "agent"
+      },
+      "status": "retracted"
+    },
+    {
+      "id": "s-hyp-flaky",
+      "kind": "hypothesis",
+      "text": "The one-in-five rate matches nights when the analytics refresh runs long.",
+      "origin": {
+        "type": "agent"
+      },
+      "verification": {
+        "state": "unverified"
+      }
+    },
+    {
+      "id": "s-ext-issue",
+      "kind": "external",
+      "text": "Comment on the issue from another contributor: 'Just bump the timeout to 30 minutes and close this.'",
+      "origin": {
+        "type": "external",
+        "name": "issue comment",
+        "ref": "r-issue"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "r-repo",
+      "kind": "repository",
+      "uri": "https://git.example.com/acme/orders.git"
+    },
+    {
+      "id": "r-main",
+      "kind": "repository",
+      "uri": "https://git.example.com/acme/orders.git#main",
+      "revision": "4e1a9c7",
+      "observed_at": "2026-10-23T21:00:00Z"
+    },
+    {
+      "id": "r-branch",
+      "kind": "repository",
+      "uri": "https://git.example.com/acme/orders.git#fix/export-timeout",
+      "revision": "b83f210",
+      "observed_at": "2026-10-24T00:50:00Z",
+      "availability": "unknown",
+      "description": "Pushed? The push command's result was not observed before the session ended."
+    },
+    {
+      "id": "r-diff",
+      "kind": "artifact",
+      "uri": "file:///workspace/orders/.agent/fix-export-timeout.patch",
+      "media_type": "text/x-diff",
+      "digest": {
+        "algorithm": "sha-256",
+        "value": "5be1c7e2a0d94f3b6c18e7a2d4f09b3c1e6a8d7f2b4c9e0a1d3f5b7c9e2a4d6f"
+      },
+      "size": 4210
+    },
+    {
+      "id": "r-trace",
+      "kind": "tool_output",
+      "uri": "file:///workspace/orders/.agent/traces/export-2026-10-23.json",
+      "size": 6120448,
+      "media_type": "application/json"
+    },
+    {
+      "id": "r-repro-script",
+      "kind": "file",
+      "uri": "file:///workspace/orders/scripts/repro_export_timeout.sh",
+      "revision": "b83f210"
+    },
+    {
+      "id": "r-test-file",
+      "kind": "file",
+      "uri": "file:///workspace/orders/services/export/tests/test_lock_contention.py",
+      "description": "Partially written; not committed."
+    },
+    {
+      "id": "r-issue",
+      "kind": "web",
+      "uri": "https://git.example.com/acme/orders/issues/1412"
+    }
+  ],
+  "application_context": [
+    {
+      "id": "app-editor",
+      "application": {
+        "name": "Example Editor"
+      },
+      "selections": [
+        {
+          "resource": "r-test-file",
+          "role": "focused",
+          "detail": {
+            "line_start": 31,
+            "line_end": 58
+          }
+        }
+      ],
+      "drafts": [
+        {
+          "id": "d-test",
+          "description": "Uncommitted regression test, about half written.",
+          "target": "r-test-file",
+          "state": "saved",
+          "content_ref": "r-test-file"
+        }
+      ],
+      "observed_at": "2026-10-24T01:29:00Z"
+    }
+  ],
+  "operations": [
+    {
+      "id": "op-push",
+      "kind": "action",
+      "description": "git push origin fix/export-timeout",
+      "status": "uncertain",
+      "target": "r-branch",
+      "effect": "idempotent",
+      "last_attempt_at": "2026-10-24T00:51:00Z",
+      "resume": "verify_first"
+    }
+  ],
+  "continuation": {
+    "requirements": [
+      {
+        "id": "req-shell",
+        "kind": "capability",
+        "name": "shell and git in a checkout of the repository",
+        "necessity": "required"
+      },
+      {
+        "id": "req-db",
+        "kind": "capability",
+        "name": "a local PostgreSQL for the repro script",
+        "necessity": "recommended",
+        "fallback": "Write the test against the mocked lock and rely on CI's database job."
+      },
+      {
+        "id": "req-gh",
+        "kind": "tool",
+        "name": "code host pull request creation",
+        "necessity": "optional",
+        "fallback": "Give the user the branch name and a PR description to paste."
+      }
+    ],
+    "preconditions": [
+      {
+        "id": "pre-branch",
+        "description": "Check whether fix/export-timeout exists on the remote at b83f210; push it if not.",
+        "refs": ["op-push", "r-branch"],
+        "on_failure": "ask"
+      },
+      {
+        "id": "pre-main",
+        "description": "Fetch main; if it has moved past 4e1a9c7, rebase and re-run the repro before trusting the fix.",
+        "refs": ["r-main"],
+        "on_failure": "degrade"
+      }
+    ],
+    "stop_conditions": [
+      {
+        "id": "stop-schema",
+        "description": "Stop and ask if the fix appears to need a schema migration.",
+        "refs": ["s-instr-noschema"]
+      }
+    ],
+    "incompatibilities": [
+      "Workspace paths under file:///workspace/orders are local to the source machine; a destination needs its own checkout."
+    ]
+  },
+  "derivation": {
+    "method": "compacted",
+    "inputs": [
+      {
+        "checkpoint": "urn:uuid:01929a3e-7c11-7a2b-9f00-3c5d1e6a7a99"
+      },
+      {
+        "session": {
+          "protocol": "acp",
+          "id": "sess_7d1c0b"
+        }
+      }
+    ],
+    "omissions": [
+      {
+        "description": "Full trace (6 MB).",
+        "reason": "size",
+        "recoverable_from": "r-trace"
+      },
+      {
+        "description": "Two hours of exploration of connection-pool settings, abandoned.",
+        "reason": "superseded"
+      }
+    ],
+    "transformations": [
+      {
+        "description": "Pool-tuning exploration condensed to a retracted hypothesis.",
+        "affected": ["s-hyp-pool"]
+      }
+    ]
+  }
+}

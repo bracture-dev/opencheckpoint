@@ -1,0 +1,66 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e05",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Reconcile the October vendor invoices against purchase orders.",
+    "status": "active"
+  },
+  "resources": [
+    {
+      "id": "r-ledger",
+      "kind": "document",
+      "uri": "https://sheets.example.com/d/ledger-q4",
+      "revision": "rev-118",
+      "observed_at": "2026-10-19T09:00:00Z",
+      "availability": "available"
+    },
+    {
+      "id": "r-archive",
+      "kind": "file",
+      "uri": "smb://fileserver.example.internal/finance/archive-2025.zip",
+      "availability": "unavailable"
+    }
+  ],
+  "statements": [
+    {
+      "id": "s-total",
+      "kind": "observation",
+      "text": "Ledger total for October is $1,284,330.12.",
+      "origin": {
+        "type": "agent"
+      },
+      "evidence": ["r-ledger"],
+      "verification": {
+        "state": "stale",
+        "checked_at": "2026-10-19T09:00:00Z",
+        "revalidate": "before_use"
+      }
+    }
+  ],
+  "continuation": {
+    "preconditions": [
+      {
+        "id": "pre-ledger",
+        "description": "Confirm the ledger is still at rev-118, or re-derive s-total.",
+        "refs": ["r-ledger", "s-total"],
+        "on_failure": "degrade"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "req-archive",
+        "kind": "access",
+        "name": "read access to the 2025 finance archive",
+        "necessity": "recommended",
+        "fallback": "Skip the prior-year comparison and say so.",
+        "refs": ["r-archive"]
+      }
+    ]
+  }
+}

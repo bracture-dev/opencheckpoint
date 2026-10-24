@@ -1,0 +1,335 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Conformance harness for the OpenCheckpoints repository.
+//
+// Runs every case in tests/conformance/manifest.json against the JSON Schema
+// (syntactic validity) and the semantic rules of spec/versions/v0.1.md §8
+// (semantic consistency), then validates every example checkpoint.
+//
+// This harness is test tooling, not an SDK. Implementations run the same
+// manifest with their own validators; see tests/conformance/README.md.
+
+import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { isDeepStrictEqual } from "node:util";
+import Ajv2020 from "ajv/dist/2020.js";
+import addFormats from "ajv-formats";
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const readJson = (p) => JSON.parse(readFileSync(join(root, p), "utf8"));
+
+const schema = readJson("spec/schema/v0.1/checkpoint.schema.json");
+const ajv = new Ajv2020({
+  allErrors: true,
+  strict: true,
+  strictTypes: false,
+  strictRequired: false,
+});
+addFormats(ajv);
+const validateSchema = ajv.compile(schema);
+
+// Which object types each reference field may point at (§8, OCP-S003).
+const ANY = null;
+const REF_TARGETS = {
+  evidence: ["resource"],
+  "origin.ref": ["resource"],
+  superseded_by: ["statement"],
+  target: ["resource"],
+  content_ref: ["resource"],
+  "selection.resource": ["resource"],
+  "approval.evidence": ["resource"],
+  depends_on: ["operation"],
+  requires: ["requirement"],
+  blocked_by: ["statement", "operation", "resource", "requirement"],
+  recoverable_from: ["resource"],
+  refs: ANY,
+  affected: ANY,
+};
+
+const TERMINAL_OPS = new Set(["completed", "cancelled", "rejected"]);
+const OPEN_OPS = new Set(["planned", "awaiting", "uncertain"]);
+
+// Collect every object that carries a local id, with its type.
+function indexObjects(doc) {
+  const objects = [];
+  const add = (type, obj) => objects.push({ type, obj });
+  for (const c of doc.task?.success_criteria ?? []) add("criterion", c);
+  for (const s of doc.progress?.completed ?? []) add("step", s);
+  for (const s of doc.progress?.next ?? []) add("step", s);
+  for (const s of doc.statements ?? []) add("statement", s);
+  for (const r of doc.resources ?? []) add("resource", r);
+  for (const a of doc.application_context ?? []) {
+    add("application_context", a);
+    for (const d of a.drafts ?? []) add("draft", d);
+  }
+  for (const o of doc.operations ?? []) add("operation", o);
+  const c = doc.continuation ?? {};
+  for (const r of c.requirements ?? []) add("requirement", r);
+  for (const p of c.preconditions ?? []) add("precondition", p);
+  for (const s of c.stop_conditions ?? []) add("stop_condition", s);
+  for (const r of c.recovery ?? []) add("recovery", r);
+  return objects;
+}
+
+// Yield [field, id, path] for every local reference in the document.
+function* references(doc) {
+  const list = function* (field, ids, path) {
+    for (const id of ids ?? []) yield [field, id, path];
+  };
+  const one = function* (field, id, path) {
+    if (id !== undefined) yield [field, id, path];
+  };
+  for (const [i, c] of (doc.task?.success_criteria ?? []).entries())
+    yield* list("evidence", c.evidence, `/task/success_criteria/${i}`);
+  yield* list("refs", doc.progress?.focus?.refs, "/progress/focus");
+  for (const [i, s] of (doc.progress?.completed ?? []).entries())
+    yield* list("evidence", s.evidence, `/progress/completed/${i}`);
+  for (const [i, s] of (doc.progress?.next ?? []).entries()) {
+    const p = `/progress/next/${i}`;
+    yield* list("blocked_by", s.blocked_by, p);
+    yield* list("requires", s.requires, p);
+    yield* list("refs", s.refs, p);
+  }
+  for (const [i, s] of (doc.statements ?? []).entries()) {
+    const p = `/statements/${i}`;
+    yield* one("origin.ref", s.origin?.ref, p);
+    yield* one("superseded_by", s.superseded_by, p);
+    yield* list("evidence", s.evidence, p);
+  }
+  for (const [i, a] of (doc.application_context ?? []).entries()) {
+    const p = `/application_context/${i}`;
+    for (const sel of a.selections ?? []) yield* one("selection.resource", sel.resource, p);
+    for (const d of a.drafts ?? []) {
+      yield* one("target", d.target, p);
+      yield* one("content_ref", d.content_ref, p);
+    }
+  }
+  for (const [i, o] of (doc.operations ?? []).entries()) {
+    const p = `/operations/${i}`;
+    yield* one("target", o.target, p);
+    yield* list("depends_on", o.depends_on, p);
+    yield* list("approval.evidence", o.approval?.evidence, p);
+  }
+  const c = doc.continuation ?? {};
+  for (const key of ["requirements", "preconditions", "stop_conditions", "recovery"])
+    for (const [i, x] of (c[key] ?? []).entries())
+      yield* list("refs", x.refs, `/continuation/${key}/${i}`);
+  for (const [i, o] of (doc.derivation?.omissions ?? []).entries())
+    yield* one("recoverable_from", o.recoverable_from, `/derivation/omissions/${i}`);
+  for (const [i, t] of (doc.derivation?.transformations ?? []).entries())
+    yield* list("affected", t.affected, `/derivation/transformations/${i}`);
+}
+
+// Yield [name, value, path] for every timestamp that records a past event.
+function* pastTimestamps(doc) {
+  for (const [i, s] of (doc.progress?.completed ?? []).entries())
+    if (s.completed_at) yield ["completed_at", s.completed_at, `/progress/completed/${i}`];
+  for (const [i, s] of (doc.statements ?? []).entries()) {
+    if (s.recorded_at) yield ["recorded_at", s.recorded_at, `/statements/${i}`];
+    if (s.verification?.checked_at)
+      yield ["checked_at", s.verification.checked_at, `/statements/${i}/verification`];
+  }
+  for (const [i, r] of (doc.resources ?? []).entries())
+    if (r.observed_at) yield ["observed_at", r.observed_at, `/resources/${i}`];
+  for (const [i, a] of (doc.application_context ?? []).entries())
+    if (a.observed_at) yield ["observed_at", a.observed_at, `/application_context/${i}`];
+  for (const [i, o] of (doc.operations ?? []).entries()) {
+    const p = `/operations/${i}`;
+    if (o.requested_at) yield ["requested_at", o.requested_at, p];
+    if (o.last_attempt_at) yield ["last_attempt_at", o.last_attempt_at, p];
+    if (o.approval?.decided_at) yield ["decided_at", o.approval.decided_at, p];
+  }
+}
+
+export function checkSemantics(doc) {
+  const errors = [];
+  const warnings = [];
+  const err = (code, path, message) => errors.push({ code, path, message });
+  const warn = (code, path, message) => warnings.push({ code, path, message });
+
+  const byId = new Map();
+  for (const { type, obj } of indexObjects(doc)) {
+    if (byId.has(obj.id)) err("OCP-S001", "", `local id "${obj.id}" is used more than once`);
+    else byId.set(obj.id, { type, obj });
+  }
+
+  for (const [field, id, path] of references(doc)) {
+    const target = byId.get(id);
+    if (!target) {
+      err("OCP-S002", path, `${field} refers to "${id}", which does not exist`);
+      continue;
+    }
+    const allowed = REF_TARGETS[field];
+    if (allowed && !allowed.includes(target.type))
+      err(
+        "OCP-S003",
+        path,
+        `${field} must refer to ${allowed.join(" or ")}, not ${target.type} "${id}"`,
+      );
+  }
+
+  if (doc.parent?.id === doc.id)
+    err("OCP-S004", "/parent", "a checkpoint cannot be its own parent");
+
+  const created = Date.parse(doc.created_at);
+  for (const [name, value, path] of pastTimestamps(doc))
+    if (Date.parse(value) > created)
+      err("OCP-S005", path, `${name} ${value} is later than created_at`);
+
+  if (doc.task?.status === "completed")
+    for (const [i, o] of (doc.operations ?? []).entries())
+      if (OPEN_OPS.has(o.status))
+        err(
+          "OCP-S006",
+          `/operations/${i}`,
+          `task is completed but operation "${o.id}" is ${o.status}`,
+        );
+
+  for (const [i, s] of (doc.statements ?? []).entries()) {
+    const target = s.superseded_by && byId.get(s.superseded_by);
+    if (target?.type !== "statement") continue;
+    const confirms = s.kind === "hypothesis" && target.obj.kind === "observation";
+    if (target.obj.id === s.id || (target.obj.kind !== s.kind && !confirms))
+      err(
+        "OCP-S007",
+        `/statements/${i}`,
+        `"${s.id}" must be superseded by a different statement of kind ${s.kind}`,
+      );
+  }
+
+  for (const [i, r] of (doc.resources ?? []).entries())
+    if (r.uri && /^[A-Za-z][A-Za-z0-9+.-]*:\/\/[^/?#]*@/.test(r.uri))
+      err(
+        "OCP-S008",
+        `/resources/${i}`,
+        `uri of "${r.id}" contains userinfo; credentials must not appear in a checkpoint`,
+      );
+
+  if (doc.task?.status === "blocked") {
+    const stepBlocked = (doc.progress?.next ?? []).some((s) => s.blocked_by?.length);
+    const opWaiting = (doc.operations ?? []).some((o) => o.status === "awaiting");
+    if (!stepBlocked && !opWaiting)
+      warn("OCP-W001", "/task", "task is blocked but nothing records what blocks it");
+  }
+
+  for (const [i, s] of (doc.statements ?? []).entries())
+    if (s.kind === "observation" && s.origin.type === "agent" && !s.evidence?.length)
+      warn("OCP-W002", `/statements/${i}`, `observation "${s.id}" by an agent cites no evidence`);
+
+  for (const [i, o] of (doc.operations ?? []).entries())
+    if (o.status === "awaiting" && o.expires_at && Date.parse(o.expires_at) <= created)
+      warn(
+        "OCP-W003",
+        `/operations/${i}`,
+        `operation "${o.id}" expired before the checkpoint was created`,
+      );
+
+  return { errors, warnings };
+}
+
+export function checkTransition(parent, child) {
+  const errors = [];
+  if (child.parent?.id !== parent.id)
+    errors.push({
+      code: "OCP-T002",
+      path: "/parent",
+      message: "child's parent.id does not name the parent",
+    });
+  if (Date.parse(child.created_at) < Date.parse(parent.created_at))
+    errors.push({
+      code: "OCP-T002",
+      path: "/created_at",
+      message: "child was created before its parent",
+    });
+  const before = new Map((parent.operations ?? []).map((o) => [o.id, o.status]));
+  for (const [i, o] of (child.operations ?? []).entries()) {
+    const was = before.get(o.id);
+    if (TERMINAL_OPS.has(was) && was !== o.status)
+      errors.push({
+        code: "OCP-T001",
+        path: `/operations/${i}`,
+        message: `operation "${o.id}" was ${was} in the parent and cannot become ${o.status}`,
+      });
+  }
+  return errors;
+}
+
+export function check(doc, parent) {
+  if (!validateSchema(doc))
+    return {
+      level: "schema",
+      errors: validateSchema.errors.map((e) => `${e.instancePath || "/"} ${e.message}`),
+      warnings: [],
+    };
+  const { errors, warnings } = checkSemantics(doc);
+  if (parent) errors.push(...checkTransition(parent, doc));
+  return { level: errors.length ? "semantic" : "ok", errors, warnings };
+}
+
+// ---- runner ----
+
+const codes = (list) => [...new Set(list.map((e) => e.code))].sort();
+let failures = 0;
+const fail = (id, why) => {
+  failures++;
+  console.log(`FAIL ${id}: ${why}`);
+};
+
+const manifest = readJson("tests/conformance/manifest.json");
+for (const c of manifest.cases) {
+  const base = "tests/conformance";
+  const doc = readJson(join(base, c.file));
+  const parent = c.parent ? readJson(join(base, c.parent)) : undefined;
+  const result = check(doc, parent);
+  const want = c.expect;
+
+  if (want.result === "valid") {
+    if (result.level !== "ok") {
+      fail(c.id, `expected valid, got ${result.level}: ${JSON.stringify(result.errors)}`);
+      continue;
+    }
+    const roundTrip = JSON.parse(JSON.stringify(doc));
+    if (!isDeepStrictEqual(roundTrip, doc)) fail(c.id, "round trip changed the document");
+  } else if (result.level !== want.result) {
+    fail(c.id, `expected ${want.result}, got ${result.level}: ${JSON.stringify(result.errors)}`);
+    continue;
+  } else if (
+    want.result === "semantic" &&
+    !isDeepStrictEqual(codes(result.errors), [...want.errors].sort())
+  ) {
+    fail(c.id, `expected errors ${want.errors}, got ${codes(result.errors)}`);
+    continue;
+  }
+  const gotWarnings = codes(result.warnings);
+  if (!isDeepStrictEqual(gotWarnings, [...(want.warnings ?? [])].sort())) {
+    fail(c.id, `expected warnings ${want.warnings ?? []}, got ${gotWarnings}`);
+    continue;
+  }
+  console.log(`ok   ${c.id}`);
+}
+
+// Every fixture on disk must appear in the manifest, so none is silently skipped.
+const listed = new Set(manifest.cases.flatMap((c) => [c.file, c.parent].filter(Boolean)));
+for (const dir of ["fixtures/valid", "fixtures/invalid"]) {
+  const abs = join(root, "tests", dir);
+  if (!existsSync(abs)) continue;
+  for (const f of readdirSync(abs))
+    if (f.endsWith(".json") && !listed.has(`../${dir}/${f}`))
+      fail(`${dir}/${f}`, "fixture is not in the manifest");
+}
+
+for (const dir of readdirSync(join(root, "examples"), { withFileTypes: true })) {
+  if (!dir.isDirectory()) continue;
+  const file = join("examples", dir.name, "checkpoint.json");
+  if (!existsSync(join(root, file))) continue;
+  const result = check(readJson(file));
+  if (result.level !== "ok") fail(file, `${result.level}: ${JSON.stringify(result.errors)}`);
+  else
+    console.log(
+      `ok   ${file}${result.warnings.length ? ` (warnings: ${codes(result.warnings)})` : ""}`,
+    );
+}
+
+console.log(failures ? `\n${failures} failure(s)` : "\nall conformance cases passed");
+process.exit(failures ? 1 : 0);

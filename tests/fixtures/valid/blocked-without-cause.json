@@ -1,0 +1,14 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e09",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Reconcile the October vendor invoices against purchase orders.",
+    "status": "blocked"
+  }
+}

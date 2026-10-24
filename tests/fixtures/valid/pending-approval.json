@@ -1,0 +1,69 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e03",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Reconcile the October vendor invoices against purchase orders.",
+    "status": "awaiting_input"
+  },
+  "resources": [
+    {
+      "id": "r-credit-memo",
+      "kind": "record",
+      "locator": {
+        "system": "erp",
+        "type": "credit_memo",
+        "key": "CM-2291"
+      },
+      "availability": "available"
+    },
+    {
+      "id": "r-approval-ticket",
+      "kind": "record",
+      "locator": {
+        "system": "approvals",
+        "type": "request",
+        "key": "APR-7710"
+      },
+      "availability": "available"
+    }
+  ],
+  "operations": [
+    {
+      "id": "op-post-memo",
+      "kind": "approval",
+      "description": "Post credit memo CM-2291 for $4,180.00.",
+      "status": "awaiting",
+      "target": "r-credit-memo",
+      "requested_from": "controller",
+      "requested_at": "2026-10-20T17:00:00Z",
+      "expires_at": "2026-10-27T17:00:00Z"
+    },
+    {
+      "id": "op-writeoff",
+      "kind": "approval",
+      "description": "Write off $12.40 rounding difference.",
+      "status": "approved",
+      "approval": {
+        "decided_by": "controller",
+        "decided_at": "2026-10-20T17:20:00Z",
+        "scope": "write-offs under $25",
+        "evidence": ["r-approval-ticket"]
+      }
+    }
+  ],
+  "progress": {
+    "next": [
+      {
+        "id": "n-post",
+        "description": "Post the credit memo once approved.",
+        "blocked_by": ["op-post-memo"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+/* Dark (Starlight default). Slate grays with a teal trail-marker accent. */
+:root {
+  --sl-color-accent-low: #0b2f2c;
+  --sl-color-accent: #14b8a6;
+  --sl-color-accent-high: #a7f3e7;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #e6ebef;
+  --sl-color-gray-2: #c3ccd4;
+  --sl-color-gray-3: #8b98a5;
+  --sl-color-gray-4: #56626e;
+  --sl-color-gray-5: #35404a;
+  --sl-color-gray-6: #1d252d;
+  --sl-color-black: #12181e;
+  --oc-step-border: var(--sl-color-gray-5);
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #ccf2ec;
+  --sl-color-accent: #0f766e;
+  --sl-color-accent-high: #0b3d39;
+  --sl-color-white: #12181e;
+  --sl-color-gray-1: #1d252d;
+  --sl-color-gray-2: #35404a;
+  --sl-color-gray-3: #56626e;
+  --sl-color-gray-4: #8b98a5;
+  --sl-color-gray-5: #c3ccd4;
+  --sl-color-gray-6: #eef2f5;
+  --sl-color-gray-7: #f6f8fa;
+  --sl-color-black: #ffffff;
+  --oc-step-border: var(--sl-color-gray-5);
+}
+
+/* Homepage handoff walkthrough. */
+.handoff {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.handoff-step {
+  border: 1px solid var(--oc-step-border);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+}
+.handoff-step > :first-child {
+  margin-top: 0;
+}
+.handoff-label {
+  font-size: var(--sl-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sl-color-accent);
+}
+.handoff-step blockquote {
+  margin: 0.5rem 0;
+}
+
+.status-note {
+  border-inline-start: 3px solid var(--sl-color-accent);
+  padding: 0.5rem 1rem;
+  background: var(--sl-color-accent-low);
+  border-radius: 0 0.375rem 0.375rem 0;
+}

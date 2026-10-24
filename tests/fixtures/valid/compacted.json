@@ -1,0 +1,85 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e08",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    },
+    "session_refs": [
+      {
+        "protocol": "a2a",
+        "id": "ctx-7f3a",
+        "event": "task-19"
+      }
+    ]
+  },
+  "task": {
+    "objective": "Reconcile the October vendor invoices against purchase orders.",
+    "status": "active"
+  },
+  "parent": {
+    "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e01",
+    "digest": {
+      "algorithm": "sha-256",
+      "value": "1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d"
+    }
+  },
+  "resources": [
+    {
+      "id": "r-log",
+      "kind": "tool_output",
+      "uri": "urn:example:tool-output:7781",
+      "size": 1840221,
+      "media_type": "application/json"
+    }
+  ],
+  "progress": {
+    "completed": [
+      {
+        "id": "c-1",
+        "description": "Loaded 212 invoices and 198 POs.",
+        "completed_at": "2026-10-20T16:05:00Z"
+      },
+      {
+        "id": "c-2",
+        "description": "Explored three matching strategies; PO-number-only was chosen (exploration condensed).",
+        "completed_at": "2026-10-20T17:40:00Z"
+      }
+    ],
+    "focus": {
+      "description": "Reviewing the 14 invoices without PO numbers."
+    }
+  },
+  "derivation": {
+    "method": "compacted",
+    "inputs": [
+      {
+        "checkpoint": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e01"
+      },
+      {
+        "session": {
+          "protocol": "a2a",
+          "id": "ctx-7f3a"
+        }
+      }
+    ],
+    "omissions": [
+      {
+        "description": "Raw output of the matching run (1.8 MB).",
+        "reason": "size",
+        "recoverable_from": "r-log"
+      },
+      {
+        "description": "Two abandoned matching strategies and their trial results.",
+        "reason": "superseded"
+      }
+    ],
+    "transformations": [
+      {
+        "description": "Forty exploration turns condensed into one completed step.",
+        "affected": ["c-2"]
+      }
+    ]
+  }
+}

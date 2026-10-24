@@ -1,0 +1,349 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:01929a3e-7c11-7a2b-9f00-3c5d1e6a7b01",
+  "created_at": "2026-10-22T23:40:00Z",
+  "source": {
+    "producer": {
+      "name": "example-analyst-assistant",
+      "version": "2.3.0"
+    },
+    "model": {
+      "provider": "example-provider",
+      "name": "example-model-large"
+    },
+    "session_refs": [
+      {
+        "protocol": "com.example.assistant",
+        "id": "conv-55120",
+        "event": "turn-38"
+      }
+    ]
+  },
+  "task": {
+    "title": "Q3 operating expense variance analysis",
+    "objective": "Explain why Q3 operating expenses came in 11.4% over budget, by cost center, for the CFO's board pre-read.",
+    "outcome": "A one-page variance bridge with the top drivers quantified, each tied to ledger evidence, plus a list of items needing a controller's judgment.",
+    "status": "active",
+    "success_criteria": [
+      {
+        "id": "sc-bridge",
+        "description": "Variance bridge reconciles to the reported $2.31M overage within $10k.",
+        "state": "unmet"
+      },
+      {
+        "id": "sc-evidence",
+        "description": "Every driver over $50k cites ledger entries or contracts.",
+        "state": "unmet"
+      },
+      {
+        "id": "sc-format",
+        "description": "Output fits the board pre-read template.",
+        "state": "unknown"
+      }
+    ],
+    "scope": {
+      "includes": ["Cost centers 100–480", "Q3 FY2026 actuals versus the board-approved budget"],
+      "excludes": ["Revenue and COGS", "Forecast revisions for Q4"]
+    }
+  },
+  "progress": {
+    "completed": [
+      {
+        "id": "c-load",
+        "description": "Loaded the Q3 GL extract and the approved budget; confirmed the total overage of $2,310,412.",
+        "completed_at": "2026-10-22T21:10:00Z",
+        "evidence": ["r-gl", "r-budget"]
+      },
+      {
+        "id": "c-rank",
+        "description": "Ranked cost centers by variance. Three account for 78% of the overage: 310 Cloud Infrastructure, 220 Contractors, 450 Facilities.",
+        "completed_at": "2026-10-22T22:05:00Z",
+        "evidence": ["r-gl"]
+      },
+      {
+        "id": "c-cloud",
+        "description": "Quantified the cloud driver: $1.02M, of which $640k is a committed-use discount that lapsed on 2026-07-01 and was not renewed until 2026-08-15.",
+        "completed_at": "2026-10-22T23:00:00Z",
+        "evidence": ["r-gl", "r-cloud-invoices"]
+      }
+    ],
+    "focus": {
+      "description": "Contractor spend in cost center 220: separating backfill for open headcount from new project work.",
+      "refs": ["r-gl", "r-hris"]
+    },
+    "next": [
+      {
+        "id": "n-contractors",
+        "description": "Split cost center 220 variance between headcount backfill and project work using the HRIS open-requisition report.",
+        "blocked_by": ["r-hris"],
+        "requires": ["req-hris"]
+      },
+      {
+        "id": "n-facilities",
+        "description": "Quantify the facilities driver; check whether the Denver lease escalation was budgeted.",
+        "refs": ["s-hyp-lease"]
+      },
+      {
+        "id": "n-bridge",
+        "description": "Assemble the bridge and reconcile to $2,310,412.",
+        "refs": ["sc-bridge"]
+      },
+      {
+        "id": "n-judgment",
+        "description": "List items needing the controller's judgment, including the lapsed discount's classification.",
+        "refs": ["s-q-classify"]
+      }
+    ]
+  },
+  "statements": [
+    {
+      "id": "s-instr-materiality",
+      "kind": "instruction",
+      "text": "Only break out drivers over $50k; group the rest as 'other'.",
+      "origin": {
+        "type": "user",
+        "name": "FP&A manager"
+      },
+      "recorded_at": "2026-10-22T20:15:00Z"
+    },
+    {
+      "id": "s-instr-tone",
+      "kind": "instruction",
+      "text": "Write for a board audience: no account numbers in the narrative, put them in the appendix.",
+      "origin": {
+        "type": "user",
+        "name": "FP&A manager"
+      },
+      "recorded_at": "2026-10-22T20:16:00Z"
+    },
+    {
+      "id": "s-con-readonly",
+      "kind": "constraint",
+      "text": "Read-only access to finance systems; do not post journal entries or change budget data.",
+      "origin": {
+        "type": "system",
+        "name": "finance workspace policy"
+      }
+    },
+    {
+      "id": "s-dec-baseline",
+      "kind": "decision",
+      "text": "Compare against the board-approved budget (version B2), not the reforecast.",
+      "origin": {
+        "type": "user",
+        "name": "FP&A manager"
+      },
+      "rationale": "The board pre-read reports against the approved budget."
+    },
+    {
+      "id": "s-dec-fx",
+      "kind": "decision",
+      "text": "Translate EUR cost centers at the budget rate so FX does not appear as an operating driver; report FX separately.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "Keeps operating drivers comparable to budget; FX impact is $84k and is shown as its own line.",
+      "evidence": ["r-gl"]
+    },
+    {
+      "id": "s-obs-cloud",
+      "kind": "observation",
+      "text": "Cloud infrastructure spend exceeded budget by $1,021,880; $640,200 of that is list-price billing between 2026-07-01 and 2026-08-15 when the committed-use discount had lapsed.",
+      "origin": {
+        "type": "agent"
+      },
+      "evidence": ["r-gl", "r-cloud-invoices"],
+      "verification": {
+        "state": "verified",
+        "method": "summed invoice line items at list versus contracted rates",
+        "checked_at": "2026-10-22T23:00:00Z",
+        "revalidate": "never"
+      }
+    },
+    {
+      "id": "s-obs-contractors",
+      "kind": "observation",
+      "text": "Cost center 220 contractor spend exceeded budget by $498,300.",
+      "origin": {
+        "type": "agent"
+      },
+      "evidence": ["r-gl"],
+      "verification": {
+        "state": "stale",
+        "method": "summed GL account 6410 for cost center 220",
+        "checked_at": "2026-10-22T22:05:00Z",
+        "revalidate": "before_use"
+      }
+    },
+    {
+      "id": "s-hyp-backfill",
+      "kind": "hypothesis",
+      "text": "Most of the contractor overage is backfill for six engineering requisitions open since Q2.",
+      "origin": {
+        "type": "agent"
+      },
+      "verification": {
+        "state": "unverified"
+      }
+    },
+    {
+      "id": "s-hyp-lease",
+      "kind": "hypothesis",
+      "text": "The facilities overage is the Denver lease escalation, which may have been left out of the budget.",
+      "origin": {
+        "type": "agent"
+      },
+      "verification": {
+        "state": "unverified"
+      }
+    },
+    {
+      "id": "s-q-classify",
+      "kind": "question",
+      "text": "Should the lapsed-discount cost be presented as a one-time item or as operating spend?",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "s-ext-vendor",
+      "kind": "external",
+      "text": "Vendor account manager's note on the cloud invoice: 'Renewal delayed at customer request.'",
+      "origin": {
+        "type": "external",
+        "name": "cloud vendor invoice memo",
+        "ref": "r-cloud-invoices"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "r-gl",
+      "kind": "dataset",
+      "locator": {
+        "system": "erp",
+        "type": "gl_extract",
+        "key": "FY2026-Q3-OPEX"
+      },
+      "title": "Q3 GL extract, operating expense accounts",
+      "revision": "extract-2026-10-22T20:30Z",
+      "observed_at": "2026-10-22T20:30:00Z",
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-budget",
+      "kind": "document",
+      "locator": {
+        "system": "planning",
+        "type": "budget_version",
+        "key": "FY2026-B2"
+      },
+      "title": "Board-approved budget B2",
+      "revision": "B2",
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-cloud-invoices",
+      "kind": "document",
+      "uri": "https://files.example.com/finance/vendors/cloud/2026-q3/",
+      "title": "Cloud vendor invoices, July–September",
+      "observed_at": "2026-10-22T22:30:00Z",
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-hris",
+      "kind": "record",
+      "locator": {
+        "system": "hris",
+        "type": "report",
+        "key": "open-requisitions"
+      },
+      "title": "Open requisition report",
+      "observed_at": "2026-10-22T23:20:00Z",
+      "availability": "restricted",
+      "description": "Access was denied to the assistant's service account."
+    },
+    {
+      "id": "r-template",
+      "kind": "document",
+      "uri": "https://files.example.com/board/templates/preread-variance.docx",
+      "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "availability": "unknown"
+    },
+    {
+      "id": "r-bridge-draft",
+      "kind": "artifact",
+      "uri": "https://files.example.com/fpa/scratch/q3-variance-bridge-draft.xlsx",
+      "title": "Draft variance bridge (cloud driver filled in)",
+      "revision": "3",
+      "observed_at": "2026-10-22T23:35:00Z",
+      "availability": "available"
+    }
+  ],
+  "continuation": {
+    "requirements": [
+      {
+        "id": "req-erp",
+        "kind": "access",
+        "name": "read access to the ERP GL extract",
+        "necessity": "required",
+        "refs": ["r-gl"]
+      },
+      {
+        "id": "req-hris",
+        "kind": "access",
+        "name": "read access to the HRIS open-requisition report",
+        "necessity": "recommended",
+        "fallback": "Ask the FP&A manager for the requisition list, or present the contractor driver unsplit and say so.",
+        "refs": ["r-hris"]
+      },
+      {
+        "id": "req-sheet",
+        "kind": "capability",
+        "name": "spreadsheet read/write",
+        "necessity": "recommended",
+        "fallback": "Produce the bridge as a table in the response.",
+        "refs": ["r-bridge-draft"]
+      }
+    ],
+    "preconditions": [
+      {
+        "id": "pre-gl-current",
+        "description": "Re-pull the GL extract. If late Q3 adjustments were posted after the recorded revision, recompute s-obs-contractors and the total before using them.",
+        "refs": ["r-gl", "s-obs-contractors"],
+        "on_failure": "halt"
+      }
+    ],
+    "stop_conditions": [
+      {
+        "id": "stop-write",
+        "description": "Stop if any step would require posting entries or editing budget data.",
+        "refs": ["s-con-readonly"]
+      }
+    ],
+    "recovery": [
+      {
+        "id": "rec-1",
+        "description": "Confirm with the FP&A manager how to proceed on contractor detail, since HRIS access was denied.",
+        "refs": ["r-hris"]
+      }
+    ]
+  },
+  "derivation": {
+    "method": "captured",
+    "omissions": [
+      {
+        "description": "Row-level GL detail (14,212 lines).",
+        "reason": "size",
+        "recoverable_from": "r-gl"
+      },
+      {
+        "description": "Employee names in contractor invoices.",
+        "reason": "sensitive"
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+name: Implementation report
+description: Report experience implementing OpenCheckpoints as a producer or consumer.
+labels: [implementation]
+body:
+  - type: input
+    id: implementation
+    attributes:
+      label: Implementation (name, link, language)
+    validations:
+      required: true
+  - type: dropdown
+    id: role
+    attributes:
+      label: Role
+      options: [Producer, Consumer, Both]
+    validations:
+      required: true
+  - type: textarea
+    id: conformance
+    attributes:
+      label: Conformance results
+      description: Which manifest cases pass or fail.
+  - type: textarea
+    id: experience
+    attributes:
+      label: What was hard, missing, or unnecessary
+    validations:
+      required: true

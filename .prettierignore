@@ -1,0 +1,15 @@
+LICENSE
+LICENSE-DOCS
+NOTICE
+CODE_OF_CONDUCT.md
+docs/dist/
+docs/.astro/
+docs/public/schema/
+docs/public/examples/
+docs/src/content/docs/specification/
+docs/src/content/docs/reference/
+docs/src/content/docs/rfcs/
+docs/src/content/docs/examples/
+docs/src/content/docs/conformance/
+docs/src/content/docs/project/
+package-lock.json

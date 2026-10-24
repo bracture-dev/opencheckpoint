@@ -1,0 +1,71 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e07",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Reconcile the October vendor invoices against purchase orders.",
+    "status": "active"
+  },
+  "resources": [
+    {
+      "id": "r-sheet",
+      "kind": "document",
+      "uri": "https://sheets.example.com/d/recon-oct",
+      "title": "October reconciliation"
+    },
+    {
+      "id": "r-inv-1042",
+      "kind": "record",
+      "locator": {
+        "system": "erp",
+        "type": "invoice",
+        "key": "INV-1042"
+      }
+    }
+  ],
+  "application_context": [
+    {
+      "id": "app-sheet",
+      "application": {
+        "name": "Example Sheets"
+      },
+      "view": {
+        "name": "Exceptions tab"
+      },
+      "selections": [
+        {
+          "resource": "r-sheet",
+          "role": "focused",
+          "detail": {
+            "range": "B14:F31"
+          }
+        },
+        {
+          "resource": "r-inv-1042",
+          "role": "selected"
+        }
+      ],
+      "filters": {
+        "variance_pct": {
+          "gt": 2
+        },
+        "vendor": "Northwind"
+      },
+      "drafts": [
+        {
+          "id": "d-note",
+          "description": "Unsaved comment on INV-1042 explaining the variance.",
+          "target": "r-inv-1042",
+          "state": "unsaved",
+          "content": "Variance is freight billed separately; see PO-5521."
+        }
+      ],
+      "observed_at": "2026-10-20T18:25:00Z"
+    }
+  ]
+}

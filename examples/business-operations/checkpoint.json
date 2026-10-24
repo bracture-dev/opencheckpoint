@@ -1,0 +1,339 @@
+{
+  "opencheckpoints": "0.1",
+  "id": "urn:uuid:01929a3e-7c11-7a2b-9f00-3c5d1e6a7b02",
+  "created_at": "2026-10-23T02:15:00Z",
+  "source": {
+    "producer": {
+      "name": "example-scheduling-app",
+      "version": "8.12"
+    },
+    "agent": {
+      "name": "example-scheduling-copilot",
+      "version": "0.9.4"
+    },
+    "session_refs": [
+      {
+        "protocol": "a2a",
+        "id": "ctx-holiday-2026",
+        "event": "task-holiday-hours-07"
+      }
+    ]
+  },
+  "task": {
+    "title": "Holiday hours rollout, Pacific region",
+    "objective": "Apply Thanksgiving-week opening hours to all 9 Pacific-region stores and reassign staff shifts to match, without breaking labor-law minimum rest periods.",
+    "outcome": "Each store's published hours and the week's shift schedule reflect the holiday plan, and each store manager has been notified.",
+    "status": "awaiting_input",
+    "success_criteria": [
+      {
+        "id": "sc-hours",
+        "description": "Holiday hours published for all 9 stores.",
+        "state": "unmet",
+        "evidence": ["r-store-portland", "r-store-seattle", "r-store-tacoma"]
+      },
+      {
+        "id": "sc-rest",
+        "description": "No shift assignment violates the 10-hour minimum rest rule.",
+        "state": "unknown"
+      },
+      {
+        "id": "sc-notify",
+        "description": "Each store manager notified once.",
+        "state": "unmet"
+      }
+    ],
+    "scope": {
+      "includes": ["Pacific region stores", "Week of 2026-11-23"],
+      "excludes": ["Corporate offices", "Distribution centers"]
+    }
+  },
+  "progress": {
+    "completed": [
+      {
+        "id": "c-plan",
+        "description": "Regional director approved the holiday hours plan (closed Thursday; 6am–10pm Friday; normal hours otherwise).",
+        "completed_at": "2026-10-22T18:00:00Z",
+        "evidence": ["r-plan"]
+      },
+      {
+        "id": "c-publish-3",
+        "description": "Published holiday hours for Portland, Seattle, and Tacoma.",
+        "completed_at": "2026-10-23T01:40:00Z",
+        "evidence": ["r-store-portland", "r-store-seattle", "r-store-tacoma"]
+      },
+      {
+        "id": "c-notify-3",
+        "description": "Notified the Portland, Seattle, and Tacoma managers.",
+        "completed_at": "2026-10-23T01:45:00Z"
+      }
+    ],
+    "focus": {
+      "description": "Reassigning Friday shifts at the Spokane store, where extended hours need two additional closers.",
+      "refs": ["app-scheduler", "r-store-spokane"]
+    },
+    "next": [
+      {
+        "id": "n-spokane",
+        "description": "Finish the Spokane Friday reassignment (draft open in the scheduler) and submit it for the store manager's approval.",
+        "blocked_by": ["op-spokane-overtime"],
+        "refs": ["d-spokane-shifts"]
+      },
+      {
+        "id": "n-remaining",
+        "description": "Publish hours and reassign shifts for Boise, Eugene, Salem, Bend, and Olympia.",
+        "refs": ["op-publish-remaining"]
+      },
+      {
+        "id": "n-notify",
+        "description": "Notify the remaining six managers after their hours are published, once each."
+      }
+    ]
+  },
+  "statements": [
+    {
+      "id": "s-instr-rest",
+      "kind": "instruction",
+      "text": "Never schedule anyone with less than 10 hours between shifts, even if they volunteer.",
+      "origin": {
+        "type": "user",
+        "name": "regional operations manager"
+      },
+      "recorded_at": "2026-10-22T18:10:00Z"
+    },
+    {
+      "id": "s-con-overtime",
+      "kind": "constraint",
+      "text": "Any shift change that puts an employee into overtime needs the store manager's approval before publishing.",
+      "origin": {
+        "type": "system",
+        "name": "labor policy"
+      }
+    },
+    {
+      "id": "s-dec-closers",
+      "kind": "decision",
+      "text": "Cover extended Friday closing with existing part-time staff before asking anyone to work overtime.",
+      "origin": {
+        "type": "user",
+        "name": "regional operations manager"
+      },
+      "rationale": "Overtime budget for November is nearly spent."
+    },
+    {
+      "id": "s-obs-spokane",
+      "kind": "observation",
+      "text": "Spokane has one available part-time closer for Friday; covering the second closing slot requires overtime for one full-time employee.",
+      "origin": {
+        "type": "application",
+        "name": "scheduler availability view"
+      },
+      "evidence": ["r-store-spokane"],
+      "verification": {
+        "state": "verified",
+        "method": "availability grid for 2026-11-28",
+        "checked_at": "2026-10-23T02:10:00Z",
+        "revalidate": "before_action"
+      }
+    },
+    {
+      "id": "s-q-boise",
+      "kind": "question",
+      "text": "Boise is mid-renovation; does the holiday plan apply there, or is it closed that week?",
+      "origin": {
+        "type": "agent"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "r-plan",
+      "kind": "document",
+      "uri": "https://docs.example.com/ops/pacific/holiday-hours-2026",
+      "title": "Pacific holiday hours plan",
+      "revision": "v4",
+      "availability": "available"
+    },
+    {
+      "id": "r-store-portland",
+      "kind": "record",
+      "locator": {
+        "system": "store-directory",
+        "type": "store_hours",
+        "key": "PDX-014"
+      },
+      "revision": "2026-10-23T01:38:00Z"
+    },
+    {
+      "id": "r-store-seattle",
+      "kind": "record",
+      "locator": {
+        "system": "store-directory",
+        "type": "store_hours",
+        "key": "SEA-002"
+      },
+      "revision": "2026-10-23T01:39:00Z"
+    },
+    {
+      "id": "r-store-tacoma",
+      "kind": "record",
+      "locator": {
+        "system": "store-directory",
+        "type": "store_hours",
+        "key": "TAC-007"
+      },
+      "revision": "2026-10-23T01:40:00Z"
+    },
+    {
+      "id": "r-store-spokane",
+      "kind": "record",
+      "locator": {
+        "system": "scheduler",
+        "type": "store_week",
+        "key": "GEG-011/2026-W48"
+      },
+      "observed_at": "2026-10-23T02:10:00Z"
+    },
+    {
+      "id": "r-emp-4471",
+      "kind": "record",
+      "locator": {
+        "system": "scheduler",
+        "type": "employee",
+        "key": "E-4471"
+      },
+      "description": "Full-time closer who would go into overtime."
+    },
+    {
+      "id": "r-approval-request",
+      "kind": "record",
+      "locator": {
+        "system": "scheduler",
+        "type": "approval_request",
+        "key": "AR-30918"
+      }
+    }
+  ],
+  "application_context": [
+    {
+      "id": "app-scheduler",
+      "application": {
+        "name": "Example Scheduler",
+        "version": "8.12"
+      },
+      "view": {
+        "name": "Week grid",
+        "uri": "https://scheduler.example.com/stores/GEG-011/weeks/2026-W48"
+      },
+      "selections": [
+        {
+          "resource": "r-store-spokane",
+          "role": "focused",
+          "detail": {
+            "day": "2026-11-28",
+            "slot": "18:00-22:30"
+          }
+        },
+        {
+          "resource": "r-emp-4471",
+          "role": "selected"
+        }
+      ],
+      "filters": {
+        "role": ["closer"],
+        "availability": "available",
+        "employment_type": ["part_time", "full_time"]
+      },
+      "drafts": [
+        {
+          "id": "d-spokane-shifts",
+          "description": "Unpublished Friday schedule for Spokane: part-time closer added 17:00–22:30; E-4471 moved from 06:00–14:30 to 14:00–22:30 (overtime).",
+          "target": "r-store-spokane",
+          "state": "saved"
+        }
+      ],
+      "state": {
+        "compare_mode": "last_year_same_week",
+        "pending_rest_check": true
+      },
+      "state_schema": "https://scheduler.example.com/schemas/week-grid-state/v2",
+      "observed_at": "2026-10-23T02:14:00Z"
+    }
+  ],
+  "operations": [
+    {
+      "id": "op-spokane-overtime",
+      "kind": "approval",
+      "description": "Spokane store manager approves overtime for E-4471 on 2026-11-28.",
+      "status": "awaiting",
+      "target": "r-emp-4471",
+      "requested_from": "Spokane store manager",
+      "requested_at": "2026-10-23T02:12:00Z",
+      "expires_at": "2026-11-20T00:00:00Z",
+      "resume": "verify_first"
+    },
+    {
+      "id": "op-publish-remaining",
+      "kind": "action",
+      "description": "Publish holiday hours for the remaining six stores.",
+      "status": "planned",
+      "effect": "idempotent",
+      "depends_on": ["op-boise-answer"]
+    },
+    {
+      "id": "op-boise-answer",
+      "kind": "input",
+      "description": "Regional operations manager confirms whether Boise follows the holiday plan.",
+      "status": "awaiting",
+      "requested_from": "regional operations manager",
+      "requested_at": "2026-10-23T02:00:00Z"
+    }
+  ],
+  "continuation": {
+    "requirements": [
+      {
+        "id": "req-scheduler",
+        "kind": "tool",
+        "name": "scheduler.update_shifts",
+        "necessity": "required",
+        "description": "Read and write shift assignments in the scheduling application."
+      },
+      {
+        "id": "req-directory",
+        "kind": "tool",
+        "name": "store_directory.publish_hours",
+        "necessity": "required"
+      },
+      {
+        "id": "req-notify",
+        "kind": "tool",
+        "name": "messaging.send",
+        "necessity": "recommended",
+        "fallback": "List the managers to notify and let the user send the notices."
+      }
+    ],
+    "preconditions": [
+      {
+        "id": "pre-draft",
+        "description": "Confirm the Spokane draft still exists and no one else has changed the Friday schedule since it was saved.",
+        "refs": ["d-spokane-shifts", "r-store-spokane"],
+        "on_failure": "ask"
+      },
+      {
+        "id": "pre-approval",
+        "description": "Check approval request AR-30918 in the scheduler before publishing the Spokane change.",
+        "refs": ["op-spokane-overtime", "r-approval-request"],
+        "on_failure": "halt"
+      }
+    ],
+    "stop_conditions": [
+      {
+        "id": "stop-rest",
+        "description": "Do not publish any schedule that the scheduler's rest-period check flags.",
+        "refs": ["s-instr-rest"]
+      }
+    ]
+  },
+  "derivation": {
+    "method": "captured"
+  }
+}
