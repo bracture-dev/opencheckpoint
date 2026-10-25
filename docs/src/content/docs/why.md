@@ -1,5 +1,5 @@
 ---
-title: Why OpenCheckpoints
+title: Why OpenCheckpoint
 description: The problem with transcripts and summaries, and why a structured checkpoint helps.
 ---
 
@@ -35,7 +35,7 @@ migrates session logs. Runtimes such as LangGraph and the OpenAI Agents SDK chec
 execution state.
 
 None of them defines a standalone, vendor-readable record of _working state_ with typed
-provenance, pending side effects, and application context. OpenCheckpoints fills that gap and is
+provenance, pending side effects, and application context. OpenCheckpoint fills that gap and is
 designed to travel inside those protocols rather than compete with them.
 [RFC 0002](../rfcs/0002-existing-standards/) compares them in detail.
 

@@ -1,11 +1,11 @@
 # Foundation stewardship
 
-OpenCheckpoints is intended to be stewarded by a neutral foundation. The Agentic AI Foundation
+OpenCheckpoint is intended to be stewarded by a neutral foundation. The Agentic AI Foundation
 (AAIF), a Linux Foundation directed fund, is the natural candidate: it hosts MCP and A2A, and
 Open Responses names it as liaison. This document records what that foundation's published
 process requires and what this project must resolve before applying.
 
-**OpenCheckpoints is not affiliated with, endorsed by, or under consideration by AAIF or any
+**OpenCheckpoint is not affiliated with, endorsed by, or under consideration by AAIF or any
 other foundation.** AAIF's proposal form asks projects not to describe themselves as donated or
 contributed before every approval is complete; this project will follow that rule.
 
@@ -48,9 +48,9 @@ acting.
 
 ## To resolve before applying
 
-1. **Trademark.** Search and, if clear, register "OpenCheckpoints" in a form that can be
+1. **Trademark.** Search and, if clear, register "OpenCheckpoint" in a form that can be
    assigned to LF Projects, LLC. Do not design a logo until the name is cleared.
-2. **Accounts and domain.** The `opencheckpoints` GitHub organization is currently owned by an
+2. **Accounts and domain.** The `opencheckpoint` GitHub organization is currently owned by an
    individual and billed to a company address. Before applying, add owners from at least one other
    organization, and register a project domain in a way that can be transferred. The schema `$id`
    uses the GitHub Pages URL until then; moving it requires a new specification version.

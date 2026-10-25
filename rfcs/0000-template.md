@@ -5,7 +5,7 @@ status: Draft
 type: Standards Track | Informational | Process
 created: YYYY-MM-DD
 authors: Name (@github-handle)
-discussion: https://github.com/opencheckpoints/opencheckpoints/discussions/N
+discussion: https://github.com/opencheckpoint/opencheckpoint/discussions/N
 ---
 
 # RFC 0000: Short title

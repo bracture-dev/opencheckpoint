@@ -1,8 +1,8 @@
-# OpenCheckpoints
+# OpenCheckpoint
 
 **Pick up where another AI left off.**
 
-OpenCheckpoints is an open format for carrying unfinished work between AI models, agents, and
+OpenCheckpoint is an open format for carrying unfinished work between AI models, agents, and
 applications, without starting over.
 
 A checkpoint is a JSON document that records the _state of the work_ at a well-defined
@@ -18,7 +18,7 @@ any model's internal state, and it never grants the next agent any authority.
 
 ```json
 {
-  "opencheckpoints": "0.1",
+  "opencheckpoint": "0.1",
   "id": "urn:uuid:01929a3e-7c11-7a2b-9f00-3c5d1e6a7b03",
   "created_at": "2026-10-23T17:05:00Z",
   "source": { "producer": { "name": "example-support-triage" } },
@@ -75,7 +75,7 @@ npm run docs:dev    # documentation site at http://localhost:4321
 
 ## Relationship to other standards
 
-OpenCheckpoints is a document format, not a protocol. It is designed to travel inside MCP, A2A,
+OpenCheckpoint is a document format, not a protocol. It is designed to travel inside MCP, A2A,
 ACP, and other protocols, and to reference session records kept by them. See
 [RFC 0002](rfcs/0002-existing-standards.md) for the survey and the reasoning.
 

@@ -4,15 +4,15 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
 // Served as a GitHub Pages project site until the project has its own domain.
-const site = process.env.SITE_URL ?? "https://opencheckpoints.github.io";
-const base = process.env.SITE_BASE ?? "/opencheckpoints";
+const site = process.env.SITE_URL ?? "https://opencheckpoint.github.io";
+const base = process.env.SITE_BASE ?? "/opencheckpoint";
 
 export default defineConfig({
   site,
   base,
   integrations: [
     starlight({
-      title: "OpenCheckpoints",
+      title: "OpenCheckpoint",
       description:
         "An open format for carrying unfinished work between AI models, agents, and applications.",
       logo: { src: "./src/assets/mark.svg", alt: "" },
@@ -22,11 +22,11 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/opencheckpoints/opencheckpoints",
+          href: "https://github.com/opencheckpoint/opencheckpoint",
         },
       ],
       editLink: {
-        baseUrl: "https://github.com/opencheckpoints/opencheckpoints/edit/main/docs/",
+        baseUrl: "https://github.com/opencheckpoint/opencheckpoint/edit/main/docs/",
       },
       lastUpdated: false,
       sidebar: [
@@ -34,7 +34,7 @@ export default defineConfig({
           label: "Start here",
           items: [
             { label: "Introduction", slug: "introduction" },
-            { label: "Why OpenCheckpoints", slug: "why" },
+            { label: "Why OpenCheckpoint", slug: "why" },
             { label: "Core concepts", slug: "concepts" },
           ],
         },

@@ -1,6 +1,6 @@
 ---
 title: TypeScript SDK
-description: Status and planned scope of the OpenCheckpoints TypeScript SDK.
+description: Status and planned scope of the OpenCheckpoint TypeScript SDK.
 ---
 
 **Status: not started.** The TypeScript SDK is Phase 2 of the [roadmap](../../project/roadmap/). This page
@@ -9,9 +9,9 @@ documents no API, because none has been designed.
 
 ## Planned scope
 
-Targets modern Node.js, Bun, and browsers. Types will be generated from the schema; validation will use Ajv with the canonical schema file. Proposed package name, subject to registry availability: `@opencheckpoints/sdk`.
+Targets modern Node.js, Bun, and browsers. Types will be generated from the schema; validation will use Ajv with the canonical schema file. Proposed package name, subject to registry availability: `@opencheckpoint/sdk`.
 
-Like every OpenCheckpoints SDK, it will:
+Like every OpenCheckpoint SDK, it will:
 
 - Parse and serialize checkpoints without adding, dropping, or changing fields.
 - Validate against the canonical schema and report structured errors.

@@ -4,7 +4,7 @@ title: Compaction and restoration
 status: Draft
 type: Informational
 created: 2026-10-24
-authors: OpenCheckpoints maintainers
+authors: OpenCheckpoint maintainers
 ---
 
 # RFC 0004: Compaction and restoration
@@ -23,7 +23,7 @@ No compaction service is part of v0.1.
 
 |                       | A. Transcript replay                                                                   | B. Prose summary                                                                      | C. Structured checkpoint                                        | D. Structured checkpoint + selective retrieval                  |
 | --------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
-| What moves            | The full history, or as much as fits.                                                  | A model-written narrative.                                                            | An OpenCheckpoints document with excerpts.                      | A checkpoint whose resources the destination fetches on demand. |
+| What moves            | The full history, or as much as fits.                                                  | A model-written narrative.                                                            | An OpenCheckpoint document with excerpts.                       | A checkpoint whose resources the destination fetches on demand. |
 | Cross-vendor          | Often impossible (encrypted reasoning and compaction items, runtime-specific formats). | Yes.                                                                                  | Yes.                                                            | Yes, if the destination can resolve the resources.              |
 | Token cost at restore | Highest. Grows with history.                                                           | Low.                                                                                  | Low to moderate; grows with state, not history.                 | Lowest at restore; retrieval costs are paid only when needed.   |
 | Provenance            | Present but implicit; the destination must re-derive it.                               | Lost. Instruction, guess, and quotation merge.                                        | Explicit per statement.                                         | Explicit, and evidence can be re-checked at the source.         |

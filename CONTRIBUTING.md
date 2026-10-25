@@ -1,6 +1,6 @@
-# Contributing to OpenCheckpoints
+# Contributing to OpenCheckpoint
 
-OpenCheckpoints is judged first as an open standard, second as a developer experience, and third
+OpenCheckpoint is judged first as an open standard, second as a developer experience, and third
 as a reference implementation. Contributions that improve the specification's clarity,
 correctness, or neutrality are as valuable as code.
 
@@ -55,7 +55,7 @@ allows comments.
 
 ## Neutrality
 
-OpenCheckpoints must remain independent of any model, provider, runtime, framework, or company.
+OpenCheckpoint must remain independent of any model, provider, runtime, framework, or company.
 Contributions must not introduce dependencies on a particular vendor's service, must not use a
 vendor's branding, and must disclose affiliations relevant to a proposal. Examples use fictional
 names and systems.

@@ -1,6 +1,6 @@
 # Governance
 
-This document describes how OpenCheckpoints is run today and how governance is meant to evolve.
+This document describes how OpenCheckpoint is run today and how governance is meant to evolve.
 It follows the shape of the Linux Foundation's Minimum Viable Governance, so that it can be
 replaced by a foundation technical charter without restructuring the project.
 

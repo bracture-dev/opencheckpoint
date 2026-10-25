@@ -1,9 +1,9 @@
 ---
 title: Introduction
-description: What OpenCheckpoints is, what it is not, and where to start.
+description: What OpenCheckpoint is, what it is not, and where to start.
 ---
 
-OpenCheckpoints lets you pick up where you left off with any AI, without starting over or
+OpenCheckpoint lets you pick up where you left off with any AI, without starting over or
 explaining everything again.
 
 It defines a **checkpoint**: a JSON document that records the working state of an unfinished
@@ -32,7 +32,7 @@ check it against the world, and continue the work with their own tools.
 
 ## Where to go next
 
-- [Why OpenCheckpoints](../why/) explains the problem and the alternatives.
+- [Why OpenCheckpoint](../why/) explains the problem and the alternatives.
 - [Core concepts](../concepts/) walks through the parts of a checkpoint.
 - [The specification](../specification/) is the normative definition, with the
   [schema reference](../reference/schema/) beside it.

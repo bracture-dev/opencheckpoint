@@ -4,7 +4,7 @@ title: Existing standards and the case for a checkpoint artifact
 status: Draft
 type: Informational
 created: 2026-10-24
-authors: OpenCheckpoints maintainers
+authors: OpenCheckpoint maintainers
 ---
 
 # RFC 0002: Existing standards and the case for a checkpoint artifact
@@ -12,9 +12,9 @@ authors: OpenCheckpoints maintainers
 ## Abstract
 
 This RFC surveys the protocols and runtimes that touch session history, task state, and
-compaction, records what each one represents, and asks whether OpenCheckpoints should be an
+compaction, records what each one represents, and asks whether OpenCheckpoint should be an
 independent specification, a profile of an existing session standard, or a complementary
-artifact that existing standards carry. It recommends the third, and lists what OpenCheckpoints
+artifact that existing standards carry. It recommends the third, and lists what OpenCheckpoint
 reuses from each.
 
 Facts below were checked against each project's repository or published specification on
@@ -188,7 +188,7 @@ archived and folded into A2A.)
 
 ### Research
 
-| Work                                                               | Takeaway for OpenCheckpoints                                                                                                                                                                                              |
+| Work                                                               | Takeaway for OpenCheckpoint                                                                                                                                                                                               |
 | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Packer et al., _MemGPT_ (2023), arXiv:2310.08560                   | Tiered memory lets work exceed the context window; a checkpoint is a portable, inspectable tier.                                                                                                                          |
 | Lindenbauer et al., _The Complexity Trap_ (2025), arXiv:2508.21433 | Masking old observations matches LLM summarization on SWE-bench Verified at about half the cost. Cheap structural reduction is a strong baseline; compaction needs measurement, not assumption.                           |
@@ -252,7 +252,7 @@ block, alongside an ASP session) and that points back into their records.
 
 ## Recommendation
 
-**C.** OpenCheckpoints is an independent _document_ specification (it needs its own schema and
+**C.** OpenCheckpoint is an independent _document_ specification (it needs its own schema and
 versioning, as in A) whose design commitment is to complement, not replace, the protocols that
 carry it. Concretely:
 

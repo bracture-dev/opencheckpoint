@@ -9,7 +9,7 @@ sidebar:
 
 An A2A agent that hands work to another agent, or pauses a task, can return the checkpoint as an
 `Artifact` with a data part containing the document, and the part's media type set to
-`application/vnd.opencheckpoints+json`. The receiving agent treats it as untrusted input and
+`application/vnd.opencheckpoint+json`. The receiving agent treats it as untrusted input and
 follows the [restoration procedure](../../specification/#107-restoration-procedure).
 
 ## Referencing A2A records
@@ -25,7 +25,7 @@ agent may retrieve history; one without it relies on the checkpoint alone.
 
 ## Mapping
 
-| A2A                             | OpenCheckpoints                                                      |
+| A2A                             | OpenCheckpoint                                                       |
 | ------------------------------- | -------------------------------------------------------------------- |
 | `TaskState.INPUT_REQUIRED`      | `task.status: awaiting_input`, and an `operation` of kind `input`    |
 | `TaskState.AUTH_REQUIRED`       | an `operation` of kind `approval`, or a requirement of kind `access` |

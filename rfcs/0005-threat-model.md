@@ -4,7 +4,7 @@ title: Threat model
 status: Draft
 type: Informational
 created: 2026-10-24
-authors: OpenCheckpoints maintainers
+authors: OpenCheckpoint maintainers
 ---
 
 # RFC 0005: Threat model

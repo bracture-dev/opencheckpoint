@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 const docs = join(dirname(fileURLToPath(import.meta.url)), "..");
 const repo = join(docs, "..");
 const content = join(docs, "src/content/docs");
-const GITHUB = "https://github.com/opencheckpoints/opencheckpoints";
+const GITHUB = "https://github.com/opencheckpoint/opencheckpoint";
 
 const read = (p) => readFileSync(join(repo, p), "utf8");
 

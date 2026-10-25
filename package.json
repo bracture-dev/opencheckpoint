@@ -1,7 +1,7 @@
 {
-  "name": "opencheckpoints-repo",
+  "name": "opencheckpoint-repo",
   "private": true,
-  "description": "Specification, schema, fixtures, and conformance harness for OpenCheckpoints.",
+  "description": "Specification, schema, fixtures, and conformance harness for OpenCheckpoint.",
   "license": "Apache-2.0",
   "type": "module",
   "engines": {

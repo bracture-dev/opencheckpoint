@@ -2,7 +2,7 @@
 
 ## Scope
 
-OpenCheckpoints is a specification. Security issues include:
+OpenCheckpoint is a specification. Security issues include:
 
 - Flaws in the specification or schema that let a conforming consumer be manipulated into an
   unsafe action: authority transfer, prompt injection that the statement model fails to contain,
@@ -10,7 +10,7 @@ OpenCheckpoints is a specification. Security issues include:
 - Gaps in the threat model ([RFC 0005](rfcs/0005-threat-model.md)).
 - Vulnerabilities in the repository's tooling, documentation site, or (later) SDKs.
 
-A vulnerability in a third-party product that implements OpenCheckpoints should be reported to
+A vulnerability in a third-party product that implements OpenCheckpoint should be reported to
 that product's maintainers.
 
 ## Reporting

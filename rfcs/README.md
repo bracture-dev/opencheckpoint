@@ -1,6 +1,6 @@
 # RFCs
 
-Changes to the OpenCheckpoints specification, and decisions about the project's direction, are
+Changes to the OpenCheckpoint specification, and decisions about the project's direction, are
 proposed and recorded as RFCs.
 
 ## When an RFC is needed
@@ -8,7 +8,7 @@ proposed and recorded as RFCs.
 - Any change to the normative specification or the schema, other than editorial fixes.
 - A new semantic rule, a new conformance requirement, or a change to the version policy.
 - A change to governance or to the RFC process itself.
-- A new extension that the project will maintain under the reserved `io.opencheckpoints`
+- A new extension that the project will maintain under the reserved `io.opencheckpoint`
   namespace.
 
 Typos, clarifications that do not change meaning, documentation, examples, and tests do not need

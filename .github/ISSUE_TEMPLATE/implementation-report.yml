@@ -1,5 +1,5 @@
 name: Implementation report
-description: Report experience implementing OpenCheckpoints as a producer or consumer.
+description: Report experience implementing OpenCheckpoint as a producer or consumer.
 labels: [implementation]
 body:
   - type: input

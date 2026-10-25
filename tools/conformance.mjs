@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 //
-// Conformance harness for the OpenCheckpoints repository.
+// Conformance harness for the OpenCheckpoint repository.
 //
 // Runs every case in tests/conformance/manifest.json against the JSON Schema
 // (syntactic validity) and the semantic rules of spec/versions/v0.1.md §8

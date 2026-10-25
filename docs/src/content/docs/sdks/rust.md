@@ -1,6 +1,6 @@
 ---
 title: Rust SDK
-description: Status and planned scope of the OpenCheckpoints Rust SDK.
+description: Status and planned scope of the OpenCheckpoint Rust SDK.
 ---
 
 **Status: not started.** The Rust SDK is Phase 4 of the [roadmap](../../project/roadmap/). This page
@@ -11,7 +11,7 @@ documents no API, because none has been designed.
 
 Serde-compatible types generated from the schema (for example with `typify`), `serde_json::Map` for extensions so unknown data round-trips, validation with the `jsonschema` crate against the embedded canonical schema, and structured error enums. Core types stay separate from any runtime integration so the crate can be embedded in agent runtimes.
 
-Like every OpenCheckpoints SDK, it will:
+Like every OpenCheckpoint SDK, it will:
 
 - Parse and serialize checkpoints without adding, dropping, or changing fields.
 - Validate against the canonical schema and report structured errors.

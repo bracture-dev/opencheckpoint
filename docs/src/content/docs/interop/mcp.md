@@ -10,7 +10,7 @@ sidebar:
 An MCP server that produces or stores checkpoints can list each one as a resource:
 
 - `uri`: any URI the server controls, for example `checkpoints://tasks/1412/latest`.
-- `mimeType`: `application/vnd.opencheckpoints+json`.
+- `mimeType`: `application/vnd.opencheckpoint+json`.
 - The resource contents are the checkpoint document as text.
 
 A client or host that restores the checkpoint follows the
@@ -37,7 +37,7 @@ MCP connections, with its own authorization.
 
 ## Mapping
 
-| MCP                                                                                    | OpenCheckpoints                                              |
+| MCP                                                                                    | OpenCheckpoint                                               |
 | -------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | `Resource.uri`, `mimeType`, `size`                                                     | `resource.uri`, `media_type`, `size`                         |
 | `Annotations.lastModified`                                                             | `resource.revision` or `observed_at`                         |

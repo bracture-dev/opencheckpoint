@@ -4,7 +4,7 @@ title: Architecture decisions for version 0.1
 status: Draft
 type: Standards Track
 created: 2026-10-24
-authors: OpenCheckpoints maintainers
+authors: OpenCheckpoint maintainers
 ---
 
 # RFC 0003: Architecture decisions for version 0.1
@@ -19,7 +19,7 @@ the known risks and open questions that reviewers are asked to weigh in on.
 
 ### D1. A complementary document format
 
-OpenCheckpoints is a self-contained document format that existing protocols carry, not a
+OpenCheckpoint is a self-contained document format that existing protocols carry, not a
 protocol, profile, or transport. RFC 0002 gives the evidence. Consequences: the specification
 defines no RPC or storage API; session history stays in the systems that own it and is
 referenced through `source.session_refs`.
@@ -100,7 +100,7 @@ charge of its own semantics.
 
 ### D10. Version policy
 
-`opencheckpoints` is a `MAJOR.MINOR` string. Before 1.0, every minor version may break and
+`opencheckpoint` is a `MAJOR.MINOR` string. Before 1.0, every minor version may break and
 consumers reject versions they do not implement. From 1.0, minor versions are additive. Each
 version's schema is immutable at a stable URL.
 

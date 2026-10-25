@@ -13,13 +13,13 @@ scope. A checkpoint fills that gap.
 
 When an editor starts a session with a new agent to continue earlier work, it can include the
 checkpoint as a resource content block in the first prompt, with media type
-`application/vnd.opencheckpoints+json`. The agent restores it as untrusted input.
+`application/vnd.opencheckpoint+json`. The agent restores it as untrusted input.
 
 ## Producing a checkpoint from an ACP session
 
 An editor or agent can build a checkpoint from what ACP already exposes:
 
-| ACP                                                  | OpenCheckpoints                                                                                                             |
+| ACP                                                  | OpenCheckpoint                                                                                                              |
 | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | Plan entries (`content`, `priority`, `status`)       | `progress.completed` for completed entries, `progress.focus` for the in-progress entry, `progress.next` for pending entries |
 | Tool call with `status: in_progress` at the boundary | `operation` with `status: uncertain` and an explicit `effect`                                                               |

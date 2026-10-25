@@ -42,7 +42,7 @@ must not claim full understanding.
 
 ## Versions
 
-The `opencheckpoints` field holds `MAJOR.MINOR`.
+The `opencheckpoint` field holds `MAJOR.MINOR`.
 
 - **Before 1.0**, any minor version may break compatibility, and consumers reject versions they
   do not implement.

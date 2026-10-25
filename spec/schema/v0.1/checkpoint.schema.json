@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://opencheckpoints.github.io/opencheckpoints/schema/v0.1/checkpoint.schema.json",
-  "title": "OpenCheckpoints checkpoint document, version 0.1",
+  "$id": "https://opencheckpoint.github.io/opencheckpoint/schema/v0.1/checkpoint.schema.json",
+  "title": "OpenCheckpoint checkpoint document, version 0.1",
   "description": "A portable record of the working state of an unfinished AI-assisted task, captured at a well-defined boundary so that another agent, runtime, or model can continue it. The normative specification is spec/versions/v0.1.md; where this schema and the specification disagree, the specification governs and the disagreement is a bug.",
   "type": "object",
-  "required": ["opencheckpoints", "id", "created_at", "source", "task"],
+  "required": ["opencheckpoint", "id", "created_at", "source", "task"],
   "properties": {
-    "opencheckpoints": {
+    "opencheckpoint": {
       "description": "Specification version this document conforms to, as MAJOR.MINOR.",
       "const": "0.1"
     },

@@ -1,5 +1,5 @@
 {
-  "$comment": "Language-neutral conformance cases for OpenCheckpoints v0.1. See README.md.",
+  "$comment": "Language-neutral conformance cases for OpenCheckpoint v0.1. See README.md.",
   "version": "0.1",
   "cases": [
     {
@@ -94,7 +94,7 @@
     },
     {
       "id": "schema/missing-version",
-      "description": "The opencheckpoints version field is required.",
+      "description": "The opencheckpoint version field is required.",
       "file": "../fixtures/invalid/missing-version.json",
       "expect": {
         "result": "schema"

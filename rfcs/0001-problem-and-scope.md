@@ -4,14 +4,14 @@ title: Problem and scope
 status: Draft
 type: Informational
 created: 2026-10-24
-authors: OpenCheckpoints maintainers
+authors: OpenCheckpoint maintainers
 ---
 
 # RFC 0001: Problem and scope
 
 ## Abstract
 
-OpenCheckpoints lets a person pick up unfinished AI-assisted work with a different AI, agent,
+OpenCheckpoint lets a person pick up unfinished AI-assisted work with a different AI, agent,
 or application without starting over or explaining everything again. This RFC states the
 problem, who has it, what a solution must and must not do, and the boundary of version 0.1.
 

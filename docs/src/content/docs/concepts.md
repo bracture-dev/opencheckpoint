@@ -9,7 +9,7 @@ This page explains the model informally. The [specification](../specification/) 
 
 ```json
 {
-  "opencheckpoints": "0.1",
+  "opencheckpoint": "0.1",
   "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e01",
   "created_at": "2026-10-20T18:30:00Z",
   "source": { "producer": { "name": "example-agent" } },
@@ -72,7 +72,7 @@ access.
 
 Application context carries state from the applications the user works in: the current view,
 selected or open objects, filters, unsaved drafts, and application-defined state. Much of it
-never appeared in conversation. OpenCheckpoints records what a destination needs to understand,
+never appeared in conversation. OpenCheckpoint records what a destination needs to understand,
 not a full UI model.
 
 ## Operations

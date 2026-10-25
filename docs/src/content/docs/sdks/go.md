@@ -1,6 +1,6 @@
 ---
 title: Go SDK
-description: Status and planned scope of the OpenCheckpoints Go SDK.
+description: Status and planned scope of the OpenCheckpoint Go SDK.
 ---
 
 **Status: not started.** The Go SDK is Phase 3 of the [roadmap](../../project/roadmap/). This page
@@ -9,9 +9,9 @@ documents no API, because none has been designed.
 
 ## Planned scope
 
-Idiomatic exported structs generated from the schema and reviewed for idiom, `encoding/json` round trips that keep unknown extensions, validation with a Draft 2020-12 validator (such as `santhosh-tekuri/jsonschema`) against the embedded canonical schema, and typed errors. The module path will follow the repository: `github.com/opencheckpoints/opencheckpoints/sdks/go`.
+Idiomatic exported structs generated from the schema and reviewed for idiom, `encoding/json` round trips that keep unknown extensions, validation with a Draft 2020-12 validator (such as `santhosh-tekuri/jsonschema`) against the embedded canonical schema, and typed errors. The module path will follow the repository: `github.com/opencheckpoint/opencheckpoint/sdks/go`.
 
-Like every OpenCheckpoints SDK, it will:
+Like every OpenCheckpoint SDK, it will:
 
 - Parse and serialize checkpoints without adding, dropping, or changing fields.
 - Validate against the canonical schema and report structured errors.

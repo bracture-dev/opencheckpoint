@@ -11,5 +11,5 @@ rules in §8.2 cover what it cannot. If the two disagree, report it as a defect.
 Published schemas are immutable. A correction produces a new version.
 
 The schema's `$id` is
-`https://opencheckpoints.github.io/opencheckpoints/schema/v0.1/checkpoint.schema.json`, served
+`https://opencheckpoint.github.io/opencheckpoint/schema/v0.1/checkpoint.schema.json`, served
 by the documentation site.
