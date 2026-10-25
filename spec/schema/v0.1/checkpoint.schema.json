@@ -735,8 +735,8 @@
       "required": ["method"],
       "properties": {
         "method": {
-          "description": "captured: written from a live session. compacted: reduced from earlier checkpoints or session history. merged: combined from several inputs. converted: translated from another format. authored: written by hand.",
-          "enum": ["captured", "compacted", "merged", "converted", "authored"]
+          "description": "captured: written from a live session. compacted: reduced from earlier checkpoints or session history. merged: combined from several inputs. converted: translated from another format. authored: written by hand. forked: copied from the parent to be continued alongside possible sibling copies.",
+          "enum": ["captured", "compacted", "merged", "converted", "authored", "forked"]
         },
         "inputs": {
           "description": "Checkpoints or sessions this one was derived from.",

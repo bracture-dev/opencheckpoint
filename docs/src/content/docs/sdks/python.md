@@ -30,7 +30,7 @@ It will not call a network service, a model, or a database, and it will not offe
 
 ## Design notes
 
-[RFC 0003, decision D13](../../rfcs/0003-architecture-decisions/#d13-sdks-generate-types-from-the-schema-and-validate-with-the-schema)
+[RFC 0001, decision D13](../../rfcs/0001-opencheckpoint/#d13-sdks-generate-types-from-the-schema-and-validate-with-the-schema)
 explains why types are generated from the schema while builders, semantic rules, and errors are
 handwritten.
 

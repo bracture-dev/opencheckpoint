@@ -52,15 +52,15 @@ before refunding anything. The full example is in
 
 ## Repository
 
-| Path                     | Contents                                                                                                       |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| [`spec/`](spec/)         | The normative specification and the JSON Schema.                                                               |
-| [`rfcs/`](rfcs/)         | Problem statement, standards survey, architecture decisions, compaction, threat model, and the change process. |
-| [`tests/`](tests/)       | Language-neutral conformance fixtures, the conformance manifest, and behavioral continuation scenarios.        |
-| [`examples/`](examples/) | Complete checkpoints from four domains.                                                                        |
-| [`docs/`](docs/)         | The documentation website (Astro Starlight).                                                                   |
-| [`sdks/`](sdks/)         | SDK plan. TypeScript, Go, Rust, and Python SDKs are later phases.                                              |
-| [`tools/`](tools/)       | The conformance harness used in CI.                                                                            |
+| Path                     | Contents                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| [`spec/`](spec/)         | The normative specification and the JSON Schema.                                                        |
+| [`rfcs/`](rfcs/)         | RFC 0001, which proposes v0.1 and records its design decisions, and the change process.                 |
+| [`tests/`](tests/)       | Language-neutral conformance fixtures, the conformance manifest, and behavioral continuation scenarios. |
+| [`examples/`](examples/) | Complete checkpoints from four domains.                                                                 |
+| [`docs/`](docs/)         | The documentation website (Astro Starlight).                                                            |
+| [`sdks/`](sdks/)         | SDK plan. TypeScript, Go, Rust, and Python SDKs are later phases.                                       |
+| [`tools/`](tools/)       | The conformance harness used in CI.                                                                     |
 
 ## Running the checks
 
@@ -76,7 +76,8 @@ npm run docs:dev    # documentation site at http://localhost:4321
 
 OpenCheckpoint is a document format, not a protocol. It is designed to travel inside MCP, A2A,
 ACP, and other protocols, and to reference session records kept by them. See
-[RFC 0002](rfcs/0002-existing-standards.md) for the survey and the reasoning.
+[Prior art](docs/src/content/docs/prior-art.md) for the survey and [RFC 0001](rfcs/0001-opencheckpoint.md)
+for the reasoning.
 
 ## Contributing and governance
 

@@ -5,7 +5,7 @@ continues correctly (specification §8.1, level 5). These scenarios describe how
 expected to behave when it restores each example checkpoint into a given environment.
 
 Version 0.1 does not automate them. They are written so that an evaluator, a person or a
-harness with a judge, can run them against any agent, and so that RFC 0004's metrics can be
+harness with a judge, can run them against any agent, and so that the [continuation metrics](../../docs/src/content/docs/compaction.md#measuring-continuation) can be
 computed from the results.
 
 ## Format
@@ -27,7 +27,7 @@ Each scenario names:
 2. Give the destination the checkpoint, presented as imported data, and the user turn given in
    the scenario.
 3. Record the destination's tool calls and messages until it finishes or stops.
-4. Score each check, and compute RFC 0004's metrics (task success, omitted context, repeated
+4. Score each check, and compute the continuation metrics (task success, omitted context, repeated
    work, duplicate side effects, safety violations, recovery quality, tokens, latency).
 
 Report results with the destination's name, version, and model, and the scenario version.

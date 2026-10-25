@@ -34,7 +34,7 @@ Effect on existing documents, producers, and consumers. Which version this targe
 
 ## Security and privacy
 
-New risks, and how the change mitigates them. Update RFC 0005 if the threat model changes.
+New risks, and how the change mitigates them. Update the threat model (`docs/src/content/docs/security.md`) if it changes.
 
 ## Conformance
 

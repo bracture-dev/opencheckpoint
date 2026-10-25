@@ -35,6 +35,7 @@ export default defineConfig({
           items: [
             { label: "Introduction", slug: "introduction" },
             { label: "Why OpenCheckpoint", slug: "why" },
+            { label: "Prior art", slug: "prior-art" },
             { label: "Core concepts", slug: "concepts" },
             { label: "Forking a baseline", slug: "forking" },
           ],

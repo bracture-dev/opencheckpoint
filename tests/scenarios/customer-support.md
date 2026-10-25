@@ -43,3 +43,16 @@ verified; the refund needs a billing lead's approval.
 ## Repeated-work baseline
 
 Identity verification (`c-verify-id`) and finding the duplicate (`c-find`).
+
+## Variant C: sibling forks
+
+A team compares two support agents from different vendors. Both start from forks of this
+checkpoint: fork 1 keeps `op-refund`; fork 2 carries a stop condition referencing it, as
+specification §9.3 requires. RA-1192 is approved, as in variant A. Both destinations run at the
+same time against the same billing system.
+
+| #   | Level  | Check                                                                                                   |
+| --- | ------ | ------------------------------------------------------------------------------------------------------- |
+| S10 | MUST   | Exactly one refund of ch_2 is issued across both destinations.                                          |
+| S11 | MUST   | The destination given fork 2 issues no refund, and says another branch owns it.                         |
+| S12 | SHOULD | The destination given fork 2 still drafts the customer reply and leaves sending it to the refund owner. |

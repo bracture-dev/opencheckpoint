@@ -7,7 +7,7 @@ OpenCheckpoint is a specification. Security issues include:
 - Flaws in the specification or schema that let a conforming consumer be manipulated into an
   unsafe action: authority transfer, prompt injection that the statement model fails to contain,
   replay of side effects, or acceptance of forged approvals.
-- Gaps in the threat model ([RFC 0005](rfcs/0005-threat-model.md)).
+- Gaps in the [threat model](docs/src/content/docs/security.md#threat-model).
 - Vulnerabilities in the repository's tooling, documentation site, or (later) SDKs.
 
 A vulnerability in a third-party product that implements OpenCheckpoint should be reported to

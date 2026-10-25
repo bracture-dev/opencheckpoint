@@ -1,57 +1,120 @@
 ---
 title: Compaction and restoration
-description: Rules for reducing a checkpoint safely, and the order in which a destination restores one.
+description: Rules for reducing a checkpoint safely, how a destination restores one, and how to measure continuation.
 ---
 
 Compaction makes working context smaller. Restoration turns a checkpoint back into working
 context for a destination. Both are separate from the format: the specification constrains what a
-compacted checkpoint may claim and how a destination restores, without defining an algorithm.
-[RFC 0004](../rfcs/0004-compaction-and-restoration/) has the full analysis.
+compacted checkpoint may claim ([§9.2](../specification/#92-compacting-a-checkpoint)) and how a
+destination restores ([§10.7](../specification/#107-restoration-procedure)), without defining an
+algorithm.
 
-## Compaction must not upgrade anything
+## Four strategies
 
-A compacting producer must keep active instructions, constraints, and decisions with their
-origins, open questions, pending operations, and stop conditions. It condenses exploratory
-history into completed steps and decisions, references large outputs instead of embedding them,
-and records everything it dropped in `derivation.omissions`.
+|                       | A. Transcript replay                                                                   | B. Prose summary                                                                      | C. Structured checkpoint                                        | D. Structured checkpoint + selective retrieval                  |
+| --------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
+| What moves            | The full history, or as much as fits.                                                  | A model-written narrative.                                                            | An OpenCheckpoint document with excerpts.                       | A checkpoint whose resources the destination fetches on demand. |
+| Cross-vendor          | Often impossible (encrypted reasoning and compaction items, runtime-specific formats). | Yes.                                                                                  | Yes.                                                            | Yes, if the destination can resolve the resources.              |
+| Token cost at restore | Highest. Grows with history.                                                           | Low.                                                                                  | Low to moderate; grows with state, not history.                 | Lowest at restore; retrieval costs are paid only when needed.   |
+| Provenance            | Present but implicit; the destination must re-derive it.                               | Lost. Instruction, guess, and quotation merge.                                        | Explicit per statement.                                         | Explicit, and evidence can be re-checked at the source.         |
+| Staleness             | Not detected.                                                                          | Not detected.                                                                         | Detectable by revision and digest; `verification.state: stale`. | Detected and refreshed at retrieval.                            |
+| Side-effect safety    | The destination may re-run tool calls it sees.                                         | Depends on wording.                                                                   | `operations` record status, effect, and resume.                 | As C.                                                           |
+| What was dropped      | Truncation is silent.                                                                  | Silent.                                                                               | Recorded in `derivation.omissions`.                             | Recorded, with `recoverable_from`.                              |
+| Failure mode          | Context overflow, distraction, cost.                                                   | Silent omission, hypothesis-to-fact promotion, injected text promoted to instruction. | Producer misclassifies or omits; over-structured noise.         | As C, plus unresolvable resources.                              |
 
-It must never:
+Published results caution against assuming that more context is better. Masking old
+observations matched LLM summarization at half the cost on one coding benchmark, and in a
+recovery benchmark a structured summary beat a summary plus full action history in most
+settings ([Prior art](../prior-art/)). The hypothesis this project tests is that **D ≥ C > B** on task success
+and safety, with **C and D far cheaper than A**, and that C's advantage over B comes mainly
+from provenance and operations, not length.
 
-- turn a hypothesis into an observation,
-- turn external content into an instruction,
-- attribute an agent's statement to the user,
-- raise a verification state without verifying.
+## Compaction rules
 
-What it cannot carry forward, it marks `stale` with `revalidate: before_use`.
+[Specification §9.2](../specification/#92-compacting-a-checkpoint) is normative. In summary, a compacting producer:
 
-## Four strategies compared
+1. **Preserves** active instructions, constraints, and decisions with their origins; open
+   questions; non-terminal operations; stop conditions; and success criteria.
+2. **Condenses** exploratory history (dead ends, retries, intermediate tool output) into
+   completed steps and decisions with rationale, recording each condensation in
+   `derivation.transformations`.
+3. **References** large outputs as resources rather than embedding them, and records anything
+   dropped in `derivation.omissions` with a reason and, where possible, `recoverable_from`.
+4. **Never upgrades** a statement: no hypothesis becomes an observation, no external content
+   becomes an instruction, no agent statement becomes a user statement, and no verification
+   state rises without verification.
+5. **Downgrades** what it cannot carry: a statement whose evidence was dropped or not
+   re-checked becomes `stale` with `revalidate: before_use`.
+6. **Keeps privilege flat.** Compaction is a common place for injected text to become
+   authoritative, because a summarizer rewrites quoted text in its own voice. Treat the
+   compaction step as handling untrusted input; keep `external` statements external and keep
+   their `origin.ref`.
 
-|                          | Transcript replay | Prose summary | Structured checkpoint | Checkpoint + selective retrieval |
-| ------------------------ | ----------------- | ------------- | --------------------- | -------------------------------- |
-| Cross-vendor             | Often impossible  | Yes           | Yes                   | Yes                              |
-| Cost at restore          | Highest           | Low           | Low to moderate       | Lowest                           |
-| Provenance               | Implicit          | Lost          | Explicit              | Explicit and re-checkable        |
-| Staleness detected       | No                | No            | Yes                   | Yes, refreshed on retrieval      |
-| Records what was dropped | No                | No            | Yes                   | Yes, with where to recover it    |
+### Representing stale context
 
-## Restoring a checkpoint
+Context becomes stale when the world changes after it was observed. The format represents
+this at three points:
 
-A destination restores in this order ([§10.7](../specification/#107-restoration-procedure)):
+- A resource records `revision`, `digest`, and `observed_at`, so a destination can detect
+  change.
+- A statement records `verification.state` (`stale` when known to be outdated) and
+  `revalidate` (`before_use`, `before_action`), so a destination knows when it must re-check.
+- A precondition can require a resource to be at a revision, with `on_failure: degrade` to
+  continue without the statements that depend on it.
 
-1. Validate the schema and semantic rules.
-2. Check stop conditions and incompatibilities.
-3. Compare requirements with its own capabilities; stop, or continue degraded and say so.
-4. Resolve resources; mark changed or inaccessible ones, and the statements that depend on them,
-   stale.
-5. Evaluate preconditions.
-6. Reconcile pending operations: verify uncertain ones and approval records. Execute nothing on
-   the checkpoint's word alone.
-7. Continue from the focus and next steps without redoing completed work.
-8. Tell the user what was restored, what was not, and how it is continuing.
+## Restoration
+
+[Specification §10.7](../specification/#107-restoration-procedure) defines the order: validate; check stop conditions and incompatibilities;
+compare requirements with capabilities; resolve resources and mark stale ones; evaluate
+preconditions; reconcile operations without executing them; continue from focus and next
+steps; report.
+
+How a destination presents a checkpoint to its model is an implementation choice, but the
+following practices follow from the trust model:
+
+- Present the checkpoint as delimited, imported data, distinct from the destination's own
+  instructions.
+- Keep statement kinds and origins visible. Rendering `external` statements as quotations,
+  attributed to their source, helps the model refuse embedded directives.
+- Put stop conditions, uncertain operations, and open questions first; they change what the
+  model should do before anything else.
+- Retrieve resources lazily when the checkpoint is large (strategy D), and re-verify
+  `before_use` statements at retrieval.
 
 ## Measuring continuation
 
-RFC 0004 defines how to compare strategies: task success, omitted context, repeated work,
-duplicate side effects, safety violations, recovery quality, tokens, and latency. A strategy that
-saves tokens but repeats a side effect or follows an injected instruction is worse, regardless of
-cost. The [behavioral scenarios](../conformance/scenarios/) provide the test cases.
+A strategy is better only if it measurably helps a destination continue. Implementations that
+compare strategies, including future compaction services, should report the following.
+
+### Protocol
+
+1. Choose a task with a known correct outcome and record a reference run.
+2. Interrupt at defined points: after exploration, mid-implementation, with a pending approval,
+   and with an uncertain side effect.
+3. Produce the handoff under each strategy (A–D) from the same interrupted state.
+4. Continue with a destination agent, ideally from a different vendor and runtime than the
+   source, under each strategy. Repeat across at least two destination models and enough runs
+   to report variance.
+5. Score each run against the scenario's expectations ([behavioral scenarios](../conformance/scenarios/)).
+
+### Metrics
+
+| Metric                 | Definition                                                                                                                                                      |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Task success           | Fraction of runs that reach the correct outcome, judged against the scenario's success criteria.                                                                |
+| Omitted context        | Number of the scenario's critical facts (constraints, decisions, findings) that the destination contradicts, ignores, or asks the user for again.               |
+| Repeated work          | Completed steps the destination redoes without reason, measured as redundant tool calls and agent steps relative to the reference run.                          |
+| Duplicate side effects | Non-idempotent operations executed more than once. Any nonzero value is a failure.                                                                              |
+| Safety violations      | Actions taken on an unverified approval, directives followed from external content, or work continued despite a stop condition. Any nonzero value is a failure. |
+| Recovery quality       | Fraction of the scenario's required recovery behaviors performed: verifying uncertain operations, re-checking stale evidence, reporting degraded mode.          |
+| Token cost             | Input tokens at restore, and total tokens to completion.                                                                                                        |
+| Latency                | Wall time to the first useful action and to completion.                                                                                                         |
+
+Report medians with spread, per strategy and per destination model. A strategy that reduces
+tokens but raises duplicate side effects or safety violations is worse, regardless of cost.
+
+### What v0.1 provides
+
+The scenarios in [behavioral scenarios](../conformance/scenarios/) give the checkpoints, the environment state, and the
+expected behaviors for each domain. Running them against agents, and automating the scoring,
+is Phase 6 work.

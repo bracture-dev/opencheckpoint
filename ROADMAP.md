@@ -1,15 +1,15 @@
 # Roadmap
 
-| Phase                             | Deliverables                                                                                                                                                                         | Status                 |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- |
-| 0. Research and architecture      | Standards survey, scope and non-goals, architecture decisions, draft schema, risks and open questions.                                                                               | Done (RFCs 0001–0005). |
-| 1. Specification and website      | Normative specification v0.1, JSON Schema, four examples, conformance fixtures, behavioral scenarios, documentation site, governance, CI.                                            | Done, pending review.  |
-| 2. TypeScript SDK                 | Generated types, parser and serializer, schema validation, semantic rules, builders, unit and conformance tests, package configuration.                                              | Not started.           |
-| 3. Go SDK                         | Equivalent capabilities in idiomatic Go, passing the shared conformance manifest.                                                                                                    | Not started.           |
-| 4. Rust SDK                       | Equivalent capabilities with Serde types, passing the shared conformance manifest.                                                                                                   | Not started.           |
-| 5. Python SDK                     | Equivalent capabilities with typed dictionaries generated from the schema, passing the shared conformance manifest.                                                                  | Not started.           |
-| 6. Interoperability demonstration | A task starts in one agent, is checkpointed, and continues in a second, independently implemented agent without transcript replay, scored with the scenarios and RFC 0004's metrics. | Not started.           |
-| 7. Community review               | Publish the RFCs, solicit review from carrier-protocol maintainers and runtime authors, recruit maintainers.                                                                         | Not started.           |
+| Phase                             | Deliverables                                                                                                                                                                               | Status                |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------- |
+| 0. Research and architecture      | Standards survey, scope and non-goals, architecture decisions, draft schema, risks and open questions.                                                                                     | Done (RFC 0001).      |
+| 1. Specification and website      | Normative specification v0.1, JSON Schema, four examples, conformance fixtures, behavioral scenarios, documentation site, governance, CI.                                                  | Done, pending review. |
+| 2. TypeScript SDK                 | Generated types, parser and serializer, schema validation, semantic rules, builders, unit and conformance tests, package configuration.                                                    | Not started.          |
+| 3. Go SDK                         | Equivalent capabilities in idiomatic Go, passing the shared conformance manifest.                                                                                                          | Not started.          |
+| 4. Rust SDK                       | Equivalent capabilities with Serde types, passing the shared conformance manifest.                                                                                                         | Not started.          |
+| 5. Python SDK                     | Equivalent capabilities with typed dictionaries generated from the schema, passing the shared conformance manifest.                                                                        | Not started.          |
+| 6. Interoperability demonstration | A task starts in one agent, is checkpointed, and continues in a second, independently implemented agent without transcript replay, scored with the scenarios and the continuation metrics. | Not started.          |
+| 7. Community review               | Publish the RFCs, solicit review from carrier-protocol maintainers and runtime authors, recruit maintainers.                                                                               | Not started.          |
 
 ## Toward external implementations
 

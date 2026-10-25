@@ -1,0 +1,51 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e21",
+  "created_at": "2026-10-21T10:00:00Z",
+  "parent": {
+    "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e01"
+  },
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Reconcile the October vendor invoices against purchase orders.",
+    "status": "active"
+  },
+  "resources": [
+    {
+      "id": "r-memo",
+      "kind": "record",
+      "locator": {
+        "system": "erp",
+        "type": "credit_memo",
+        "key": "CM-2291"
+      }
+    }
+  ],
+  "operations": [
+    {
+      "id": "op-post-memo",
+      "kind": "action",
+      "description": "Post credit memo CM-2291.",
+      "status": "planned",
+      "effect": "non_idempotent",
+      "target": "r-memo"
+    }
+  ],
+  "derivation": {
+    "method": "forked",
+    "inputs": [
+      {
+        "checkpoint": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e01"
+      }
+    ],
+    "transformations": [
+      {
+        "description": "Branch explores matching on vendor and amount instead of PO number."
+      }
+    ]
+  }
+}

@@ -36,6 +36,9 @@ function page(source, route, { title, order, extra = "" } = {}) {
 // ---- collect pages ----
 
 page("spec/versions/v0.1.md", "specification/");
+for (const f of readdirSync(join(docs, "src/content/docs")))
+  if (/\.mdx?$/.test(f) && !f.startsWith("index"))
+    routes.set(`docs/src/content/docs/${f}`, `${f.replace(/\.mdx?$/, "")}/`);
 routes.set("spec/schema/v0.1/checkpoint.schema.json", "schema/v0.1/checkpoint.schema.json");
 routes.set("spec/schema/v0.1", "reference/schema/");
 routes.set("spec/README.md", "specification/");

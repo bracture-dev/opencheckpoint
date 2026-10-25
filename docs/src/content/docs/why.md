@@ -24,7 +24,7 @@ runtime's private format, or someone's memory.
 
 Research on handoffs between coding agents found that carrying context cut agent steps by 20–59%
 and prompt tokens by 42–63%, while also showing that _more_ context is not automatically better.
-Structure matters more than volume. [RFC 0002](../rfcs/0002-existing-standards/) has the
+Structure matters more than volume. [Prior art](../prior-art/) has the
 sources.
 
 ## What existing standards cover
@@ -37,7 +37,7 @@ execution state.
 None of them defines a standalone, vendor-readable record of _working state_ with typed
 provenance, pending side effects, and application context. OpenCheckpoint fills that gap and is
 designed to travel inside those protocols rather than compete with them.
-[RFC 0002](../rfcs/0002-existing-standards/) compares them in detail.
+[Prior art](../prior-art/) compares them in detail.
 
 ## Design commitments
 

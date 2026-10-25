@@ -25,7 +25,7 @@ runtime is the job of runtime-specific adapters built on top.
 
 ## Generated versus handwritten
 
-RFC 0003, decision D13, records the evaluation. In short: types are generated from the schema and
+[RFC 0001](../rfcs/0001-opencheckpoint.md), decision D13, records the evaluation. In short: types are generated from the schema and
 checked in CI by regenerating and diffing; validation uses the canonical schema through each
 language's 2020-12 validator; builders, semantic rules, and error types are handwritten and
 idiomatic.

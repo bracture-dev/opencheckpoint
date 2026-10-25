@@ -219,6 +219,22 @@ export function checkSemantics(doc) {
     if (s.kind === "observation" && s.origin.type === "agent" && !s.evidence?.length)
       warn("OCP-W002", `/statements/${i}`, `observation "${s.id}" by an agent cites no evidence`);
 
+  if (doc.derivation?.method === "forked") {
+    const guarded = new Set((doc.continuation?.stop_conditions ?? []).flatMap((s) => s.refs ?? []));
+    for (const [i, o] of (doc.operations ?? []).entries())
+      if (
+        o.kind === "action" &&
+        o.effect !== "none" &&
+        !TERMINAL_OPS.has(o.status) &&
+        !guarded.has(o.id)
+      )
+        warn(
+          "OCP-W004",
+          `/operations/${i}`,
+          `fork carries actionable operation "${o.id}" with no stop condition guarding it`,
+        );
+  }
+
   for (const [i, o] of (doc.operations ?? []).entries())
     if (o.status === "awaiting" && o.expires_at && Date.parse(o.expires_at) <= created)
       warn(

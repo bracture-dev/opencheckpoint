@@ -76,6 +76,23 @@
       }
     },
     {
+      "id": "valid/fork-guarded",
+      "description": "A fork whose pending side-effecting action is guarded by a stop condition, because another branch owns it.",
+      "file": "../fixtures/valid/fork-guarded.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/fork-unguarded",
+      "description": "Valid, but a fork that leaves a side-effecting action actionable produces warning OCP-W004.",
+      "file": "../fixtures/valid/fork-unguarded.json",
+      "expect": {
+        "result": "valid",
+        "warnings": ["OCP-W004"]
+      }
+    },
+    {
       "id": "valid/transition-parent",
       "description": "Parent of a valid transition pair.",
       "file": "../fixtures/valid/transition-parent.json",

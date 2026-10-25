@@ -1,25 +1,10 @@
 ---
-rfc: 0002
-title: Existing standards and the case for a checkpoint artifact
-status: Draft
-type: Informational
-created: 2026-10-24
-authors: OpenCheckpoint maintainers
+title: Prior art
+description: How existing protocols, session formats, and runtimes represent task state, and the gap OpenCheckpoint fills.
 ---
 
-# RFC 0002: Existing standards and the case for a checkpoint artifact
-
-## Abstract
-
-This RFC surveys the protocols and runtimes that touch session history, task state, and
-compaction, records what each one represents, and asks whether OpenCheckpoint should be an
-independent specification, a profile of an existing session standard, or a complementary
-artifact that existing standards carry. It recommends the third, and lists what OpenCheckpoint
-reuses from each.
-
 Facts below were checked against each project's repository or published specification on
-2026-10-24. Versions and dates are as found that day. Where a point could not be verified it
-says so.
+2026-10-24. Versions and dates are as found that day.
 
 ## Survey
 
@@ -196,7 +181,7 @@ archived and folded into A2A.)
 | Gulati, _ContinuityBench_ (ICML 2026 workshop)                     | Interruption cut success from 41.7% to 28.0%; a structured summary beat summary plus full action history in 11 of 18 settings. More context is not always better.                                                         |
 
 These sources measure task success, tokens and cost, agent steps (a proxy for repeated work),
-latency, and consistency. RFC 0004 adopts these metrics.
+latency, and consistency. The [Compaction and restoration](../compaction/) page adopts these metrics.
 
 ## Gap analysis
 
@@ -220,7 +205,7 @@ runtime checkpoints preserve executable state for one engine; compaction outputs
 encrypted. ASP comes closest on portability and fidelity, but it preserves the log, not a
 distilled state, and it has no typed provenance for claims or application context.
 
-## Options
+## Options considered
 
 **A. Independent specification.** A new format with its own model, governance, and transport
 bindings.
@@ -255,7 +240,7 @@ block, alongside an ASP session) and that points back into their records.
 versioning, as in A) whose design commitment is to complement, not replace, the protocols that
 carry it. Concretely:
 
-1. It defines no transport, RPC, or storage. §12 of the specification describes how each
+1. It defines no transport, RPC, or storage. [§12 of the specification](../specification/#12-relationship-to-other-protocols-informative) describes how each
    protocol carries a checkpoint.
 2. It references session history kept by other standards (`source.session_refs`) instead of
    embedding it.
