@@ -1,8 +1,6 @@
 # Governance
 
 This document describes how OpenCheckpoint is run today and how governance is meant to evolve.
-It follows the shape of the Linux Foundation's Minimum Viable Governance, so that it can be
-replaced by a foundation technical charter without restructuring the project.
 
 ## Principles
 
@@ -62,9 +60,3 @@ All participants follow the [code of conduct](CODE_OF_CONDUCT.md). Maintainers e
 ## Changes to governance
 
 Changes to this document are Process RFCs and need a two-thirds vote of maintainers.
-
-## Foundation stewardship
-
-The project intends to seek stewardship by a neutral foundation. See
-[STEWARDSHIP.md](STEWARDSHIP.md) for the plan and the items to resolve first. Until a
-foundation accepts the project, no affiliation with any foundation should be stated or implied.

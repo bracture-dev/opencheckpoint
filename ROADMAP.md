@@ -8,7 +8,7 @@
 | 3. Go SDK                         | Equivalent capabilities in idiomatic Go, passing the shared conformance manifest.                                                                                                    | Not started.           |
 | 4. Rust SDK                       | Equivalent capabilities with Serde types, passing the shared conformance manifest.                                                                                                   | Not started.           |
 | 5. Interoperability demonstration | A task starts in one agent, is checkpointed, and continues in a second, independently implemented agent without transcript replay, scored with the scenarios and RFC 0004's metrics. | Not started.           |
-| 6. Community review               | Publish the RFCs, solicit review from carrier-protocol maintainers and runtime authors, recruit maintainers, prepare for foundation stewardship.                                     | Not started.           |
+| 6. Community review               | Publish the RFCs, solicit review from carrier-protocol maintainers and runtime authors, recruit maintainers.                                                                         | Not started.           |
 
 ## Toward external implementations
 

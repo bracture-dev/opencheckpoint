@@ -20,11 +20,13 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = (p) => JSON.parse(readFileSync(join(root, p), "utf8"));
 
 const schema = readJson("spec/schema/v0.1/checkpoint.schema.json");
+// Formats are annotations (specification §8.1); ajv-formats only registers their names.
 const ajv = new Ajv2020({
   allErrors: true,
   strict: true,
   strictTypes: false,
   strictRequired: false,
+  validateFormats: false,
 });
 addFormats(ajv);
 const validateSchema = ajv.compile(schema);

@@ -11,8 +11,7 @@ by whom, which resources and application objects are involved, which approvals a
 pending, and what must be checked before anyone continues. It does not contain the transcript or
 any model's internal state, and it never grants the next agent any authority.
 
-> **Status:** v0.1 draft, open for review. Nothing here has been adopted, endorsed, or accepted by
-> any foundation or standards body. The format may change incompatibly before 1.0.
+> **Status:** v0.1 draft, open for review. The format may change incompatibly before 1.0.
 
 ## A checkpoint, in brief
 

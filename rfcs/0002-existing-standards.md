@@ -26,8 +26,7 @@ says so.
 ### Open Responses
 
 - **Solves:** a vendor-neutral, multi-provider LLM API modeled on the OpenAI Responses API:
-  items, the agentic loop, streaming events. Specification version 2026-04-24; a series of LF
-  Projects, LLC, with a technical charter that names the Agentic AI Foundation as liaison.
+  items, the agentic loop, streaming events. Specification version 2026-04-24.
   Defined in TypeSpec, published as OpenAPI 3.1. Apache-2.0.
 - **State:** typed `Item`s (`message`, `function_call`, `function_call_output`, `reasoning`,
   `compaction`) inside a `Response` with `id`, `status`, `previous_response_id`, `output`.
@@ -44,7 +43,7 @@ says so.
 ### Model Context Protocol (MCP)
 
 - **Solves:** how applications expose tools, resources, and prompts to models. Version
-  2026-07-28; a series of LF Projects, LLC, hosted by AAIF. TypeScript source of truth,
+  2026-07-28. TypeScript source of truth,
   generated JSON Schema 2020-12, JSON-RPC 2.0 transport. Code and specification moving from MIT
   to Apache-2.0; documentation CC-BY-4.0.
 - **State:** `Resource {uri, name, title, description, mimeType, annotations, size}`;
@@ -66,7 +65,7 @@ says so.
 ### Agent2Agent (A2A)
 
 - **Solves:** discovery and task delegation between independent agents. v1.0.0 (2026-03-12),
-  with v1.0.1 in the changelog; Linux Foundation project, AAIF growth stage. `a2a.proto` is
+  with v1.0.1 in the changelog. `a2a.proto` is
   normative; JSON Schema is generated and non-normative. Apache-2.0.
 - **State:** `Task {id, context_id, status, artifacts, history, metadata}`;
   `TaskState` (`SUBMITTED`, `WORKING`, `COMPLETED`, `FAILED`, `CANCELED`, `INPUT_REQUIRED`,
@@ -238,7 +237,7 @@ an A2A extension, or an MCP extension.
   are derived from events; a checkpoint must be authorable without a log, by hand or by an
   application with no agent session at all. A2A and MCP are transports; binding the format to
   one excludes users of the others. ASP is also early (draft, unidentified steward), which
-  makes it a risky foundation. A profile would inherit those constraints and lose
+  makes it a risky base. A profile would inherit those constraints and lose
   neutrality between protocols.
 
 **C. Complementary checkpoint artifact.** A self-contained document format, independent of

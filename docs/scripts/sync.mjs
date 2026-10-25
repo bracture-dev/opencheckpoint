@@ -78,7 +78,6 @@ const projectDocs = [
   ["CONTRIBUTING.md", "Contributing"],
   ["MAINTAINERS.md", "Maintainers"],
   ["ROADMAP.md", "Roadmap"],
-  ["STEWARDSHIP.md", "Foundation stewardship"],
   ["SECURITY.md", "Security policy"],
   ["CODE_OF_CONDUCT.md", "Code of conduct"],
   ["CHANGELOG.md", "Changelog"],

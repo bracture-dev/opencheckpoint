@@ -18,4 +18,4 @@ specification follows the version policy in §5 of the specification.
 - RFCs 0001–0005: problem and scope, existing standards, architecture decisions, compaction and
   restoration, threat model.
 - Documentation site (Astro Starlight).
-- Governance, contribution, security, and stewardship documents.
+- Governance, contribution, and security documents.
