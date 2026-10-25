@@ -31,7 +31,7 @@ CDDL, or a TypeScript source of truth (MCP, ASP).
 
 JSON Schema 2020-12 is chosen because it is language-neutral, is the format MCP and ACP
 publish, has mature validators in every target language (Ajv for JavaScript,
-`santhosh-tekuri/jsonschema` for Go, the `jsonschema` crate for Rust), and can express most of
+`santhosh-tekuri/jsonschema` for Go, the `jsonschema` crate for Rust, `jsonschema` for Python), and can express most of
 the format's safety rules directly through `if`/`then`. Protocol Buffers would make JSON a
 secondary encoding and lose conditional constraints. A TypeScript or Rust source of truth would
 make one SDK's language the owner of the contract.
@@ -122,11 +122,12 @@ reviewed pull request. Normative material (`spec/`), process (`rfcs/`), document
 
 Evaluated per language:
 
-| Language   | Types                                                                                          | Schema validation                                           | Handwritten                                       |
-| ---------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------- |
-| TypeScript | Generated from the schema (e.g. `json-schema-to-typescript`).                                  | Ajv with the canonical schema file.                         | Builder helpers, semantic rules, error reporting. |
-| Go         | Generated structs (e.g. `go-jsonschema`), reviewed for idiom; `map[string]any` for extensions. | `santhosh-tekuri/jsonschema` with the embedded schema file. | Constructors, semantic rules, typed errors.       |
-| Rust       | Generated Serde types (e.g. `typify`), `serde_json::Map` for extensions.                       | `jsonschema` crate with the embedded schema file.           | Builders, semantic rules, error enums.            |
+| Language   | Types                                                                                                               | Schema validation                                           | Handwritten                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------- |
+| TypeScript | Generated from the schema (e.g. `json-schema-to-typescript`).                                                       | Ajv with the canonical schema file.                         | Builder helpers, semantic rules, error reporting. |
+| Go         | Generated structs (e.g. `go-jsonschema`), reviewed for idiom; `map[string]any` for extensions.                      | `santhosh-tekuri/jsonschema` with the embedded schema file. | Constructors, semantic rules, typed errors.       |
+| Rust       | Generated Serde types (e.g. `typify`), `serde_json::Map` for extensions.                                            | `jsonschema` crate with the embedded schema file.           | Builders, semantic rules, error enums.            |
+| Python     | Generated typed dictionaries (e.g. `datamodel-code-generator`), plain `dict` documents so round trips are lossless. | `jsonschema` with the packaged schema file.                 | Builder, semantic rules, exception types.         |
 
 Generated types are reviewed and may be wrapped for idiom, but never edited to diverge from the
 schema; CI regenerates and diffs them. Every SDK validates with the canonical schema rather

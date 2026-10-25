@@ -59,7 +59,7 @@ before refunding anything. The full example is in
 | [`tests/`](tests/)       | Language-neutral conformance fixtures, the conformance manifest, and behavioral continuation scenarios.        |
 | [`examples/`](examples/) | Complete checkpoints from four domains.                                                                        |
 | [`docs/`](docs/)         | The documentation website (Astro Starlight).                                                                   |
-| [`sdks/`](sdks/)         | SDK plan. TypeScript, Go, and Rust SDKs are later phases.                                                      |
+| [`sdks/`](sdks/)         | SDK plan. TypeScript, Go, Rust, and Python SDKs are later phases.                                              |
 | [`tools/`](tools/)       | The conformance harness used in CI.                                                                            |
 
 ## Running the checks

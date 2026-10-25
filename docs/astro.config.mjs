@@ -55,6 +55,7 @@ export default defineConfig({
             { label: "TypeScript", slug: "sdks/typescript" },
             { label: "Go", slug: "sdks/go" },
             { label: "Rust", slug: "sdks/rust" },
+            { label: "Python", slug: "sdks/python" },
           ],
         },
         { label: "Interoperability", items: [{ autogenerate: { directory: "interop" } }] },

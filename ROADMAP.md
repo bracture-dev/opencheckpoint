@@ -7,8 +7,9 @@
 | 2. TypeScript SDK                 | Generated types, parser and serializer, schema validation, semantic rules, builders, unit and conformance tests, package configuration.                                              | Not started.           |
 | 3. Go SDK                         | Equivalent capabilities in idiomatic Go, passing the shared conformance manifest.                                                                                                    | Not started.           |
 | 4. Rust SDK                       | Equivalent capabilities with Serde types, passing the shared conformance manifest.                                                                                                   | Not started.           |
-| 5. Interoperability demonstration | A task starts in one agent, is checkpointed, and continues in a second, independently implemented agent without transcript replay, scored with the scenarios and RFC 0004's metrics. | Not started.           |
-| 6. Community review               | Publish the RFCs, solicit review from carrier-protocol maintainers and runtime authors, recruit maintainers.                                                                         | Not started.           |
+| 5. Python SDK                     | Equivalent capabilities with typed dictionaries generated from the schema, passing the shared conformance manifest.                                                                  | Not started.           |
+| 6. Interoperability demonstration | A task starts in one agent, is checkpointed, and continues in a second, independently implemented agent without transcript replay, scored with the scenarios and RFC 0004's metrics. | Not started.           |
+| 7. Community review               | Publish the RFCs, solicit review from carrier-protocol maintainers and runtime authors, recruit maintainers.                                                                         | Not started.           |
 
 ## Toward external implementations
 

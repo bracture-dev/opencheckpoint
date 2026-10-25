@@ -127,4 +127,4 @@ tokens but raises duplicate side effects or safety violations is worse, regardle
 
 The scenarios in `tests/scenarios/` give the checkpoints, the environment state, and the
 expected behaviors for each domain. Running them against agents, and automating the scoring,
-is Phase 5 work.
+is Phase 6 work.
