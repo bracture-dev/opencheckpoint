@@ -99,6 +99,26 @@ incompatibilities. This is what makes degraded continuation possible.
 `converted`, `authored`), from which inputs, what was deliberately left out and why, and what
 was condensed. A compacted checkpoint that does not say what it dropped is not conforming.
 
+## Checkpoints and memory
+
+A checkpoint is not memory. Memory is what an assistant keeps about you, your projects, and your
+preferences across many tasks, retrieved a piece at a time when it seems relevant. A checkpoint
+is the state of one task at one moment, read whole when the work changes hands, and replaced by
+the next checkpoint.
+
+|          | Checkpoint                                                             | Memory                             |
+| -------- | ---------------------------------------------------------------------- | ---------------------------------- |
+| Scope    | One task                                                               | Many tasks, a user, a project      |
+| Shape    | Snapshot at a capture time                                             | Accumulates over time              |
+| Use      | Read whole, at a handoff                                               | Retrieved by relevance             |
+| Lifetime | Superseded; done when the task ends                                    | Persists until edited or forgotten |
+| Carries  | Provenance, verification, staleness, pending operations, preconditions | Usually remembered facts           |
+
+They meet at the edges: a producer can draw on memory when writing a checkpoint, and lessons from
+a finished task can be saved to memory. A checkpoint should not become a long-lived store updated
+across tasks. If you reuse the same starting state over weeks, capture it again so its timestamps
+and verification states stay true. See [§1.3 of the specification](../specification/#13-checkpoints-and-memory).
+
 ## Extensions
 
 Domain-specific data goes in `extensions` maps keyed by reverse-DNS names such as

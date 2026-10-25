@@ -49,3 +49,4 @@ an RFC. Open a pull request.
 | [0003](0003-architecture-decisions.md)     | Architecture decisions for version 0.1                    | Standards Track | Draft  |
 | [0004](0004-compaction-and-restoration.md) | Compaction and restoration                                | Informational   | Draft  |
 | [0005](0005-threat-model.md)               | Threat model                                              | Informational   | Draft  |
+| [0006](0006-forking-from-a-baseline.md)    | Forking from a baseline                                   | Standards Track | Draft  |

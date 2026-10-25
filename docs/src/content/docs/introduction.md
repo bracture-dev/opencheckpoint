@@ -26,7 +26,8 @@ check it against the world, and continue the work with their own tools.
 
 - **Not a transcript.** It can point to one kept elsewhere, but it does not contain it.
 - **Not model state.** No KV caches, hidden reasoning, or provider-specific blobs.
-- **Not memory.** It describes one task at one point, not everything an assistant knows.
+- **Not memory.** It describes one task at one point, not everything an assistant knows
+  across tasks. [Core concepts](../concepts/#checkpoints-and-memory) explains the difference.
 - **Not a permission slip.** Nothing in a checkpoint authorizes the destination to do anything.
 - **Not a protocol.** It travels inside MCP, A2A, ACP, or any other channel.
 

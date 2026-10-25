@@ -15,7 +15,7 @@ specification follows the version policy in §5 of the specification.
 - Behavioral continuation scenarios for four domains.
 - Example checkpoints: financial analysis, business operations, customer support, software
   development.
-- RFCs 0001–0005: problem and scope, existing standards, architecture decisions, compaction and
-  restoration, threat model.
+- RFCs 0001–0006: problem and scope, existing standards, architecture decisions, compaction and
+  restoration, threat model, forking from a baseline.
 - Documentation site (Astro Starlight).
 - Governance, contribution, and security documents.
