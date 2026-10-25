@@ -123,6 +123,35 @@ protocol, profile, or transport. [Prior art](../docs/src/content/docs/prior-art.
 defines no RPC or storage API; session history stays in the systems that own it and is
 referenced through `source.session_refs`.
 
+#### Alternatives considered
+
+**A. Independent specification.** A new format with its own model, governance, and transport
+bindings.
+
+- For: full control over the model; no dependency on another project's release cycle.
+- Against: risks duplicating concepts (resources, task states, extension conventions) that
+  existing standards already define; a new transport would compete rather than complement.
+
+**B. Profile or extension of an existing session standard.** For example, an ASP projection,
+an A2A extension, or an MCP extension.
+
+- For: inherits a community and transport.
+- Against: each candidate represents something else. ASP is a log format and its projections
+  are derived from events; a checkpoint must be authorable without a log, by hand or by an
+  application with no agent session at all. A2A and MCP are transports; binding the format to
+  one excludes users of the others. ASP is also early (draft, unidentified steward), which
+  makes it a risky base. A profile would inherit those constraints and lose
+  neutrality between protocols.
+
+**C. Complementary checkpoint artifact.** A self-contained document format, independent of
+transport, that existing protocols carry (as an MCP resource, an A2A artifact, an ACP content
+block, alongside an ASP session) and that points back into their records.
+
+- For: fills the gap without competing; usable from any protocol, runtime, or application;
+  reuses existing conventions instead of redefining them; small surface.
+- Against: needs its own governance and versioning; adoption depends on producers in several
+  ecosystems.
+
 ### D2. JSON, described by JSON Schema Draft 2020-12
 
 Alternatives: Protocol Buffers (A2A's normative source), TypeSpec/OpenAPI (Open Responses),

@@ -11,21 +11,20 @@ moves from one vendor's agent to a person to another vendor's agent. A developer
 agents mid-refactor.
 
 Each time, the work has state: an objective, completed steps, findings, decisions, open
-questions, approvals in flight, unsaved drafts. Today that state is trapped in a transcript, a
-runtime's private format, or someone's memory.
+questions, approvals in flight, unsaved drafts. That state lives in a transcript, a runtime's
+private format, or someone's head.
 
-## The usual options fall short
+## Transcripts, summaries, and starting over
 
-| Option                | What goes wrong                                                                                                                                                                                      |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Replay the transcript | Expensive, grows with history, and often impossible across vendors because reasoning and compaction data are encrypted or runtime-specific. The next agent must re-derive what matters.              |
-| Write a prose summary | Cheap, but provenance disappears. A summary does not say what the user said, what the AI guessed, or what came from a web page. Guesses become facts and quoted text becomes instructions, silently. |
-| Start over            | The person re-explains, the agent redoes work, and side effects can happen twice.                                                                                                                    |
+| Approach              | Limitation                                                                                                                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Replay the transcript | Expensive, grows with history, and often impossible across vendors because reasoning and compaction data are encrypted or runtime-specific. The next agent must re-derive what matters.           |
+| Write a prose summary | Cheap, and provenance is lost. A summary does not say what the user said, what the AI guessed, or what came from a web page. Guesses become facts and quoted text becomes instructions, silently. |
+| Start over            | The person re-explains, the agent redoes work, and side effects can happen twice.                                                                                                                 |
 
 Research on handoffs between coding agents found that carrying context cut agent steps by 20–59%
-and prompt tokens by 42–63%, while also showing that _more_ context is not automatically better.
-Structure matters more than volume. [Prior art](../prior-art/) has the
-sources.
+and prompt tokens by 42–63%; separate work found that more context did not reliably improve
+results. [Prior art](../prior-art/) has the sources.
 
 ## What existing standards cover
 
@@ -35,8 +34,8 @@ migrates session logs. Runtimes such as LangGraph and the OpenAI Agents SDK chec
 execution state.
 
 None of them defines a standalone, vendor-readable record of _working state_ with typed
-provenance, pending side effects, and application context. OpenCheckpoint fills that gap and is
-designed to travel inside those protocols rather than compete with them.
+provenance, pending side effects, and application context. OpenCheckpoint defines that record,
+and travels inside those protocols.
 [Prior art](../prior-art/) compares them in detail.
 
 ## Design commitments

@@ -35,9 +35,7 @@ export default defineConfig({
           items: [
             { label: "Introduction", slug: "introduction" },
             { label: "Why OpenCheckpoint", slug: "why" },
-            { label: "Prior art", slug: "prior-art" },
             { label: "Core concepts", slug: "concepts" },
-            { label: "Forking a baseline", slug: "forking" },
           ],
         },
         {
@@ -46,8 +44,14 @@ export default defineConfig({
             { label: "Specification v0.1", slug: "specification" },
             { label: "Schema reference", slug: "reference/schema" },
             { label: "Validation and compatibility", slug: "validation" },
-            { label: "Compaction and restoration", slug: "compaction" },
             { label: "Security and trust", slug: "security" },
+          ],
+        },
+        {
+          label: "Guides",
+          items: [
+            { label: "Compaction and restoration", slug: "compaction" },
+            { label: "Forking a baseline", slug: "forking" },
           ],
         },
         { label: "Examples", items: [{ autogenerate: { directory: "examples" } }] },
@@ -62,7 +66,14 @@ export default defineConfig({
         },
         { label: "Interoperability", items: [{ autogenerate: { directory: "interop" } }] },
         { label: "Conformance", items: [{ autogenerate: { directory: "conformance" } }] },
-        { label: "RFCs", items: [{ autogenerate: { directory: "rfcs" } }] },
+        {
+          label: "Design",
+          items: [
+            { label: "RFC 0001: OpenCheckpoint v0.1", slug: "rfcs/0001-opencheckpoint" },
+            { label: "RFC process", slug: "rfcs" },
+            { label: "Prior art", slug: "prior-art" },
+          ],
+        },
         { label: "Project", items: [{ autogenerate: { directory: "project" } }] },
       ],
     }),

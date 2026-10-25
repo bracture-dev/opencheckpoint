@@ -123,8 +123,8 @@ archived and folded into A2A.)
 - **Application state:** none beyond `cwd`.
 - **Portability:** native to pi.
 - **Reuse:** the summary's sections map almost one to one onto `task`, `statements`
-  (constraints, decisions), and `progress` (completed, focus, next). That an independently
-  developed agent converged on these sections is evidence the data model fits practice. Read
+  (constraints, decisions), and `progress` (completed, focus, next). The same sections appear in
+  OpenCheckpoint's data model. Read
   and modified file lists map to resources.
 
 ### LangGraph checkpointing
@@ -205,40 +205,9 @@ runtime checkpoints preserve executable state for one engine; compaction outputs
 encrypted. ASP comes closest on portability and fidelity, but it preserves the log, not a
 distilled state, and it has no typed provenance for claims or application context.
 
-## Options considered
+## How OpenCheckpoint relates
 
-**A. Independent specification.** A new format with its own model, governance, and transport
-bindings.
-
-- For: full control over the model; no dependency on another project's release cycle.
-- Against: risks duplicating concepts (resources, task states, extension conventions) that
-  existing standards already define; a new transport would compete rather than complement.
-
-**B. Profile or extension of an existing session standard.** For example, an ASP projection,
-an A2A extension, or an MCP extension.
-
-- For: inherits a community and transport.
-- Against: each candidate represents something else. ASP is a log format and its projections
-  are derived from events; a checkpoint must be authorable without a log, by hand or by an
-  application with no agent session at all. A2A and MCP are transports; binding the format to
-  one excludes users of the others. ASP is also early (draft, unidentified steward), which
-  makes it a risky base. A profile would inherit those constraints and lose
-  neutrality between protocols.
-
-**C. Complementary checkpoint artifact.** A self-contained document format, independent of
-transport, that existing protocols carry (as an MCP resource, an A2A artifact, an ACP content
-block, alongside an ASP session) and that points back into their records.
-
-- For: fills the gap without competing; usable from any protocol, runtime, or application;
-  reuses existing conventions instead of redefining them; small surface.
-- Against: needs its own governance and versioning; adoption depends on producers in several
-  ecosystems.
-
-## Recommendation
-
-**C.** OpenCheckpoint is an independent _document_ specification (it needs its own schema and
-versioning, as in A) whose design commitment is to complement, not replace, the protocols that
-carry it. Concretely:
+OpenCheckpoint is a document format that complements the protocols that carry it:
 
 1. It defines no transport, RPC, or storage. [§12 of the specification](../specification/#12-relationship-to-other-protocols-informative) describes how each
    protocol carries a checkpoint.
@@ -252,6 +221,6 @@ carry it. Concretely:
    provenance, operations with side-effect semantics, application context, continuation
    requirements, and derivation records.
 
-If a carrier protocol later wants a normative binding (for example an A2A extension URI for
-checkpoint artifacts), that binding belongs to that protocol's process, with this
-specification as the referenced format.
+A normative binding in a carrier protocol (for example an A2A extension URI for
+checkpoint artifacts) belongs to that protocol's process, with this specification as the
+referenced format.

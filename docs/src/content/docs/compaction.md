@@ -22,12 +22,12 @@ algorithm.
 | What was dropped      | Truncation is silent.                                                                  | Silent.                                                                               | Recorded in `derivation.omissions`.                             | Recorded, with `recoverable_from`.                              |
 | Failure mode          | Context overflow, distraction, cost.                                                   | Silent omission, hypothesis-to-fact promotion, injected text promoted to instruction. | Producer misclassifies or omits; over-structured noise.         | As C, plus unresolvable resources.                              |
 
-Published results caution against assuming that more context is better. Masking old
+Published results show that more context does not reliably improve continuation. Masking old
 observations matched LLM summarization at half the cost on one coding benchmark, and in a
 recovery benchmark a structured summary beat a summary plus full action history in most
-settings ([Prior art](../prior-art/)). The hypothesis this project tests is that **D ≥ C > B** on task success
-and safety, with **C and D far cheaper than A**, and that C's advantage over B comes mainly
-from provenance and operations, not length.
+settings ([Prior art](../prior-art/)). The
+[measurement protocol](#measuring-continuation) compares the four strategies on task success,
+safety, and cost.
 
 ## Compaction rules
 
