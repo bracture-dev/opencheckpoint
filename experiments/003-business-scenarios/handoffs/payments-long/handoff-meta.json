@@ -1,0 +1,21 @@
+{
+  "capture": {
+    "summary": {
+      "input": 15356,
+      "output": 2157,
+      "cost": 0.16598,
+      "seconds": 21.277
+    },
+    "checkpoint": {
+      "input": 39559,
+      "output": 9396,
+      "cost": 0.504384,
+      "seconds": 76.052
+    }
+  },
+  "validation": {
+    "level": "ok",
+    "errors": [],
+    "warnings": []
+  }
+}

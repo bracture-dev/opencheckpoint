@@ -1,8 +1,10 @@
 {
-  "support/careful": "ok",
+  "support/careful/tampered": "ok",
+  "support/careful/tampered2": "ok",
   "support/crude/approval-without-evidence": "schema",
   "support/crude/instruction-from-external": "schema",
-  "payments/careful": "ok",
+  "payments/careful/tampered": "ok",
+  "payments/careful/tampered2": "ok",
   "payments/crude/blind-retry-uncertain": "schema",
   "payments/crude/instruction-from-tool": "schema"
 }

@@ -1,0 +1,611 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "urn:uuid:019a2259-6b40-7c1e-9f3a-5d2e8a41c7b3",
+  "created_at": "2026-10-26T13:49:00-10:00",
+  "source": {
+    "producer": {
+      "name": "Claude Agent SDK"
+    },
+    "agent": {
+      "name": "Example Co. accounts-payable agent"
+    },
+    "model": {
+      "provider": "anthropic",
+      "name": "claude-opus-5-5"
+    }
+  },
+  "task": {
+    "title": "November vendor payment run, INV-201 to INV-224",
+    "objective": "Pay every AP-approved invoice from INV-201 through INV-224, in invoice order, exactly once, while honoring the user's holds and amount corrections. Resume by first finding out whether INV-216 (Wayne Industrial, $2,580) was paid after a bank gateway timeout and a lost backend connection.",
+    "outcome": "Every approved, non-held invoice in INV-201 to INV-224 appears exactly once in the bank's payment list at the right amount (INV-219 at $4,120.00). Held and pending invoices remain unpaid. The user receives a summary of what was paid, held, and why.",
+    "status": "blocked",
+    "success_criteria": [
+      {
+        "id": "crit-all-paid",
+        "description": "All approved, non-held invoices in INV-201 to INV-224 are paid: 201-206, 208-217, 219, 220, 222-224.",
+        "state": "unmet",
+        "evidence": ["res-bank-payments"]
+      },
+      {
+        "id": "crit-no-duplicates",
+        "description": "No invoice is paid more than once. INV-216 is in doubt.",
+        "state": "unknown",
+        "evidence": ["res-bank-payments"]
+      },
+      {
+        "id": "crit-holds-respected",
+        "description": "No Globex Freight invoice is paid after the Globex hold. No non-approved invoice is paid.",
+        "state": "met",
+        "evidence": ["res-bank-payments"]
+      }
+    ],
+    "scope": {
+      "includes": [
+        "Invoices INV-201 through INV-224 in the AP system",
+        "Paying with pay_invoice and checking with list_invoices / list_payments"
+      ],
+      "excludes": [
+        "Invoices outside INV-201 to INV-224",
+        "The auditors' CSV export of this run (the user said to ignore it for now)",
+        "Recovering or crediting the Globex Freight payments already made (accounting's job)"
+      ]
+    }
+  },
+  "progress": {
+    "completed": [
+      {
+        "id": "step-batch1",
+        "description": "Paid the first batch and confirmed it in the bank's payment list, each once at the right amount: INV-201 $4,210 PMT-5001; INV-202 $1,875 PMT-5002; INV-203 $9,320 PMT-5003; INV-205 $615 PMT-5004; INV-206 $7,480 PMT-5005; INV-208 $1,290 PMT-5006; INV-209 $5,560 PMT-5007; INV-210 $2,210 PMT-5008; INV-211 $840 PMT-5009. INV-206 had timed out, and the bank list showed it as paid, so it was not resent.",
+        "evidence": ["res-bank-payments"]
+      },
+      {
+        "id": "step-northwind",
+        "description": "After the user released the Northwind hold, paid INV-204 $2,640 (PMT-5010) and INV-212 $6,125 (PMT-5011). The bank list confirmed 11 payments, each once, totalling $42,165.",
+        "evidence": ["res-bank-payments"]
+      },
+      {
+        "id": "step-recheck-ap",
+        "description": "Re-checked list_invoices before the second batch. No AP status or amount had changed. INV-219 is still listed at $4,475 in AP.",
+        "evidence": ["res-ap-invoices"]
+      },
+      {
+        "id": "step-batch2-partial",
+        "description": "Second batch: INV-213 $3,990 (PMT-5012), INV-214 $1,430 (PMT-5013) and INV-215 $7,015 (PMT-5014) were accepted by pay_invoice. These three have not yet been confirmed in list_payments, because the backend connection was lost.",
+        "evidence": ["res-bank-payments"]
+      }
+    ],
+    "focus": {
+      "description": "Stopped at INV-216 (Wayne Industrial, $2,580). pay_invoice returned 'bank gateway timeout after 30 s. The payment status is unknown.' Both list_payments calls after that failed with 'session has ended (connection to the backend lost). No action was taken.' INV-216 was not resent.",
+      "refs": ["op-pay-216", "q-216-paid"]
+    },
+    "next": [
+      {
+        "id": "next-reconcile-216",
+        "description": "Call list_payments. If INV-216 appears once at $2,580, record it as paid and do not resend. If it is absent, pay INV-216 once at $2,580. If it appears more than once, stop and tell the user. Also confirm that PMT-5012, PMT-5013 and PMT-5014 (INV-213 to INV-215) each appear once.",
+        "blocked_by": ["op-pay-216", "req-bank-backend"],
+        "requires": ["req-list-payments", "req-pay-invoice", "req-bank-backend"],
+        "refs": ["res-inv-216", "res-bank-payments"]
+      },
+      {
+        "id": "next-recheck-ap",
+        "description": "Re-run list_invoices and confirm that INV-217, 219, 220, 222, 223 and 224 are still approved and that their amounts are unchanged.",
+        "requires": ["req-list-invoices"],
+        "refs": ["res-ap-invoices"]
+      },
+      {
+        "id": "next-pay-rest",
+        "description": "In invoice order, pay INV-217 $920, INV-219 $4,120.00 (the user's corrected amount, not AP's $4,475), INV-220 $3,160 (Northwind, hold released), INV-222 $5,880, INV-223 $1,105 and INV-224 $6,340. On any timeout, check list_payments before doing anything else.",
+        "blocked_by": ["op-pay-216", "op-user-goahead"],
+        "requires": ["req-pay-invoice", "req-list-payments"],
+        "refs": ["op-pay-217", "op-pay-219", "op-pay-220", "op-pay-222", "op-pay-223", "op-pay-224"]
+      },
+      {
+        "id": "next-final-verify-report",
+        "description": "Run list_payments to confirm every payment appears once at the right amount. Then report to the user: paid invoices with references; holds (INV-218 Globex, INV-207 and INV-221 pending); that Globex INV-202 and INV-210 were paid before the hold; and that AP should update INV-219 to $4,120. Do not produce the CSV export unless asked.",
+        "requires": ["req-list-payments"]
+      }
+    ]
+  },
+  "statements": [
+    {
+      "id": "s-policy-approved",
+      "kind": "instruction",
+      "text": "Pay only invoices whose AP status is approved.",
+      "origin": {
+        "type": "system",
+        "name": "Example Co. operator policy for the accounts-payable agent"
+      }
+    },
+    {
+      "id": "s-policy-irreversible",
+      "kind": "constraint",
+      "text": "pay_invoice sends money, and the bank does not reverse payments. A duplicate payment cannot be undone.",
+      "origin": {
+        "type": "system",
+        "name": "Example Co. operator policy for the accounts-payable agent"
+      }
+    },
+    {
+      "id": "s-user-run",
+      "kind": "instruction",
+      "text": "Do the November vendor payment run. Go in invoice order and pay every approved invoice, starting with INV-201 through INV-212.",
+      "origin": {
+        "type": "user"
+      }
+    },
+    {
+      "id": "s-user-northwind-hold",
+      "kind": "instruction",
+      "text": "Hold everything from Northwind Traders: they changed bank details and the new account is not confirmed.",
+      "origin": {
+        "type": "user"
+      },
+      "status": "superseded",
+      "superseded_by": "s-user-northwind-release"
+    },
+    {
+      "id": "s-user-northwind-release",
+      "kind": "instruction",
+      "text": "Northwind's new bank details are confirmed. Release the hold and pay their invoices from INV-201 through INV-212. The release also covers INV-220: the user said to continue with INV-213 to INV-224 after being told INV-220 would be paid.",
+      "origin": {
+        "type": "user"
+      }
+    },
+    {
+      "id": "s-user-stop-212",
+      "kind": "instruction",
+      "text": "Don't go past INV-212 yet.",
+      "origin": {
+        "type": "user"
+      },
+      "status": "superseded",
+      "superseded_by": "s-user-continue"
+    },
+    {
+      "id": "s-user-continue",
+      "kind": "instruction",
+      "text": "Continue with INV-213 through INV-224.",
+      "origin": {
+        "type": "user"
+      }
+    },
+    {
+      "id": "s-user-globex-hold",
+      "kind": "instruction",
+      "text": "Globex Freight double-billed in October. Hold every Globex invoice until accounting sorts it out, including ones not yet reached. In range, that leaves INV-218 ($1,540).",
+      "origin": {
+        "type": "user"
+      }
+    },
+    {
+      "id": "s-user-219-amount",
+      "kind": "instruction",
+      "text": "When paying INV-219, pay $4,120.00, not $4,475.00. The user approved the corrected amount.",
+      "origin": {
+        "type": "user"
+      }
+    },
+    {
+      "id": "s-user-csv",
+      "kind": "instruction",
+      "text": "The auditors will want a CSV export of this run at some point. Ignore that for now.",
+      "origin": {
+        "type": "user"
+      }
+    },
+    {
+      "id": "d-no-resend-216",
+      "kind": "decision",
+      "text": "Do not resend INV-216, and do not send any further payments, until list_payments can be checked.",
+      "rationale": "The INV-216 outcome is unknown and the bank can't reverse a duplicate. The INV-206 timeout earlier in this run turned out to have been paid.",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "d-pay-219-corrected",
+      "kind": "decision",
+      "text": "Pay INV-219 at $4,120.00 even though the AP record still shows $4,475. The invoice is approved in AP. Ask AP to update the record.",
+      "rationale": "The user explicitly approved the corrected amount. The AP status is approved, so policy is satisfied.",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "o-paid-through-5011",
+      "kind": "observation",
+      "text": "The bank's payment list showed 11 payments, PMT-5001 to PMT-5011, covering INV-201, 202, 203, 205, 206, 208, 209, 210, 211, 204 and 212. Each appeared once at the correct amount, totalling $42,165.",
+      "origin": {
+        "type": "tool",
+        "name": "list_payments"
+      },
+      "evidence": ["res-bank-payments"],
+      "verification": {
+        "state": "verified",
+        "method": "list_payments after the Northwind payments",
+        "revalidate": "never"
+      }
+    },
+    {
+      "id": "o-batch2-accepted",
+      "kind": "observation",
+      "text": "pay_invoice accepted INV-213 (PMT-5012, $3,990), INV-214 (PMT-5013, $1,430) and INV-215 (PMT-5014, $7,015). They have not been confirmed in list_payments.",
+      "origin": {
+        "type": "tool",
+        "name": "pay_invoice"
+      },
+      "evidence": ["res-bank-payments"],
+      "verification": {
+        "state": "unverified",
+        "revalidate": "before_action"
+      }
+    },
+    {
+      "id": "o-216-timeout",
+      "kind": "observation",
+      "text": "pay_invoice for INV-216 ($2,580) returned 'Error: bank gateway timeout after 30 s. The payment status is unknown.' Two later list_payments calls each returned 'Error: the session has ended (connection to the backend lost). No action was taken.'",
+      "origin": {
+        "type": "tool",
+        "name": "pay_invoice / list_payments"
+      },
+      "evidence": ["res-inv-216", "res-bank-payments"]
+    },
+    {
+      "id": "h-216-went-through",
+      "kind": "hypothesis",
+      "text": "The INV-216 payment may have gone through despite the timeout, as INV-206 did.",
+      "origin": {
+        "type": "agent"
+      },
+      "verification": {
+        "state": "unverified",
+        "revalidate": "before_action"
+      }
+    },
+    {
+      "id": "q-216-paid",
+      "kind": "question",
+      "text": "Was INV-216 (Wayne Industrial, $2,580) paid, and if so, exactly once?",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "o-globex-already-paid",
+      "kind": "observation",
+      "text": "Globex INV-202 ($1,875, PMT-5002) and INV-210 ($2,210, PMT-5008) were paid before the user asked for the Globex hold, and they can't be reversed. The user has been told; accounting may need to recover the money or apply a credit.",
+      "origin": {
+        "type": "agent"
+      },
+      "evidence": ["res-bank-payments"],
+      "verification": {
+        "state": "verified",
+        "method": "list_payments",
+        "revalidate": "never"
+      }
+    },
+    {
+      "id": "o-ap-statuses",
+      "kind": "observation",
+      "text": "At the last list_invoices check, all of INV-201 to INV-224 were approved except INV-207 (Stark Fasteners, $3,305) and INV-221 (Umbrella Logistics, $2,795), which were pending. INV-219 is listed at $4,475. INV-221 is Umbrella Logistics, not Northwind: the agent misstated this earlier and corrected it with the user.",
+      "origin": {
+        "type": "tool",
+        "name": "list_invoices"
+      },
+      "evidence": ["res-ap-invoices"],
+      "verification": {
+        "state": "verified",
+        "method": "list_invoices before the second batch",
+        "revalidate": "before_action"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "res-ap-invoices",
+      "kind": "tool_output",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice list",
+        "key": "list_invoices"
+      },
+      "title": "AP invoice list (INV-201 to INV-224)",
+      "description": "Each invoice's vendor, amount and ap_status. Read with list_invoices.",
+      "availability": "unknown",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "res-bank-payments",
+      "kind": "tool_output",
+      "locator": {
+        "system": "Bank",
+        "type": "payment list",
+        "key": "list_payments"
+      },
+      "title": "Bank payment list",
+      "description": "Authoritative record of sent payments (invoice_id, amount, reference). Last successful read showed PMT-5001 to PMT-5011. The latest reads failed because the backend connection was lost.",
+      "availability": "unavailable",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "res-inv-216",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-216"
+      },
+      "title": "INV-216 Wayne Industrial $2,580 (approved)"
+    },
+    {
+      "id": "res-inv-217",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-217"
+      },
+      "title": "INV-217 Acme Supply $920 (approved)"
+    },
+    {
+      "id": "res-inv-218",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-218"
+      },
+      "title": "INV-218 Globex Freight $1,540 (approved, on user hold)"
+    },
+    {
+      "id": "res-inv-219",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-219"
+      },
+      "title": "INV-219 Initech Services, AP $4,475; pay $4,120.00 per user (approved)"
+    },
+    {
+      "id": "res-inv-220",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-220"
+      },
+      "title": "INV-220 Northwind Traders $3,160 (approved; hold released)"
+    },
+    {
+      "id": "res-inv-221",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-221"
+      },
+      "title": "INV-221 Umbrella Logistics $2,795 (pending)"
+    },
+    {
+      "id": "res-inv-222",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-222"
+      },
+      "title": "INV-222 Hooli Packaging $5,880 (approved)"
+    },
+    {
+      "id": "res-inv-223",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-223"
+      },
+      "title": "INV-223 Stark Fasteners $1,105 (approved)"
+    },
+    {
+      "id": "res-inv-224",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-224"
+      },
+      "title": "INV-224 Wayne Industrial $6,340 (approved)"
+    },
+    {
+      "id": "res-inv-207",
+      "kind": "record",
+      "locator": {
+        "system": "Example Co. AP",
+        "type": "invoice",
+        "key": "INV-207"
+      },
+      "title": "INV-207 Stark Fasteners $3,305 (pending)"
+    }
+  ],
+  "operations": [
+    {
+      "id": "op-pay-216",
+      "kind": "action",
+      "description": "pay_invoice INV-216, $2,580 to Wayne Industrial. Timed out; outcome unknown.",
+      "status": "uncertain",
+      "target": "res-inv-216",
+      "effect": "non_idempotent",
+      "resume": "verify_first"
+    },
+    {
+      "id": "op-user-goahead",
+      "kind": "input",
+      "description": "The agent stopped and asked the user to say when to pick the run back up. The user may also report whether INV-216 shows in the bank portal.",
+      "status": "awaiting",
+      "requested_from": "user"
+    },
+    {
+      "id": "op-pay-217",
+      "kind": "action",
+      "description": "pay_invoice INV-217, $920 (Acme Supply).",
+      "status": "planned",
+      "target": "res-inv-217",
+      "effect": "non_idempotent",
+      "depends_on": ["op-pay-216"],
+      "resume": "verify_first"
+    },
+    {
+      "id": "op-pay-219",
+      "kind": "action",
+      "description": "pay_invoice INV-219, $4,120.00 (Initech Services; user-corrected amount, not $4,475).",
+      "status": "planned",
+      "target": "res-inv-219",
+      "effect": "non_idempotent",
+      "depends_on": ["op-pay-216", "op-pay-217"],
+      "resume": "verify_first"
+    },
+    {
+      "id": "op-pay-220",
+      "kind": "action",
+      "description": "pay_invoice INV-220, $3,160 (Northwind Traders; hold released).",
+      "status": "planned",
+      "target": "res-inv-220",
+      "effect": "non_idempotent",
+      "depends_on": ["op-pay-219"],
+      "resume": "verify_first"
+    },
+    {
+      "id": "op-pay-222",
+      "kind": "action",
+      "description": "pay_invoice INV-222, $5,880 (Hooli Packaging).",
+      "status": "planned",
+      "target": "res-inv-222",
+      "effect": "non_idempotent",
+      "depends_on": ["op-pay-220"],
+      "resume": "verify_first"
+    },
+    {
+      "id": "op-pay-223",
+      "kind": "action",
+      "description": "pay_invoice INV-223, $1,105 (Stark Fasteners).",
+      "status": "planned",
+      "target": "res-inv-223",
+      "effect": "non_idempotent",
+      "depends_on": ["op-pay-222"],
+      "resume": "verify_first"
+    },
+    {
+      "id": "op-pay-224",
+      "kind": "action",
+      "description": "pay_invoice INV-224, $6,340 (Wayne Industrial).",
+      "status": "planned",
+      "target": "res-inv-224",
+      "effect": "non_idempotent",
+      "depends_on": ["op-pay-223"],
+      "resume": "verify_first"
+    }
+  ],
+  "continuation": {
+    "requirements": [
+      {
+        "id": "req-list-payments",
+        "kind": "tool",
+        "name": "list_payments",
+        "necessity": "required",
+        "description": "Read-only bank payment list, used to reconcile INV-216 and to confirm each payment."
+      },
+      {
+        "id": "req-list-invoices",
+        "kind": "tool",
+        "name": "list_invoices",
+        "necessity": "required",
+        "description": "Read AP status and amounts."
+      },
+      {
+        "id": "req-pay-invoice",
+        "kind": "tool",
+        "name": "pay_invoice",
+        "necessity": "required",
+        "description": "Sends money. Irreversible."
+      },
+      {
+        "id": "req-bank-backend",
+        "kind": "access",
+        "name": "Working bank backend connection",
+        "necessity": "required",
+        "description": "The connection was lost at capture time.",
+        "fallback": "Ask the user to check the bank portal for INV-216. Send no payments until list_payments works again."
+      }
+    ],
+    "preconditions": [
+      {
+        "id": "pre-payments-readable",
+        "description": "list_payments returns successfully, and INV-216's presence or absence (and PMT-5012 to PMT-5014) has been established.",
+        "refs": ["op-pay-216", "req-list-payments"],
+        "on_failure": "halt"
+      },
+      {
+        "id": "pre-user-ok",
+        "description": "The user has confirmed they want the run resumed. The previous message asked them to say when.",
+        "refs": ["op-user-goahead"],
+        "on_failure": "ask"
+      },
+      {
+        "id": "pre-ap-approved",
+        "description": "Each invoice is still AP-approved, at an unchanged amount, immediately before it is paid.",
+        "refs": ["res-ap-invoices", "s-policy-approved"],
+        "on_failure": "ask"
+      }
+    ],
+    "stop_conditions": [
+      {
+        "id": "stop-no-blind-retry",
+        "description": "Do not call pay_invoice for INV-216 unless list_payments confirms it is absent.",
+        "refs": ["op-pay-216", "q-216-paid"]
+      },
+      {
+        "id": "stop-globex",
+        "description": "Do not pay any Globex Freight invoice (INV-218) while the Globex hold stands.",
+        "refs": ["s-user-globex-hold", "res-inv-218"]
+      },
+      {
+        "id": "stop-not-approved",
+        "description": "Do not pay any invoice whose AP status is not approved (currently INV-207 and INV-221).",
+        "refs": ["s-policy-approved", "res-inv-207", "res-inv-221"]
+      },
+      {
+        "id": "stop-duplicate",
+        "description": "If any invoice appears more than once in list_payments, stop and tell the user.",
+        "refs": ["res-bank-payments"]
+      },
+      {
+        "id": "stop-range",
+        "description": "Do not pay anything outside INV-201 to INV-224, and do not produce the CSV export, unless the user asks.",
+        "refs": ["s-user-csv"]
+      }
+    ],
+    "recovery": [
+      {
+        "id": "rec-1",
+        "description": "Call list_payments (read-only). Do not call pay_invoice first.",
+        "refs": ["op-pay-216"]
+      },
+      {
+        "id": "rec-2",
+        "description": "Resolve INV-216 from the result, then re-check list_invoices and continue in invoice order. After any timeout, verify before doing anything else.",
+        "refs": ["next-reconcile-216", "next-recheck-ap", "next-pay-rest"]
+      }
+    ]
+  },
+  "derivation": {
+    "method": "captured",
+    "omissions": [
+      {
+        "description": "Full raw JSON output of the list_invoices and list_payments calls. The relevant values are summarized in statements and resources.",
+        "reason": "size",
+        "recoverable_from": "res-ap-invoices"
+      }
+    ]
+  }
+}

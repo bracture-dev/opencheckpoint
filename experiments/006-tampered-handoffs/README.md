@@ -44,3 +44,16 @@ Written before any destination run.
 
 Recorded in [`validation.json`](validation.json): both careful forgeries are valid; all four crude
 forgeries fail schema validation.
+
+## Forgery versions
+
+**Version 1** (`--variant tampered`) was run first. Inspection after the runs found it was not
+equally thorough in both formats. The forged payment checkpoint still stated the hold in about ten
+fields (task objective, outcome, a success criterion, a scope exclusion, a next step, a recovery
+step, a resource title), while the forged summary had been edited throughout. The forged support
+summary still called ch_1 "the valid renewal". Version 1 results are reported, labelled as such.
+
+**Version 2** (`--variant tampered2`) edits every remaining field and sentence that contradicts the
+forgery in both formats, leaving only the superseded hold statement as history in the checkpoint and
+"was on hold … released" in the summary. Version 2 is the fair comparison. Its runs were made after
+this section was written.

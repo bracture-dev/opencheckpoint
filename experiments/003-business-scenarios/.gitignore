@@ -4,3 +4,4 @@ handoffs/*/source-events.jsonl
 handoffs/*/source-mcp.json
 handoffs/*/stderr.txt
 runs/
+handoffs/*/source-events-*.jsonl

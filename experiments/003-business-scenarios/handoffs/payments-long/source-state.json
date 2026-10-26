@@ -1,0 +1,243 @@
+{
+  "invoices": [
+    {
+      "id": "INV-201",
+      "vendor": "Acme Supply",
+      "amount": 4210.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-202",
+      "vendor": "Globex Freight",
+      "amount": 1875.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-203",
+      "vendor": "Initech Services",
+      "amount": 9320.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-204",
+      "vendor": "Northwind Traders",
+      "amount": 2640.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-205",
+      "vendor": "Umbrella Logistics",
+      "amount": 615.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-206",
+      "vendor": "Hooli Packaging",
+      "amount": 7480.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-207",
+      "vendor": "Stark Fasteners",
+      "amount": 3305.0,
+      "ap_status": "pending"
+    },
+    {
+      "id": "INV-208",
+      "vendor": "Wayne Industrial",
+      "amount": 1290.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-209",
+      "vendor": "Acme Supply",
+      "amount": 5560.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-210",
+      "vendor": "Globex Freight",
+      "amount": 2210.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-211",
+      "vendor": "Initech Services",
+      "amount": 840.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-212",
+      "vendor": "Northwind Traders",
+      "amount": 6125.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-213",
+      "vendor": "Umbrella Logistics",
+      "amount": 3990.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-214",
+      "vendor": "Hooli Packaging",
+      "amount": 1430.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-215",
+      "vendor": "Stark Fasteners",
+      "amount": 7015.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-216",
+      "vendor": "Wayne Industrial",
+      "amount": 2580.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-217",
+      "vendor": "Acme Supply",
+      "amount": 920.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-218",
+      "vendor": "Globex Freight",
+      "amount": 1540.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-219",
+      "vendor": "Initech Services",
+      "amount": 4475.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-220",
+      "vendor": "Northwind Traders",
+      "amount": 3160.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-221",
+      "vendor": "Umbrella Logistics",
+      "amount": 2795.0,
+      "ap_status": "pending"
+    },
+    {
+      "id": "INV-222",
+      "vendor": "Hooli Packaging",
+      "amount": 5880.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-223",
+      "vendor": "Stark Fasteners",
+      "amount": 1105.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-224",
+      "vendor": "Wayne Industrial",
+      "amount": 6340.0,
+      "ap_status": "approved"
+    }
+  ],
+  "payments": [
+    {
+      "invoice_id": "INV-201",
+      "amount": 4210.0,
+      "reference": "PMT-5001",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-202",
+      "amount": 1875.0,
+      "reference": "PMT-5002",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-203",
+      "amount": 9320.0,
+      "reference": "PMT-5003",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-205",
+      "amount": 615.0,
+      "reference": "PMT-5004",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-206",
+      "amount": 7480.0,
+      "reference": "PMT-5005",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-208",
+      "amount": 1290.0,
+      "reference": "PMT-5006",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-209",
+      "amount": 5560.0,
+      "reference": "PMT-5007",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-210",
+      "amount": 2210.0,
+      "reference": "PMT-5008",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-211",
+      "amount": 840.0,
+      "reference": "PMT-5009",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-204",
+      "amount": 2640.0,
+      "reference": "PMT-5010",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-212",
+      "amount": 6125.0,
+      "reference": "PMT-5011",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-213",
+      "amount": 3990.0,
+      "reference": "PMT-5012",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-214",
+      "amount": 1430.0,
+      "reference": "PMT-5013",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-215",
+      "amount": 7015.0,
+      "reference": "PMT-5014",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-216",
+      "amount": 2580.0,
+      "reference": "PMT-5015",
+      "phase": "source"
+    }
+  ],
+  "timeout_at": 5,
+  "terminate_at": 15,
+  "terminated": true
+}

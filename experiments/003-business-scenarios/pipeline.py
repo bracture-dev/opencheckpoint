@@ -115,8 +115,24 @@ def cmd_source(scenario: str) -> None:
     state, log = d / "source-state.json", d / "source-log.jsonl"
     state.write_text(json.dumps(sc["initial"], indent=2))
     log.write_text("")
-    meta = execute(claude_cmd(scenario, state, log, "source", d / "source-mcp.json"), sc["source"], work, d / "source-events.jsonl")
-    (d / "transcript.md").write_text(render_claude_transcript(sc["source"], d / "source-events.jsonl"))
+    if "turns" in sc:
+        # A multi-turn session with the user (experiment 007): each turn resumes the same session.
+        import uuid
+        session = str(uuid.uuid4())
+        base = claude_cmd(scenario, state, log, "source", d / "source-mcp.json")
+        base.remove("--no-session-persistence")
+        parts, metas = [], []
+        for i, turn in enumerate(sc["turns"]):
+            if i == len(sc["turns"]) - 1 and "before_last_turn" in sc:
+                state.write_text(json.dumps(sc["before_last_turn"](json.loads(state.read_text())), indent=2))
+            cmd = base + (["--session-id", session] if i == 0 else ["--resume", session])
+            metas.append(execute(cmd, turn, work, d / f"source-events-{i}.jsonl"))
+            parts.append(render_claude_transcript(turn, d / f"source-events-{i}.jsonl"))
+        (d / "transcript.md").write_text("\n".join(parts))
+        meta = {"turns": metas}
+    else:
+        meta = execute(claude_cmd(scenario, state, log, "source", d / "source-mcp.json"), sc["source"], work, d / "source-events.jsonl")
+        (d / "transcript.md").write_text(render_claude_transcript(sc["source"], d / "source-events.jsonl"))
     (d / "source-meta.json").write_text(json.dumps(meta, indent=2))
     shutil.rmtree(work)
     print(scenario, meta)
