@@ -13,3 +13,4 @@ docs/src/content/docs/examples/
 docs/src/content/docs/conformance/
 docs/src/content/docs/project/
 package-lock.json
+experiments/*/private/
