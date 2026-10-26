@@ -94,8 +94,8 @@ not across agents. Cost is reported by Claude Code; Codex reports none.
 | Claude Code | D. Checkpoint    |   3 |         7.0 |           0 |        125,381 |    3,298,129 | 36,366 | $2.39 |     366 s |         36 |                    13.7 |
 | Codex       | A. Bare          |   3 |         4.0 |           0 |         34,620 |      322,901 |  3,640 |   n/a |     111 s |         11 |                     5.3 |
 | Codex       | B2. Transcript   |   3 |         7.0 |           0 |        150,659 |    1,553,109 |  6,164 |   n/a |     176 s |         11 |                     3.7 |
-| Codex       | C. Prose summary |   1 |         7.0 |           0 |         37,163 |      535,040 |  6,281 |   n/a |     178 s |         13 |                     4.0 |
-| Codex       | D. Checkpoint    |   1 |         7.0 |           0 |         48,178 |      585,600 |  6,513 |   n/a |     179 s |         14 |                     7.0 |
+| Codex       | C. Prose summary |   3 |         7.0 |           0 |         43,492 |      580,395 |  6,621 |   n/a |     183 s |         13 |                     4.3 |
+| Codex       | D. Checkpoint    |   3 |         7.0 |           0 |         48,829 |      567,296 |  6,318 |   n/a |     173 s |         13 |                     6.0 |
 
 No run regressed on any of the four earlier preferences, in any condition, including bare. The
 repository at the interruption point already reflects those preferences, so these checks did not
@@ -109,8 +109,8 @@ discriminate between conditions on this task.
    completed all seven checks in every run.
 2. **Summaries and checkpoints cost less than replay.** With Claude, both cost $2.39 per run
    against $3.47 for transcript replay (31% less), and read about half as many uncached input
-   tokens. With Codex, a checkpoint or summary read 3 to 4 times fewer uncached input tokens
-   than the transcript.
+   tokens. With Codex, a checkpoint or summary read about 3 times fewer uncached input tokens
+   than the transcript (44,000 to 49,000 against 151,000).
 3. **Replay was faster here.** With Claude, transcript runs finished in 206 s with 21 tool calls
    and made their first edit after 4 calls; summary and checkpoint runs took about 370 s and
    37 to 41 calls, with the first edit after 11 to 14. The transcript contains the previous
@@ -122,7 +122,7 @@ discriminate between conditions on this task.
    where typed provenance and operations are designed to matter. Experiment 3 (business
    scenarios) tests those.
 5. **The same checkpoint worked on both agents.** Claude Code and Codex each completed all seven
-   checks from it (Codex n=1 for the checkpoint).
+   checks from it in every run.
 6. **Transcript replay carried live paths into the original environment.** Two of three Claude
    transcript runs listed the original repository's absolute path, taken from the transcript.
    Redaction had replaced the username, so the path did not exist. Without redaction the agent
@@ -131,11 +131,9 @@ discriminate between conditions on this task.
 
 ### Deviations from the pre-registered plan
 
-- **Codex usage limit.** The operator's ChatGPT plan reached its usage limit twice. In the first
-  batch, 8 of 12 Codex runs failed on the limit error (6 immediately, 2 partway); a second
-  attempt after a reset completed the bare and transcript cells and lost 4 summary and checkpoint
-  runs the same way. Runs that ended on the limit error are excluded. Codex has n=3 for bare and
-  transcript and n=1 for prose summary and checkpoint.
+- **Codex usage limit.** The operator's ChatGPT plan reached its usage limit twice during the
+  batch. Twelve runs that ended on the limit error were rerun from fresh workspaces after the
+  limit was lifted; only completed runs are scored. Every cell has n=3.
 - **Contamination rule narrowed after the runs.** The registered rule also flagged four Claude
   runs that touched a non-existent redacted path or their own spilled tool output under
   `~/.claude/projects/<run>`. Their tool calls were inspected: none reached the original
@@ -153,8 +151,6 @@ discriminate between conditions on this task.
 
 ## Next
 
-- **Complete the Codex repeats** for prose summary and checkpoint (2 runs each) once the usage
-  limit resets.
 - **Experiment 3:** business scenarios with pending side effects, approvals, and injected content,
   where structure is expected to matter.
 - **Redaction** before anything from `private/` is published.
