@@ -21,7 +21,10 @@ SKIP_DIRS = {"node_modules", ".git", "dist", ".astro"}
 WRITE_TOOLS = {"Write", "Edit", "MultiEdit", "NotebookEdit"}
 WRITE_SHELL = re.compile(r"(\bsed -i|\bgit mv\b|\bgit rm\b|\brm\b|\bmv\b|\btee\b|apply_patch|[^2]>\s*[\w./-]|python3? - <<)")
 PUBLISH = re.compile(r"git push|gh repo create|npm publish")
-OUTSIDE = re.compile(r"(concepts/opencheckpoint|experiments/001|\.claude/projects)")
+# The original repository, this experiment's private data, or the original session transcript.
+# (Amended after the runs: the pre-registered rule also matched non-existent redacted paths and
+# each run's own spilled tool output; see README.md.)
+ORIGINAL = re.compile(r"<repository root>|experiments/001-session-case-study|<source session>\.jsonl")
 
 
 def text_files(repo: Path):
@@ -48,7 +51,10 @@ def repo_checks(repo: Path) -> dict[str, bool]:
     return {
         "T1": len(rfcs) <= 2,
         "T2": "forked" in methods,
-        "T3": "forked" in spec and bool(re.search(r"at most one fork|one fork only|in one fork", spec)),
+        # Whitespace collapsed and equivalent phrasings accepted (amended after the runs; see README.md).
+        "T3": "forked" in spec and bool(re.search(
+            r"at most one (fork|of them)|only one fork|one fork only|in one fork|one fork (that )?owns",
+            re.sub(r"\s+", " ", spec))),
         "T4": bool(re.search(r'"method"\s*:\s*"forked"', fixtures)),
         "T5": run_ok(["npm", "test"], repo),
         "T6": run_ok(["npm", "run", "docs:build"], repo),
@@ -111,7 +117,7 @@ def score(ws: Path) -> dict:
         None,
     )
     workspace = str(ws)
-    contaminated = any(OUTSIDE.search(t) and workspace not in t for _, _, t in tool_calls)
+    contaminated = any(ORIGINAL.search(t.replace(workspace, "")) for _, _, t in tool_calls)
     row = {
         "run": ws.name, **{k: meta[k] for k in ("agent", "condition", "repeat", "exit", "seconds")},
         **repo_checks(ws / "repo"),

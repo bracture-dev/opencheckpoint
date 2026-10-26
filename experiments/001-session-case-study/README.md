@@ -79,12 +79,79 @@ behavior is the real test.
 4. **Tokenizers differ.** The same documents cost 1.45 to 1.6 times more tokens in Claude's
    tokenizer than in `o200k_base`. Cross-model claims report both.
 
+## Results: continuation
+
+Scored with the pre-registered [rubric](rubric.md) by [`score.py`](score.py). Per-run numbers are
+in [`results.json`](results.json). Token figures are totals across every turn of the run,
+including each CLI's own system prompt and tool definitions; compare conditions within an agent,
+not across agents. Cost is reported by Claude Code; Codex reports none.
+
+| Agent       | Condition        |   n | Task (of 7) | Regressions | Uncached input | Cached input | Output |  Cost | Wall time | Tool calls | Calls before first edit |
+| ----------- | ---------------- | --: | ----------: | ----------: | -------------: | -----------: | -----: | ----: | --------: | ---------: | ----------------------: |
+| Claude Code | A. Bare          |   3 |         3.0 |           0 |         27,345 |      103,082 |  2,845 | $0.30 |      31 s |          3 |                no edits |
+| Claude Code | B2. Transcript   |   3 |         7.0 |           0 |        255,429 |    5,157,569 | 19,817 | $3.47 |     206 s |         21 |                     4.0 |
+| Claude Code | C. Prose summary |   3 |         7.0 |           0 |        119,325 |    3,667,468 | 35,234 | $2.39 |     371 s |         41 |                    11.0 |
+| Claude Code | D. Checkpoint    |   3 |         7.0 |           0 |        125,381 |    3,298,129 | 36,366 | $2.39 |     366 s |         36 |                    13.7 |
+| Codex       | A. Bare          |   1 |         4.0 |           0 |         42,575 |      315,648 |  3,986 |   n/a |     129 s |         11 |                     6.0 |
+| Codex       | B2. Transcript   |   1 |         7.0 |           0 |        156,601 |    1,480,192 |  6,356 |   n/a |     185 s |         10 |                     3.0 |
+| Codex       | C. Prose summary |   1 |         7.0 |           0 |         37,163 |      535,040 |  6,281 |   n/a |     178 s |         13 |                     4.0 |
+| Codex       | D. Checkpoint    |   1 |         7.0 |           0 |         48,178 |      585,600 |  6,513 |   n/a |     179 s |         14 |                     7.0 |
+
+No run regressed on any of the four earlier preferences, in any condition, including bare. The
+repository at the interruption point already reflects those preferences, so these checks did not
+discriminate between conditions on this task.
+
+### What the runs show
+
+1. **A handoff is necessary.** Without one, neither agent knew that the user's "yes" accepted the
+   forking proposal. Claude explained the problem and proposed a plan without editing (3 of 7);
+   Codex consolidated the RFCs and deferred forking (4 of 7). With any handoff, both agents
+   completed all seven checks in every run.
+2. **Summaries and checkpoints cost less than replay.** With Claude, both cost $2.39 per run
+   against $3.47 for transcript replay (31% less), and read about half as many uncached input
+   tokens. With Codex, a checkpoint or summary read 3 to 4 times fewer uncached input tokens
+   than the transcript.
+3. **Replay was faster here.** With Claude, transcript runs finished in 206 s with 21 tool calls
+   and made their first edit after 4 calls; summary and checkpoint runs took about 370 s and
+   37 to 41 calls, with the first edit after 11 to 14. The transcript contains the previous
+   assistant's exact plan, so the destination executes it; with a summary or checkpoint it
+   re-reads the repository first. The checkpoint's explicit preconditions encourage that
+   verification. With Codex, wall time was equal across handoff conditions.
+4. **Checkpoint and prose summary performed alike on this task.** Same task score, same cost,
+   similar time. This task has no pending side effects, approvals, or injected content, which is
+   where typed provenance and operations are designed to matter. Experiment 3 (business
+   scenarios) tests those.
+5. **The same checkpoint worked on both agents.** Claude Code and Codex each completed all seven
+   checks from it (Codex n=1).
+6. **Transcript replay carried live paths into the original environment.** Two of three Claude
+   transcript runs listed the original repository's absolute path, taken from the transcript.
+   Redaction had replaced the username, so the path did not exist. Without redaction the agent
+   would have reached the original repository and its later commits. A checkpoint references
+   resources deliberately; a transcript references whatever the session touched.
+
+### Deviations from the pre-registered plan
+
+- **Codex usage limit.** The operator's ChatGPT plan reached its usage limit during the batch.
+  Seven Codex runs failed on the limit error, three of them partway through, and were excluded.
+  Codex results are n=1 per condition.
+- **Contamination rule narrowed after the runs.** The registered rule also flagged four Claude
+  runs that touched a non-existent redacted path or their own spilled tool output under
+  `~/.claude/projects/<run>`. Their tool calls were inspected: none reached the original
+  repository or transcript. The rule now matches only those.
+- **T3 matching corrected after the runs.** The registered phrase match missed correct statements
+  of the one-owner rule that wrapped across lines or used equivalent wording ("at most one of
+  them"). Five runs failed T3 on this alone; all five state the rule. Before the correction, the
+  summary and checkpoint conditions averaged 6.3 of 7 with Claude, and Codex scored 6 with the
+  checkpoint.
+- **Pilot runs.** The bare-condition pilots (repeat 0) ran before the rubric was committed. The one
+  rubric change made then (whole-word matching for G2) came from baseline counts, not from pilot
+  results.
+- **Global instructions.** Both CLIs load the operator's global instructions and skills in every
+  condition; Codex also read a global workspace skill. This is constant across conditions.
+
 ## Next
 
-- **Continuation runs.** Give conditions A, B2, C, and D with the next request to Claude Code
-  (`claude -p`) and Codex (`codex exec`) in a copy of the repository at `7a1668c`. Measure
-  tokens, wall time, tool calls before the first edit, and score the result against a rubric
-  written before the runs: the ten facts, what the user's actual next turn produced, and
-  regressions (re-adding foundation material, plural naming, building SDK code).
-- **Repeat** each run at least three times per destination to report spread.
+- **Complete the Codex repeats** once the usage limit resets, for n=3 per condition.
+- **Experiment 3:** business scenarios with pending side effects, approvals, and injected content,
+  where structure is expected to matter.
 - **Redaction** before anything from `private/` is published.
