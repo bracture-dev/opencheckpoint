@@ -140,7 +140,22 @@ def cmd_source(scenario: str) -> None:
 
 # ------------------------------------------------------------------ handoffs
 
+def produce_ollama(system_prompt: str, body: str, model: str) -> dict:
+    """A local model through Ollama (experiment 007), reported in the same shape as a Claude call."""
+    import urllib.request
+    req = urllib.request.Request("http://localhost:11434/api/chat", headers={"Content-Type": "application/json"},
+                                 data=json.dumps({"model": model, "stream": False, "options": {"num_ctx": 32768},
+                                                  "messages": [{"role": "system", "content": system_prompt},
+                                                               {"role": "user", "content": body}]}).encode())
+    r = json.loads(urllib.request.urlopen(req, timeout=1800).read())
+    return {"result": r["message"]["content"], "total_cost_usd": 0.0, "duration_ms": r.get("total_duration", 0) / 1e6,
+            "usage": {"input_tokens": r.get("prompt_eval_count", 0), "cache_creation_input_tokens": 0,
+                      "cache_read_input_tokens": 0, "output_tokens": r.get("eval_count", 0)}}
+
+
 def produce(system_prompt: str, body: str, model: str = MODEL) -> dict:
+    if model.startswith("ollama:"):
+        return produce_ollama(system_prompt, body, model.removeprefix("ollama:"))
     p = subprocess.run(["claude", "-p", "--model", model, "--tools", "", "--system-prompt", system_prompt, "--strict-mcp-config",
                         "--no-session-persistence", "--output-format", "json"], input=body, capture_output=True, text=True, check=True)
     return json.loads(p.stdout)

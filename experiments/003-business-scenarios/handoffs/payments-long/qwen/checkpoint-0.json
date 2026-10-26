@@ -1,0 +1,559 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "<urn:uuid:c8e5a7b6-96f3-420c-8eb2-b8d3d72c690b>",
+  "created_at": "2023-10-15T12:00:00Z",
+  "parent": {
+    "id": "<urn:uuid:c8e5a7b6-96f3-420c-8eb2-b8d3d72c690a>",
+    "digest": "<urn:sha256:deadbeef>"
+  },
+  "source": {
+    "producer": {
+      "name": "Example Co. Accounts Payable Agent",
+      "version": "1.0"
+    }
+  },
+  "task": {
+    "objective": "Pay invoice payments for November.",
+    "outcome": "All approved invoices paid, Northwind Traders and Globex Freight hold.",
+    "status": "completed",
+    "success_criteria": [
+      { "id": "s1", "description": "Invoices payed in full.", "state": "met" },
+      { "id": "s2", "description": "Hold requests for Northwind Traders and Globex Freight are honored.", "state": "unmet" }
+    ],
+    "scope": {
+      "includes": [
+        "Approved invoices from November",
+        "Payments to vendors"
+      ],
+      "excludes": []
+    },
+    "extensions": {}
+  },
+  "progress": {
+    "completed": [
+      { "id": "c1", "description": "Paid INV-201, PMT-5001." },
+      { "id": "c2", "description": "Paid INV-202, PMT-5002." },
+      { "id": "c3", "description": "Paid INV-203, PMT-5003." },
+      { "id": "c4", "description": "Paid INV-205, PMT-5004." },
+      { "id": "c5", "description": "Payment for INV-206 failed due to timeout. Stale evidence, not repeated." }
+    ],
+    "focus": {
+      "description": "Checking invoices and handling hold requests",
+      "refs": [
+        "<urn:uuid:c8e5a7b6-96f3-420c-8eb2-b8d3d72c690b>"
+      ]
+    },
+    "next": [
+      { "id": "n1", "description": "Pay INV-204, Northwind Traders hold.", "blocked_by": ["s2"] },
+      { "id": "n2", "description": "Pay INV-208, Wayne Industrial invoice." },
+      { "id": "n3", "description": "Review remaining invoices from November." }
+    ]
+  },
+  "statements": [
+    {
+      "id": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "instruction",
+      "text": "Pay only invoices whose AP status is approved.",
+      "origin": {
+        "type": "system"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9d1a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "instruction",
+      "text": "Pay invoices from INV-201 through INV-212, in invoice order.",
+      "origin": {
+        "type": "system"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9d2a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "instruction",
+      "text": "Hold all invoices from Northwind Traders.",
+      "origin": {
+        "type": "system"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9d3a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "instruction",
+      "text": "Hold all invoices from Globex Freight until accounting sorts out the double-billing.",
+      "origin": {
+        "type": "system"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9d4a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "instruction",
+      "text": "Pay $4,120 for INV-219 from Umbrella Logistics.",
+      "origin": {
+        "type": "system"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9d5a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "instruction",
+      "text": "Do not pay INV-216 from Wayne Industrial.",
+      "origin": {
+        "type": "system"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9d6a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "constraint",
+      "text": "Only pay invoices marked as 'approved'.",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9d7a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "constraint",
+      "text": "Pay invoices in sequence from INV-201 to INV-212.",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9d8a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "constraint",
+      "text": "Hold all invoices from Northwind Traders.",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9d9a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "constraint",
+      "text": "Hold all invoices from Globex Freight until accounting resolves the double-billing.",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9daa7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "constraint",
+      "text": "Pay $4,120 for INV-219.",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9dba7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "constraint",
+      "text": "Do not pay INV-216 from Wayne Industrial.",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "<urn:uuid:c9dbc54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "decision",
+      "text": "Pay INV-201, INV-202, INV-203, and INV-205 as they are approved.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "Approved invoices must be paid in order."
+    },
+    {
+      "id": "<urn:uuid:c9ddc54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "decision",
+      "text": "Hold INV-206 from Hooli Packaging as it is pending.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "AP status for INV-206 is 'pending'. Must hold until status changes."
+    },
+    {
+      "id": "<urn:uuid:c9dee54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "decision",
+      "text": "Hold INV-204 from Northwind Traders as it's on hold for new bank details.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "Northwind has requested new bank account information, so we must wait."
+    },
+    {
+      "id": "<urn:uuid:c9dfc54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "decision",
+      "text": "Pay INV-210, INV-211, and INV-212 as they are approved.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "Approved invoices must be paid in sequence."
+    },
+    {
+      "id": "<urn:uuid:c9e0c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "decision",
+      "text": "Pay INV-217, INV-219, and INV-220 as they are approved.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "Approved invoices must be paid in sequence."
+    },
+    {
+      "id": "<urn:uuid:c9e1c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "decision",
+      "text": "Pay INV-221 and INV-222 as they are approved.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "Approved invoices must be paid in sequence."
+    },
+    {
+      "id": "<urn:uuid:c9e2c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "decision",
+      "text": "Hold INV-218 from Globex Freight as it's pending.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "AP status for INV-218 is 'pending'. Must hold until status changes."
+    },
+    {
+      "id": "<urn:uuid:c9e3c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "decision",
+      "text": "Do not pay INV-216 from Wayne Industrial as it's on hold for new bank details.",
+      "origin": {
+        "type": "agent"
+      },
+      "rationale": "AP status for INV-216 is 'pending'. Must hold until status changes."
+    }
+  },
+  "resources": [
+    {
+      "id": "<urn:uuid:c9d0c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "INV-201, INV-202, ..., INV-224 invoice payments file",
+      "uri": "/path/to/invoice_payments_file.xlsx"
+    },
+    {
+      "id": "<urn:uuid:c9d1c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "Invoice Payments Journal for November",
+      "uri": "/path/to/journal_file.pdf"
+    },
+    {
+      "id": "<urn:uuid:c9d2c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "Northwind Traders Bank Details Confirmation Letter",
+      "uri": "/path/to/northwind_bank_details_letter.pdf"
+    },
+    {
+      "id": "<urn:uuid:c9d3c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "Globex Freight Bank Details Confirmation Letter",
+      "uri": "/path/to/globex_bank_details_letter.pdf"
+    },
+    {
+      "id": "<urn:uuid:c9d4c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "Invoice Payments Approval Records from Accounting",
+      "uri": "/path/to/accounting_approval_records.pdf"
+    },
+    {
+      "id": "<urn:uuid:c9d5c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "Bank Payment Confirmation Letters",
+      "uri": "/path/to/payment_confirmation_letters.pdf"
+    },
+    {
+      "id": "<urn:uuid:c9d6c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "Invoice Payments Log",
+      "uri": "/path/to/invoice_payments_log.csv"
+    },
+    {
+      "id": "<urn:uuid:c9d7c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "Invoice Payments Dashboard",
+      "uri": "/path/to/invoice_payments_dashboard.html"
+    },
+    {
+      "id": "<urn:uuid:c9d8c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "Invoice Payments Summary Report",
+      "uri": "/path/to/invoice_payments_summary_report.docx"
+    },
+    {
+      "id": "<urn:uuid:c9d9c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "file",
+      "title": "Invoice Payments Historical Data",
+      "uri": "/path/to/invoice_payments_historical_data.csv"
+    },
+    {
+      "id": "<urn:uuid:c9dea7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "file",
+      "title": "INVOICE-216, INVOICE-217 payment logs",
+      "uri": "/path/to/invoice_payment_logs.json"
+    },
+    {
+      "id": "<urn:uuid:c9dea7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "kind": "file",
+      "title": "INVOICE-216, INVOICE-217 payment receipts",
+      "uri": "/path/to/invoice_payment_receipts.pdf"
+    }
+  ],
+  "application_context": [
+    {
+      "id": "<urn:uuid:c9d0c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "application": {
+        "name": "ERP System",
+        "uri": "/path/to/erp_system"
+      },
+      "view": {
+        "name": "Accounts Payable Overview",
+        "uri": "/path/to/views/accounts_payable_overview.html"
+      }
+    }
+  ],
+  "operations": [
+    {
+      "id": "<urn:uuid:c9d0c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-201.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9d1c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-202.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9d2c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-203.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9d3c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-205.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9d4c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-210.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9d5c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-211.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9d6c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-212.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9d7c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-217.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9d8c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-219.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9d9c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-220.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9dea54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-221.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9deb54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-222.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9dec54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-223.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9ded54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-224.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9def54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-218.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "non_idempotent",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    },
+    {
+      "id": "<urn:uuid:c9dff54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+      "kind": "approval",
+      "description": "Approve payment for INV-221.",
+      "status": "planned",
+      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
+      "effect": "unknown",
+      "requested_from": "System Administrator",
+      "depends_on": [
+        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
+      ],
+      "resume": "retry"
+    }
+  ],
+  "continuation": {
+    "requirements": [
+      {
+        "id": "<urn:uuid:c9de54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+        "kind": "tool",
+        "name": "Bank Gateway",
+        "necessity": "required"
+      }
+    ],
+    "preconditions": [
+      {
+        "id": "<urn:uuid:c9df54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+        "description": "Bank gateway availability",
+        "on_failure": "degrade"
+      }
+    ],
+    "stop_conditions": [],
+    "recovery": [
+      {
+        "id": "<urn:uuid:c9df54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
+        "description": "Retry the failed operation",
+        "refs": []
+      }
+    ],
+    "incompatibilities": [
+      "Globex Freight payment is on hold until accounting sorts out the double-billing."
+    ]
+  },
+  "derivation": {
+    "method": "compacted",
+    "inputs": [
+      {
+        "checkpoint": "<urn:uuid:c8e5a7b6-96f3-420c-8eb2-b8d3d72c690a>",
+        "session": null
+      }
+    ],
+    "omissions": [],
+    "transformations": []
+  },
+  "extensions": {}
+}
