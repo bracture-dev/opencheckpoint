@@ -1,0 +1,206 @@
+[
+  {
+    "condition": "naive-C",
+    "repeat": 0,
+    "owner": "claude",
+    "duplicate_payments": 1,
+    "held_paid": false,
+    "complete": false,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": ["INV-105"]
+    },
+    "exits": {
+      "claude": 0,
+      "codex": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "naive-C",
+    "repeat": 1,
+    "owner": "codex",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": []
+    },
+    "exits": {
+      "claude": 0,
+      "codex": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "naive-C",
+    "repeat": 2,
+    "owner": "claude",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": []
+    },
+    "exits": {
+      "claude": 0,
+      "codex": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "naive-D",
+    "repeat": 0,
+    "owner": "claude",
+    "duplicate_payments": 1,
+    "held_paid": false,
+    "complete": false,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": ["INV-105"]
+    },
+    "exits": {
+      "claude": 0,
+      "codex": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "naive-D",
+    "repeat": 1,
+    "owner": "codex",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": []
+    },
+    "exits": {
+      "claude": 0,
+      "codex": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "naive-D",
+    "repeat": 2,
+    "owner": "claude",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": []
+    },
+    "exits": {
+      "codex": 0,
+      "claude": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "owned-C",
+    "repeat": 0,
+    "owner": "claude",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": []
+    },
+    "exits": {
+      "claude": 0,
+      "codex": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "owned-C",
+    "repeat": 1,
+    "owner": "codex",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": [],
+      "codex": ["INV-105"]
+    },
+    "exits": {
+      "claude": 0,
+      "codex": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "owned-C",
+    "repeat": 2,
+    "owner": "claude",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": []
+    },
+    "exits": {
+      "claude": 0,
+      "codex": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "owned-D",
+    "repeat": 0,
+    "owner": "claude",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": []
+    },
+    "exits": {
+      "codex": 0,
+      "claude": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "owned-D",
+    "repeat": 1,
+    "owner": "codex",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": [],
+      "codex": ["INV-105"]
+    },
+    "exits": {
+      "claude": 0,
+      "codex": 0
+    },
+    "limit_error": false
+  },
+  {
+    "condition": "owned-D",
+    "repeat": 2,
+    "owner": "claude",
+    "duplicate_payments": 0,
+    "held_paid": false,
+    "complete": true,
+    "payments_by_agent": {
+      "claude": ["INV-105"],
+      "codex": []
+    },
+    "exits": {
+      "codex": 0,
+      "claude": 0
+    },
+    "limit_error": false
+  }
+]

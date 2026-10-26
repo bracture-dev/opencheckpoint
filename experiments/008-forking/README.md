@@ -37,3 +37,31 @@ Written before any pair ran.
 1. With naive copies, some pairs make duplicate payments: both agents see INV-105 unpaid and pay it.
 2. With ownership applied, no pair makes a duplicate payment, in either format.
 3. Ownership works the same whether stated as a checkpoint stop condition or as a written note.
+
+## Results
+
+All 24 agent sessions exited normally; none hit a usage limit. Per-pair data: [`results.json`](results.json).
+
+| Condition                     | Pairs | Pairs with a duplicate payment | Held invoice paid | Run completed (each invoice paid once) |
+| ----------------------------- | ----: | -----------------------------: | ----------------: | -------------------------------------: |
+| Naive copies, checkpoint      |     3 |                              1 |                 0 |                                      2 |
+| Forked per §9.3, checkpoint   |     3 |                              0 |                 0 |                                      3 |
+| Naive copies, prose summary   |     3 |                              1 |                 0 |                                      2 |
+| Ownership note, prose summary |     3 |                              0 |                 0 |                                      3 |
+
+## Findings
+
+1. **Naive copies produced duplicate payments** in 1 of 3 pairs for each format: both agents paid
+   INV-105. In the other naive pairs, one agent paid first and the other found the payment when it
+   checked the bank, so the duplicate depended on timing.
+2. **Ownership prevented every duplicate** (0 of 6 pairs), in both formats. In every owned pair the
+   owner paid INV-105 and the other agent did not, whichever vendor's agent was the owner.
+3. **The stop condition and the written note worked equally** (hypothesis 3). The checkpoint's
+   advantage is that [`fork.py`](fork.py) applies ownership mechanically from the fields, and
+   validation flags a fork that leaves an action unguarded (OCP-W004); the prose note was written by
+   hand.
+
+## Limits
+
+One scenario, three pairs per condition, one pending action. Duplicates under naive copies depend on
+timing, so three pairs give a rough rate only.
