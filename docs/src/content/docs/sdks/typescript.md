@@ -3,7 +3,8 @@ title: TypeScript SDK
 description: Status and planned scope of the OpenCheckpoint TypeScript SDK.
 ---
 
-**Status: not started.** The TypeScript SDK is Phase 2 of the [roadmap](../../project/roadmap/). This page
+**Status: not started.** The TypeScript SDK is Phase 2 of the [roadmap](../../project/roadmap/),
+and the CLI, the MCP server, and the documentation site's validator are built on it. This page
 describes its planned scope so that implementers and reviewers can comment before code exists. It
 documents no API, because none has been designed.
 

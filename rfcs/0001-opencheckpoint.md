@@ -281,6 +281,16 @@ one fork (specification §9.3), because every fork inherits the baseline's pendi
 The [Forking a baseline](../docs/src/content/docs/forking.md) page records the audit behind this
 decision, including where forking does not pay off.
 
+### D16. Tools before SDKs
+
+The first people to use checkpoints are mid-conversation: the agent they are talking to writes
+the checkpoint, and another agent restores it. That needs a skill that teaches agents the capture
+and restore procedures, and tools that validate, inspect, render, and move checkpoints: a CLI and
+an MCP server. Both are built on one library, in TypeScript, which also runs the validator in the
+browser and shares its rules with the conformance harness. Libraries in other languages follow
+when runtime authors integrate natively. The [Using OpenCheckpoint](../docs/src/content/docs/using.md)
+page describes the flows and which piece serves whom.
+
 ## Risks
 
 - **Adoption.** A format with no producers is not a standard. Mitigation: keep the minimal

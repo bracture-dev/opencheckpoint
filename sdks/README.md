@@ -3,7 +3,9 @@
 No SDK exists yet. The canonical format is the specification and schema in [`spec/`](../spec/);
 SDKs are conveniences around it and never redefine it.
 
-Order: TypeScript (Phase 2), Go (Phase 3), Rust (Phase 4), Python (Phase 5). Each will live in its own directory
+The TypeScript library comes first (Phase 2): the CLI, the MCP server, and the browser
+validator are built on it. Python, Go, and Rust follow (Phase 5) when runtime authors need
+native integration. Each will live in its own directory
 here and must pass the shared [conformance manifest](../tests/conformance/) in CI.
 
 ## Responsibilities in v0.1

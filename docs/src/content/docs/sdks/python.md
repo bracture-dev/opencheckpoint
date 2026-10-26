@@ -3,7 +3,8 @@ title: Python SDK
 description: Status and planned scope of the OpenCheckpoint Python SDK.
 ---
 
-**Status: not started.** The Python SDK is Phase 5 of the [roadmap](../../project/roadmap/). This
+**Status: not started.** The Python SDK is part of Phase 5 of the [roadmap](../../project/roadmap/),
+built when runtime authors need native integration. This
 page describes its planned scope so that implementers and reviewers can comment before code
 exists. It documents no API, because none has been designed.
 

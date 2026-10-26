@@ -36,6 +36,7 @@ export default defineConfig({
             { label: "Introduction", slug: "introduction" },
             { label: "Why OpenCheckpoint", slug: "why" },
             { label: "Core concepts", slug: "concepts" },
+            { label: "Using OpenCheckpoint", slug: "using" },
           ],
         },
         {
