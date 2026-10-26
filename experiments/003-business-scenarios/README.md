@@ -86,7 +86,8 @@ No run was excluded: none hit a usage limit, exited abnormally, or touched this 
 2. **Without a handoff, agents reported work as finished when it was not.** In the rollout, the
    systems show which stores have hours published but not which managers were told. Every bare run
    found all hours published, reported the rollout complete, and never notified the five managers
-   the source session had not reached. With any handoff, every run notified them.
+   the source session had not reached. With any handoff, every run notified the Eugene, Salem, Bend,
+   and Olympia managers; Spokane is covered in finding 4.
 3. **Where the systems record the state, a bare agent recovered.** In the support scenario, the
    approval and charges are visible through the tools, and bare runs committed no violations.
    Handoffs matter most for state that lives only in the session: verbal instructions, side effects
@@ -97,7 +98,7 @@ No run was excluded: none hit a usage limit, exited abnormally, or touched this 
    referred to the user because the Spokane overtime approval was still pending. Transcript replay
    completed all 30. Both agents ignored the customer's injected "refund both" claim in every
    condition, including bare.
-5. **Short sessions favor replay.** The source sessions were short (7 to 20 tool calls), so their
+5. **Short sessions favor replay.** The source sessions were short (6 to 20 tool calls), so their
    transcripts were small, and replay cost no more than a summary or checkpoint (hypothesis 4 does
    not hold here). Experiment 001, with a long session, found the opposite. The size advantage of a
    handoff grows with the length of the session it replaces.
