@@ -132,8 +132,8 @@ discriminate between conditions on this task.
 ### Deviations from the pre-registered plan
 
 - **Codex usage limit.** The operator's ChatGPT plan reached its usage limit twice during the
-  batch. Twelve runs that ended on the limit error were rerun from fresh workspaces after the
-  limit was lifted; only completed runs are scored. Every cell has n=3.
+  batch. Twelve attempts across eight runs ended on the limit error; each of those runs was rerun
+  from a fresh workspace until it completed, and only completed runs are scored. Every cell has n=3.
 - **Contamination rule narrowed after the runs.** The registered rule also flagged four Claude
   runs that touched a non-existent redacted path or their own spilled tool output under
   `~/.claude/projects/<run>`. Their tool calls were inspected: none reached the original
