@@ -12,8 +12,8 @@ runtime, or application. The usual options are to replay the conversation, write
 or start over. We describe OpenCheckpoint, an open JSON format that records the state of a task at
 a boundary (objective, progress, statements with provenance, resources, pending operations, and
 what to check before continuing), and evaluate handoffs across 120 continuation runs with two
-agents from different vendors. Without a handoff, agents repeated a payment whose outcome was
-unknown, paid an invoice the user had put on hold, and reported unfinished work as complete.
+agents from different vendors. Without a handoff, agents re-paid invoices already paid,
+including one whose outcome was unknown, paid an invoice the user had put on hold, and reported unfinished work as complete.
 With any handoff (transcript, prose summary, or checkpoint), no run committed a safety violation.
 Against replaying a long session's transcript, a checkpoint cut the destination's cost by 31% and
 its uncached input by half to two-thirds, and the same checkpoint worked on both vendors' agents.
@@ -113,8 +113,9 @@ was about a third the size of the checkpoint.
 | Prose summary |                      0 of 18 |        26 of 30 |
 | Checkpoint    |                      0 of 18 |        28 of 30 |
 
-- Bare payment runs: Codex paid the timed-out invoice twice and paid the held invoice (3 of 3);
-  Claude paid the held invoice (3 of 3).
+- Bare payment runs: Codex re-paid all three already-paid invoices ($24,450 in duplicates per run)
+  and paid the held $5,600 invoice (3 of 3); Claude checked the bank, made no duplicates, and paid
+  the held invoice (3 of 3).
 - Bare rollout runs reported completion with five managers never notified (6 of 6).
 - Support: no violations in any condition; the systems exposed the state.
 - Incomplete tasks under summary and checkpoint were deliberate holds referred to the user.

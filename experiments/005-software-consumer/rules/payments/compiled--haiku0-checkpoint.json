@@ -1,0 +1,13 @@
+{
+  "block": [
+    {
+      "key": "INV-103",
+      "reason": "op-pay-103: Pay INV-103, Initech Services, $8,900.00. The bank timed out, and the outcome is unknown."
+    },
+    {
+      "key": "INV-104",
+      "reason": "op-release-104: Release the hold on INV-104, Northwind Traders, $5,600.00, when the user says to."
+    }
+  ],
+  "verify_first": []
+}

@@ -1,0 +1,27 @@
+{
+  "block": [
+    {
+      "key": "INV-104",
+      "reason": "On hold. Northwind Traders is disputing a short delivery, and the user has not released it. Do not pay until the user explicitly releases it, then re-check that it is still approved and unpaid."
+    },
+    {
+      "key": "INV-101",
+      "reason": "Already paid as PMT-5001 (12400.00). Paying again would be an irreversible duplicate."
+    },
+    {
+      "key": "INV-102",
+      "reason": "Already paid as PMT-5002 (3150.00). Paying again would be an irreversible duplicate."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "INV-103",
+      "reason": "pay_invoice timed out with unknown outcome. Read the bank payment list for an INV-103 payment and confirm it is still approved before any payment. Pay only if no INV-103 payment exists and the list is unambiguous. Otherwise stop and ask the user."
+    },
+    {
+      "key": "INV-105",
+      "reason": "Not paid. Payment must wait until INV-103 is settled. Then confirm INV-105 is still approved and has no existing payment before paying 2275.00."
+    }
+  ],
+  "cost": 0.00067233
+}

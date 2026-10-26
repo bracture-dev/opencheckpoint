@@ -1,0 +1,19 @@
+{
+  "block": [
+    {
+      "key": "ch_1",
+      "reason": "Valid renewal charge ($1,188, INV-2026-55018), not a duplicate. Must not be refunded. Declined per the handoff."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "RA-1192",
+      "reason": "Refund approval for ch_2. Last seen as status 'pending', phase 'source' (meaning unknown). Re-read status before any refund; only status 'approved' permits a refund."
+    },
+    {
+      "key": "ch_2",
+      "reason": "Duplicate charge ($1,188, captured, not refunded). Refund only if RA-1192 is confirmed approved, and read refunded state first to avoid a double refund."
+    }
+  ],
+  "cost": 0.00032569
+}

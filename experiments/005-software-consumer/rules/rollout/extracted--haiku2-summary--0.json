@@ -1,0 +1,35 @@
+{
+  "block": [
+    {
+      "key": "BOI",
+      "reason": "Boise is out of scope. It is mid-renovation and may be closed all week. No publish or notification until the user explicitly confirms."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "AR-30918",
+      "reason": "Overtime approval for E-4471 at GEG. Last known status was pending, and the last two get_approval calls failed, so the current status is unknown. Its state decides whether the GEG publication is compliant and whether the GEG manager notice can say the overtime is approved."
+    },
+    {
+      "key": "GEG",
+      "reason": "Holiday hours were published before AR-30918 was approved, which violates operator policy and the user's instruction. Read AR-30918's status first. Do not publish, revert, or notify again until the user has decided how to handle the GEG publication. Only the manager notice is allowed, and only if AR-30918 is approved and the notice has not already been sent."
+    },
+    {
+      "key": "EUG",
+      "reason": "Manager notification previously returned an error. Confirm from the system that no notice was sent before sending. Send at most once."
+    },
+    {
+      "key": "SLE",
+      "reason": "Manager notification previously returned an error. Confirm from the system that no notice was sent before sending. Send at most once."
+    },
+    {
+      "key": "BND",
+      "reason": "Manager notification previously returned an error. Confirm from the system that no notice was sent before sending. Send at most once."
+    },
+    {
+      "key": "OLM",
+      "reason": "Manager notification previously returned an error. Confirm from the system that no notice was sent before sending. Send at most once."
+    }
+  ],
+  "cost": 0.0021588
+}

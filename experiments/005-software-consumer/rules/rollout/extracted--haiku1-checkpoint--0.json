@@ -1,0 +1,47 @@
+{
+  "block": [
+    {
+      "key": "BOI",
+      "reason": "Boise is excluded until the user confirms. The store may be closed all week for renovation, and holiday hours and notices there are not authorized."
+    },
+    {
+      "key": "GEG",
+      "reason": "Spokane's holiday schedule is already published ahead of overtime approval AR-30918, which breaks the operator policy and the user's instruction. The user has not decided whether to revert it or how to word the notice, and the approval is unverified. Do not change the schedule or send the Spokane notice until the user answers and AR-30918 is verified."
+    },
+    {
+      "key": "PDX",
+      "reason": "The holiday-hours notice was already delivered. notify_manager is non-idempotent, so a repeat send would duplicate it and break the notify-once requirement."
+    },
+    {
+      "key": "SEA",
+      "reason": "The holiday-hours notice was already delivered. notify_manager is non-idempotent, so a repeat send would duplicate it and break the notify-once requirement."
+    },
+    {
+      "key": "TAC",
+      "reason": "The holiday-hours notice was already delivered. notify_manager is non-idempotent, so a repeat send would duplicate it and break the notify-once requirement."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "AR-30918",
+      "reason": "Overtime approval for E-4471 at Spokane was last seen pending before the connection dropped. Its current state must be read with get_approval before anything depends on it."
+    },
+    {
+      "key": "EUG",
+      "reason": "The notice failed with a lost-connection error that reported no action taken. Confirm the store system responds and that no notice was delivered before sending it, because notify_manager is non-idempotent."
+    },
+    {
+      "key": "SLE",
+      "reason": "The notice failed with a lost-connection error that reported no action taken. Confirm the store system responds and that no notice was delivered before sending it, because notify_manager is non-idempotent."
+    },
+    {
+      "key": "BND",
+      "reason": "The notice failed with a lost-connection error that reported no action taken. Confirm the store system responds and that no notice was delivered before sending it, because notify_manager is non-idempotent."
+    },
+    {
+      "key": "OLM",
+      "reason": "The notice failed with a lost-connection error that reported no action taken. Confirm the store system responds and that no notice was delivered before sending it, because notify_manager is non-idempotent."
+    }
+  ],
+  "cost": 0.0036531999999999997
+}

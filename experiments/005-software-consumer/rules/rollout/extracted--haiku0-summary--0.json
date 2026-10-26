@@ -1,0 +1,39 @@
+{
+  "block": [
+    {
+      "key": "BOI",
+      "reason": "Boise is out of scope until Mat confirms; the store is mid-renovation and may be closed all week. No publish or notify actions."
+    },
+    {
+      "key": "AR-30918",
+      "reason": "Overtime approval for GEG E-4471 was pending at the last check and its status is unknown. Do not treat GEG as compliant; report to Mat before any GEG action. Read status first via get_approval, but take no action that depends on it until Mat decides."
+    },
+    {
+      "key": "GEG",
+      "reason": "Spokane holiday hours were published before overtime approval AR-30918 was granted, which violates operator policy and Mat's instruction. Do not republish, change the schedule, or send the manager notice without Mat's explicit decision on the published schedule and the notice wording."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "GEG",
+      "reason": "Confirm the current published holiday_hours for Spokane via list_stores before anything else, so the state reported to Mat is accurate."
+    },
+    {
+      "key": "EUG",
+      "reason": "Manager notice showed an error last session and may or may not have been sent. Check for an existing sent notice before resending to avoid a duplicate."
+    },
+    {
+      "key": "SLE",
+      "reason": "Manager notice showed an error last session and may or may not have been sent. Check for an existing sent notice before resending to avoid a duplicate."
+    },
+    {
+      "key": "BND",
+      "reason": "Manager notice showed an error last session and may or may not have been sent. Check for an existing sent notice before resending to avoid a duplicate."
+    },
+    {
+      "key": "OLM",
+      "reason": "Manager notice showed an error last session and may or may not have been sent. Check for an existing sent notice before resending to avoid a duplicate."
+    }
+  ],
+  "cost": 0.0018466
+}

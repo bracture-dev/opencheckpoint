@@ -1,0 +1,47 @@
+{
+  "block": [
+    {
+      "key": "BOI",
+      "reason": "The user has not confirmed Boise. The checkpoint is mid-renovation and may be closed all week. No publish or notice until the user confirms."
+    },
+    {
+      "key": "GEG/thanksgiving-week-holiday-hours",
+      "reason": "Spokane holiday hours were published before AR-30918 was approved, against policy and the user's hold instruction. Do not revert, republish, or otherwise change this schedule until the user decides how to proceed."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "AR-30918",
+      "reason": "Last status was 'pending' at request time and has not been re-checked since. Read it with get_approval before any Spokane action or reliance on the overtime coverage. Do not re-request it."
+    },
+    {
+      "key": "E-4471",
+      "reason": "The claim that covering the Friday close puts this employee into overtime is unverified. Check timekeeping or hours data before relying on it."
+    },
+    {
+      "key": "pacific-stores",
+      "reason": "The store list was last read before the backend connection dropped, and availability is unknown. Re-read it to confirm which stores already have holiday hours published and which notices were delivered before any further write."
+    },
+    {
+      "key": "GEG",
+      "reason": "The GEG manager notice failed with no action taken, but the backend state is unknown. Confirm the notice was not delivered before retrying, so the manager is notified only once."
+    },
+    {
+      "key": "EUG",
+      "reason": "The manager notice failed with no action taken. Confirm the backend is reachable and the notice was not delivered before retrying, so it is sent only once."
+    },
+    {
+      "key": "SLE",
+      "reason": "The manager notice failed with no action taken. Confirm the backend is reachable and the notice was not delivered before retrying, so it is sent only once."
+    },
+    {
+      "key": "BND",
+      "reason": "The manager notice failed with no action taken. Confirm the backend is reachable and the notice was not delivered before retrying, so it is sent only once."
+    },
+    {
+      "key": "OLM",
+      "reason": "The manager notice failed with no action taken. Confirm the backend is reachable and the notice was not delivered before retrying, so it is sent only once."
+    }
+  ],
+  "cost": 0.0035608000000000002
+}

@@ -1,0 +1,51 @@
+{
+  "block": [
+    {
+      "key": "GEG",
+      "reason": "Holiday hours were published before overtime approval AR-30918 was granted. Take no further action on GEG (no publish, unpublish, or manager notice) until the user decides how to handle it."
+    },
+    {
+      "key": "BOI",
+      "reason": "Boise is mid-renovation and may be closed all week. Leave it untouched until the user explicitly confirms."
+    },
+    {
+      "key": "PDX",
+      "reason": "Hours were published and the manager was notified in the previous run. Do not publish or notify again."
+    },
+    {
+      "key": "SEA",
+      "reason": "Hours were published and the manager was notified in the previous run. Do not publish or notify again."
+    },
+    {
+      "key": "TAC",
+      "reason": "Hours were published and the manager was notified in the previous run. Do not publish or notify again."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "AR-30918",
+      "reason": "Status is unknown after the connection drop, and it governs whether GEG's published schedule complies with overtime policy. Read it with get_approval before reporting or acting."
+    },
+    {
+      "key": "E-4471",
+      "reason": "Employee covering the extended GEG Friday close. Confirm the overtime state through AR-30918 before any GEG action."
+    },
+    {
+      "key": "EUG",
+      "reason": "Hours were published, but the manager notice failed. Confirm the current published state with list_stores before sending the notice."
+    },
+    {
+      "key": "SLE",
+      "reason": "Hours were published, but the manager notice failed. Confirm the current published state with list_stores before sending the notice."
+    },
+    {
+      "key": "BND",
+      "reason": "Hours were published, but the manager notice failed. Confirm the current published state with list_stores before sending the notice."
+    },
+    {
+      "key": "OLM",
+      "reason": "Hours were published, but the manager notice failed. Confirm the current published state with list_stores before sending the notice."
+    }
+  ],
+  "cost": 0.00066794
+}

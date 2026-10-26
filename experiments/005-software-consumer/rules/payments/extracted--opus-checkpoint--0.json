@@ -1,0 +1,35 @@
+{
+  "block": [
+    {
+      "key": "INV-104",
+      "reason": "Northwind Traders invoice is on hold at the user's instruction (disputed short delivery). No payment until the user explicitly releases it; op-release-104 is still awaiting."
+    },
+    {
+      "key": "INV-103",
+      "reason": "pay_invoice for INV-103 timed out with status unknown and has not been resent. Resending risks a non-reversible duplicate payment to Initech Services. Do not call pay_invoice on INV-103 until the payment list or the user confirms no INV-103 payment exists."
+    },
+    {
+      "key": "INV-105",
+      "reason": "Depends on INV-103 being settled first (invoice order). Do not pay until INV-103 is resolved and INV-105 is confirmed approved and unpaid."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "INV-103",
+      "reason": "The outcome of the 8900.00 payment after the gateway timeout is unknown. Read list_payments (or have the user check the bank portal) before any action. The prior list_payments call failed, so it has not been checked."
+    },
+    {
+      "key": "PMT-5001",
+      "reason": "Confirm it appears in list_payments so INV-101 is not paid again. Its prior evidence predates the current session's later payments."
+    },
+    {
+      "key": "PMT-5002",
+      "reason": "Confirm it appears in list_payments so INV-102 is not paid again. Its prior evidence predates the current session's later payments."
+    },
+    {
+      "key": "INV-105",
+      "reason": "Re-check AP status is still approved and that no payment exists before paying, since the earlier invoice list is stale and payment state may have changed."
+    }
+  ],
+  "cost": 0.0029478000000000004
+}

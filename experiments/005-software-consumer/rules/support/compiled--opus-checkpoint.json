@@ -1,0 +1,18 @@
+{
+  "block": [
+    {
+      "key": "RA-1192",
+      "reason": "op-approval-ra1192: Billing-lead approval RA-1192 to refund ch_2 for $1,188.00 as a duplicate charge."
+    },
+    {
+      "key": "ch_2",
+      "reason": "op-refund-ch2: Refund ch_2 for $1,188.00, once RA-1192 is confirmed approved. Use a fixed idempotency key such as RA-1192 if the refund tool supports one, so a retry cannot refund twice. Whether the billing system honors such a key was not confirmed."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "88213",
+      "reason": "op-notify-customer: Reply on ticket 88213 that the duplicate charge has been refunded. Include no card number or billing address."
+    }
+  ]
+}

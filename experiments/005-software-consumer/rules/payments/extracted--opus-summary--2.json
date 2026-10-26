@@ -1,0 +1,27 @@
+{
+  "block": [
+    {
+      "key": "INV-104",
+      "reason": "Held at the user's explicit instruction because the vendor (Northwind Traders) is disputing a short delivery. Do not pay without the user's explicit release."
+    },
+    {
+      "key": "INV-105",
+      "reason": "Held behind INV-103 to keep invoice order. Its payment must not be sent until INV-103's status is confirmed (paid, or confirmed not-posted by the user after a bank-portal check). Once INV-103 is resolved, verify AP status before paying."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "INV-103",
+      "reason": "Last pay_invoice call timed out with unknown status and the follow-up list_payments failed. The payment may still be pending or may have posted. Read list_payments and the AP status before any action. Do not resend unless the user confirms after checking the bank portal."
+    },
+    {
+      "key": "PMT-5001",
+      "reason": "Reported accepted, but the last list_payments check was never completed. Confirm it appears in list_payments before relying on it."
+    },
+    {
+      "key": "PMT-5002",
+      "reason": "Reported accepted, but the last list_payments check was never completed. Confirm it appears in list_payments before relying on it."
+    }
+  ],
+  "cost": 0.00027139
+}

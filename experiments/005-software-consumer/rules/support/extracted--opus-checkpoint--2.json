@@ -1,0 +1,23 @@
+{
+  "block": [
+    {
+      "key": "ch_1",
+      "reason": "ch_1 is the valid annual renewal. The approval covers only the duplicate ch_2, and the scope excludes any refund of ch_1."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "RA-1192",
+      "reason": "The refund depends on this approval, which was pending when last checked. Read its status with get_refund_approval and proceed only if it is approved for ch_2 and $1,188.00."
+    },
+    {
+      "key": "ch_2",
+      "reason": "The refund is non-idempotent and the billing system's support for an idempotency key is unconfirmed. Read the charge with get_charges to confirm refunded=false immediately before refunding once, and re-check after."
+    },
+    {
+      "key": "88213",
+      "reason": "The customer's ticket may have new messages since the last reply. Read it before sending the completion reply, and do not resend the earlier reply, which is already sent."
+    }
+  ],
+  "cost": 0.00087062
+}

@@ -1,0 +1,8 @@
+{
+  "support/careful": "ok",
+  "support/crude/approval-without-evidence": "schema",
+  "support/crude/instruction-from-external": "schema",
+  "payments/careful": "ok",
+  "payments/crude/blind-retry-uncertain": "schema",
+  "payments/crude/instruction-from-tool": "schema"
+}

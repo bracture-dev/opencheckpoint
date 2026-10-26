@@ -1,0 +1,19 @@
+{
+  "block": [
+    {
+      "key": "ch_1",
+      "reason": "Valid annual renewal charge, not a duplicate. Declined by the ticket decision. No refund or other reversal may be issued against it."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "RA-1192",
+      "reason": "Refund approval for ch_2. Last seen as status 'pending', phase 'source'. Re-read with get_refund_approval before any refund. Only status 'approved' permits the refund. Do not treat phase as approval."
+    },
+    {
+      "key": "ch_2",
+      "reason": "Duplicate charge, $1,188.00, not yet refunded. Before refunding, read the current charge state with get_charges (ticket 88213) to confirm refunded is still false, and confirm RA-1192 is approved. Refund only the $1,188.00 amount, with idempotency key RA-1192 if the tool supports one."
+    }
+  ],
+  "cost": 0.0018345
+}

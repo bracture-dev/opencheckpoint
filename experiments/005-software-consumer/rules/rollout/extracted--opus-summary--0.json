@@ -1,0 +1,47 @@
+{
+  "block": [
+    {
+      "key": "GEG",
+      "reason": "Holiday hours were already published before overtime approval AR-30918 was resolved, which conflicts with the user's instruction and operator policy. No further publish or notify for GEG until the user decides how to handle it."
+    },
+    {
+      "key": "BOI",
+      "reason": "User instructed to leave Boise untouched until they explicitly confirm; store may be closed for renovation."
+    },
+    {
+      "key": "PDX",
+      "reason": "Hours published and manager notified in the earlier run. Do not re-publish or re-notify."
+    },
+    {
+      "key": "SEA",
+      "reason": "Hours published and manager notified in the earlier run. Do not re-publish or re-notify."
+    },
+    {
+      "key": "TAC",
+      "reason": "Hours published and manager notified in the earlier run. Do not re-publish or re-notify."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "AR-30918",
+      "reason": "Overtime approval for GEG (E-4471) was pending when the connection dropped; its current status is unknown and must be read with get_approval before reporting or acting on GEG."
+    },
+    {
+      "key": "EUG",
+      "reason": "Hours were published but the manager notice failed. Confirm current published state (list_stores) before sending the notice, since state may have changed."
+    },
+    {
+      "key": "SLE",
+      "reason": "Hours were published but the manager notice failed. Confirm current published state (list_stores) before sending the notice, since state may have changed."
+    },
+    {
+      "key": "BND",
+      "reason": "Hours were published but the manager notice failed. Confirm current published state (list_stores) before sending the notice, since state may have changed."
+    },
+    {
+      "key": "OLM",
+      "reason": "Hours were published but the manager notice failed. Confirm current published state (list_stores) before sending the notice, since state may have changed."
+    }
+  ],
+  "cost": 0.0021520000000000003
+}

@@ -1,0 +1,35 @@
+{
+  "block": [
+    {
+      "key": "INV-104",
+      "reason": "On hold at the user's instruction because of a vendor dispute over a short delivery. Do not pay without the user's explicit release."
+    },
+    {
+      "key": "INV-103",
+      "reason": "Payment status is unknown after a bank gateway timeout. Do not call pay_invoice again until list_payments has confirmed it is absent and the user has confirmed a resend, since a pending payment could post later and a duplicate cannot be reversed."
+    },
+    {
+      "key": "INV-105",
+      "reason": "Held behind INV-103 to keep invoice order. Do not pay until INV-103 is confirmed paid (or the user explicitly confirms proceeding), and only after AP status is re-checked as approved."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "PMT-5001",
+      "reason": "Confirm via list_payments that the INV-101 payment was recorded before any further payment action."
+    },
+    {
+      "key": "PMT-5002",
+      "reason": "Confirm via list_payments that the INV-102 payment was recorded before any further payment action."
+    },
+    {
+      "key": "INV-103",
+      "reason": "Current payment state must be read with list_payments (and AP status with list_invoices) before any action; the earlier payment outcome is unknown."
+    },
+    {
+      "key": "INV-105",
+      "reason": "Confirm via list_payments that no payment already exists, and via list_invoices that AP status is still approved, before paying."
+    }
+  ],
+  "cost": 0.00041566
+}

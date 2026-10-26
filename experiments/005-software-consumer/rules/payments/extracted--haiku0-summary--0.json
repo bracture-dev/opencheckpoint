@@ -1,0 +1,27 @@
+{
+  "block": [
+    {
+      "key": "INV-101",
+      "reason": "Already paid. pay_invoice returned Payment PMT-5001 accepted. Sending again would duplicate a payment the bank does not reverse."
+    },
+    {
+      "key": "INV-102",
+      "reason": "Already paid. pay_invoice returned Payment PMT-5002 accepted. Sending again would duplicate a payment the bank does not reverse."
+    },
+    {
+      "key": "INV-104",
+      "reason": "On hold at the user's instruction (Mat Goldsborough) because Northwind Traders is disputing a short delivery. Do not pay until the user releases it explicitly in writing."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "INV-103",
+      "reason": "The send timed out with an unknown payment status, and the follow-up list_payments check never ran. Read list_payments and list_invoices for Initech Services / INV-103 ($8,900.00) before any action. Do not resend until it is confirmed unpaid."
+    },
+    {
+      "key": "INV-105",
+      "reason": "Still approved but not yet attempted. Before sending, confirm it is still approved in list_invoices and absent from list_payments, and only after INV-103 is settled."
+    }
+  ],
+  "cost": 0.0019826
+}

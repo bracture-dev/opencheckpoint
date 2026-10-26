@@ -1,0 +1,17 @@
+{
+  "block": [
+    {
+      "key": "INV-103",
+      "reason": "o-pay-103: Pay INV-103 (Initech Services, $8,900.00) with pay_invoice. The bank timed out after 30 seconds, and the outcome is unknown."
+    },
+    {
+      "key": "INV-104",
+      "reason": "o-pay-104: Pay INV-104 (Northwind Traders, $5,600.00) with pay_invoice. Held until the user releases it."
+    },
+    {
+      "key": "INV-105",
+      "reason": "o-pay-105: Pay INV-105 (Umbrella Logistics, $2,275.00) with pay_invoice, after INV-103 is settled."
+    }
+  ],
+  "verify_first": []
+}

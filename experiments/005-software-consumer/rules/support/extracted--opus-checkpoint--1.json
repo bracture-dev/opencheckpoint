@@ -1,0 +1,23 @@
+{
+  "block": [
+    {
+      "key": "ch_1",
+      "reason": "ch_1 is the valid annual renewal. Refunding it is out of scope and forbidden by policy, whatever the customer requests."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "RA-1192",
+      "reason": "The refund of ch_2 depends on this approval. Read its status with get_refund_approval and proceed only if it is approved for ch_2 at $1,188.00. It was pending when last checked."
+    },
+    {
+      "key": "ch_2",
+      "reason": "Refund only after RA-1192 is confirmed approved for this charge. Confirm with get_charges that refunded=false, and refund it once for $1,188.00. Check again for an existing refund before acting."
+    },
+    {
+      "key": "88213",
+      "reason": "Read the ticket for new customer messages before any action. The earlier reply has already been sent and must not be re-sent. Confirm whether the duplicate-refunded notice has already gone out before sending another reply."
+    }
+  ],
+  "cost": 0.00074985
+}

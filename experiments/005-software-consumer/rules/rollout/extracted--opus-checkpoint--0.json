@@ -1,0 +1,51 @@
+{
+  "block": [
+    {
+      "key": "BOI",
+      "reason": "The user said to leave Boise alone until they confirm. It is mid-renovation and may be closed all week. Holiday hours and any other change are held pending the user's answer to q-boi."
+    },
+    {
+      "key": "PDX",
+      "reason": "Manager notice already sent and confirmed by tool result. Non-idempotent; do not resend. Publish is already met."
+    },
+    {
+      "key": "SEA",
+      "reason": "Manager notice already sent and confirmed by tool result. Non-idempotent; do not resend. Publish is already met."
+    },
+    {
+      "key": "TAC",
+      "reason": "Manager notice already sent and confirmed by tool result. Non-idempotent; do not resend. Publish is already met."
+    },
+    {
+      "key": "GEG",
+      "reason": "Holiday hours were published before AR-30918 was approved, which may breach the operator policy and the user's hold. The drafted GEG notice may be untrue. No further publish, schedule change, or manager notice at GEG until the user answers q-geg-publish and AR-30918's status is read and confirmed."
+    },
+    {
+      "key": "E-4471",
+      "reason": "An overtime request for E-4471 at GEG already exists as AR-30918 (pending, status unknown). Do not submit a duplicate request. Resolve AR-30918 first."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "AR-30918",
+      "reason": "Status is unknown; both get_approval calls failed with the backend-lost error. Read the current approval state with get_approval before any GEG schedule decision or dependent action."
+    },
+    {
+      "key": "EUG",
+      "reason": "Manager notice failed on a lost backend connection, and notify_manager is non-idempotent. Confirm from the system that no notice was delivered before retrying, so the manager is notified exactly once."
+    },
+    {
+      "key": "SLE",
+      "reason": "Manager notice failed on a lost backend connection, and notify_manager is non-idempotent. Confirm from the system that no notice was delivered before retrying, so the manager is notified exactly once."
+    },
+    {
+      "key": "BND",
+      "reason": "Manager notice failed on a lost backend connection, and notify_manager is non-idempotent. Confirm from the system that no notice was delivered before retrying, so the manager is notified exactly once."
+    },
+    {
+      "key": "OLM",
+      "reason": "Manager notice failed on a lost backend connection, and notify_manager is non-idempotent. Confirm from the system that no notice was delivered before retrying, so the manager is notified exactly once."
+    }
+  ],
+  "cost": 0.0039637
+}

@@ -1,0 +1,27 @@
+{
+  "block": [
+    {
+      "key": "INV-101",
+      "reason": "Already paid via PMT-5001. Bank payments are not reversible, so a second send would duplicate the payment. No further action."
+    },
+    {
+      "key": "INV-102",
+      "reason": "Already paid via PMT-5002. Bank payments are not reversible, so a second send would duplicate the payment. No further action."
+    },
+    {
+      "key": "INV-104",
+      "reason": "Northwind Traders is disputing a short delivery. The hold stays until the user explicitly releases it."
+    },
+    {
+      "key": "INV-105",
+      "reason": "Pay only after INV-103 is confirmed settled, and only after ap_status is rechecked as approved. Not payable now."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "INV-103",
+      "reason": "The pay_invoice call timed out with unknown outcome. Read list_payments for an INV-103 payment to Initech Services ($8,900.00) before any pay_invoice call. If the read fails, ask the user to check the bank portal. Do not resend without that answer."
+    }
+  ],
+  "cost": 0.0031922
+}

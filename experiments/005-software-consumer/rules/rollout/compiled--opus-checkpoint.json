@@ -1,0 +1,17 @@
+{
+  "block": [
+    {
+      "key": "AR-30918",
+      "reason": "o-ar30918: GEG store manager's overtime approval for E-4471 to cover the 6am-10pm Friday hours."
+    },
+    {
+      "key": "GEG",
+      "reason": "o-notify-geg: Notify the GEG manager of the holiday hours and the pending AR-30918. Failed with 'No action was taken'. Revise the message before sending, because its claim that the schedule will be published after approval may be untrue."
+    },
+    {
+      "key": "BOI",
+      "reason": "o-boi: Any change at Boise. Not started, pending user confirmation."
+    }
+  ],
+  "verify_first": []
+}

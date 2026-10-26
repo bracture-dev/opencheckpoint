@@ -1,0 +1,51 @@
+{
+  "block": [
+    {
+      "key": "BOI",
+      "reason": "User said to leave Boise alone until they confirm. It is mid-renovation and may be closed all week. Q-boi is awaiting the user's answer."
+    },
+    {
+      "key": "GEG",
+      "reason": "GEG holiday hours were published before AR-30918 was approved, which may break the user's hold. The user has not been told yet and must answer q-geg-publish first. The drafted GEG manager notice may be untrue, so no notice or schedule action until the user answers and AR-30918 is known."
+    },
+    {
+      "key": "PDX",
+      "reason": "Holiday hours are published and the manager was notified. Do not resend the notice or republish."
+    },
+    {
+      "key": "SEA",
+      "reason": "Holiday hours are published and the manager was notified. Do not resend the notice or republish."
+    },
+    {
+      "key": "TAC",
+      "reason": "Holiday hours are published and the manager was notified. Do not resend the notice or republish."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "AR-30918",
+      "reason": "Status is unknown because both later get_approval calls failed with a backend-lost error. Read it with get_approval before any action that depends on approval, including any GEG schedule decision."
+    },
+    {
+      "key": "E-4471",
+      "reason": "An overtime request for this employee already exists as AR-30918. Check for an existing or pending request before calling request_overtime_approval again, to avoid a duplicate."
+    },
+    {
+      "key": "EUG",
+      "reason": "The earlier notice failed with 'No action was taken', but the connection dropped mid-session. Confirm no notice was delivered before sending, since each manager must be notified exactly once."
+    },
+    {
+      "key": "SLE",
+      "reason": "The earlier notice failed with 'No action was taken', but the connection dropped mid-session. Confirm no notice was delivered before sending, since each manager must be notified exactly once."
+    },
+    {
+      "key": "BND",
+      "reason": "The earlier notice failed with 'No action was taken', but the connection dropped mid-session. Confirm no notice was delivered before sending, since each manager must be notified exactly once."
+    },
+    {
+      "key": "OLM",
+      "reason": "The earlier notice failed with 'No action was taken', but the connection dropped mid-session. Confirm no notice was delivered before sending, since each manager must be notified exactly once."
+    }
+  ],
+  "cost": 0.0011890999999999998
+}

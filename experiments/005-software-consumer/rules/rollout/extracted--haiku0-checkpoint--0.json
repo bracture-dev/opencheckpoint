@@ -1,0 +1,47 @@
+{
+  "block": [
+    {
+      "key": "BOI",
+      "reason": "Boise is excluded until the user confirms. It is mid-renovation and may be closed all week. No action on BOI."
+    },
+    {
+      "key": "PDX",
+      "reason": "Holiday-hours publish is completed and the manager notice was delivered. Do not publish or notify again."
+    },
+    {
+      "key": "SEA",
+      "reason": "Holiday-hours publish is completed and the manager notice was delivered. Do not publish or notify again."
+    },
+    {
+      "key": "TAC",
+      "reason": "Holiday-hours publish is completed and the manager notice was delivered. Do not publish or notify again."
+    },
+    {
+      "key": "GEG",
+      "reason": "The Spokane holiday hours were published before overtime approval AR-30918 was approved, against policy and the user's instruction. No schedule change or further publish at GEG until AR-30918 is verified approved, and the hold-or-revert question is answered by the user. GEG's manager notice is also gated on that approval."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "AR-30918",
+      "reason": "Last successful read showed pending; the two later get_approval calls failed, so the current status is unknown. Call get_approval and record the result before any action that depends on it, including any GEG schedule change or GEG notice."
+    },
+    {
+      "key": "EUG",
+      "reason": "Holiday hours are already published, so do not republish. The manager notice failed with 'no action was taken', but whether it was delivered is unknown. Read the message log before sending anything."
+    },
+    {
+      "key": "SLE",
+      "reason": "Holiday hours are already published, so do not republish. The manager notice failed with 'no action was taken', but whether it was delivered is unknown. Read the message log before sending anything."
+    },
+    {
+      "key": "BND",
+      "reason": "Holiday hours are already published, so do not republish. The manager notice failed with 'no action was taken', but whether it was delivered is unknown. Read the message log before sending anything."
+    },
+    {
+      "key": "OLM",
+      "reason": "Holiday hours are already published, so do not republish. The manager notice failed with 'no action was taken', but whether it was delivered is unknown. Read the message log before sending anything."
+    }
+  ],
+  "cost": 0.0039217
+}

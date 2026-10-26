@@ -44,17 +44,19 @@ def mcp_args(scenario: str, state: Path, log: Path, phase: str) -> list[str]:
     return [*SERVER_ARGS, scenario, str(state), str(log), phase]
 
 
-def claude_cmd(scenario: str, state: Path, log: Path, phase: str, config: Path) -> list[str]:
-    config.write_text(json.dumps({"mcpServers": {"systems": {"command": UV, "args": mcp_args(scenario, state, log, phase)}}}))
+def claude_cmd(scenario: str, state: Path, log: Path, phase: str, config: Path, env: dict | None = None) -> list[str]:
+    server = {"command": UV, "args": mcp_args(scenario, state, log, phase), **({"env": env} if env else {})}
+    config.write_text(json.dumps({"mcpServers": {"systems": server}}))
     return ["claude", "-p", "--model", MODEL, "--tools", "", "--mcp-config", str(config), "--strict-mcp-config",
             "--dangerously-skip-permissions", "--no-session-persistence", "--output-format", "stream-json", "--verbose"]
 
 
-def codex_cmd(scenario: str, state: Path, log: Path, phase: str, workdir: Path) -> list[str]:
+def codex_cmd(scenario: str, state: Path, log: Path, phase: str, workdir: Path, env: dict | None = None) -> list[str]:
     args = json.dumps(mcp_args(scenario, state, log, phase))
+    extra = ["-c", "mcp_servers.systems.env={" + ", ".join(f'{k}="{v}"' for k, v in env.items()) + "}"] if env else []
     return ["codex", "exec", "--json", "--dangerously-bypass-approvals-and-sandbox", "--skip-git-repo-check",
             "-c", 'model_reasoning_effort="medium"', "-c", f'mcp_servers.systems.command="{UV}"',
-            "-c", f"mcp_servers.systems.args={args}", "-C", str(workdir), "-"]
+            "-c", f"mcp_servers.systems.args={args}", *extra, "-C", str(workdir), "-"]
 
 
 def execute(cmd: list[str], prompt: str, cwd: Path, events: Path, timeout_s: int = 20 * 60) -> dict:
@@ -219,10 +221,12 @@ def cmd_variant_handoffs(scenario: str, variant: str, model: str, samples: int) 
 
 # ------------------------------------------------------------------ destination runs
 
-def cmd_run(agent: str, scenario: str, cond: str, rep: int, root: Path, variant: str | None = None) -> None:
+def cmd_run(agent: str, scenario: str, cond: str, rep: int, root: Path, variant: str | None = None,
+            guard: Path | None = None, tag: str = "") -> None:
     sc = SCENARIOS[scenario]
     d = HERE / "handoffs" / scenario
-    ws = root / f"{scenario}-{agent}-{cond}-{rep}"
+    root = root.resolve()  # the agent runs from inside the workspace, so every path must be absolute
+    ws = root / f"{scenario}-{agent}-{cond}{tag}-{rep}"
     if variant:
         # Each repeat reads its own independently produced handoff sample.
         handoff = (d / variant / HANDOFF_FILES[cond].replace(".", f"-{rep}.", 1)) if cond in ("C", "D") else d / HANDOFF_FILES.get(cond, "")
@@ -238,9 +242,11 @@ def cmd_run(agent: str, scenario: str, cond: str, rep: int, root: Path, variant:
     body = message if cond == "A" else WRAPPER.format(handoff=handoff.read_text().strip(), message=message)
     prompt = f"{sc['policy']}\n\n{body}\n"
     (ws / "prompt.txt").write_text(prompt)
-    cmd = (claude_cmd(scenario, state, log, "destination", ws / "mcp.json") if agent == "claude"
-           else codex_cmd(scenario, state, log, "destination", work))
-    meta = {"agent": agent, "scenario": scenario, "condition": cond, "repeat": rep, "variant": variant,
+    env = {"OCP_GUARD": str(guard.resolve())} if guard else None
+    cmd = (claude_cmd(scenario, state, log, "destination", ws / "mcp.json", env) if agent == "claude"
+           else codex_cmd(scenario, state, log, "destination", work, env))
+    meta = {"agent": agent, "scenario": scenario, "condition": cond + tag, "repeat": rep, "variant": variant,
+            "guard": guard.name if guard else None,
             **execute(cmd, prompt, work, ws / "events.jsonl")}
     (ws / "meta.json").write_text(json.dumps(meta, indent=2))
     print(json.dumps(meta))
@@ -291,6 +297,7 @@ def cmd_score(root: Path) -> None:
         shells = shell_commands(meta["agent"], ws / "events.jsonl")
         rows.append({**meta, **checks, **u,
                      "tool_calls": len(dest),
+                     "blocked_calls": sum(1 for c in dest if c.get("blocked")),
                      "calls_before_first_side_effect": first_effect,
                      "shell_commands": len(shells),
                      "contaminated": any("003-business-scenarios" in c or "exp003" in c for c in shells),
@@ -322,6 +329,8 @@ def main() -> None:
     p = sub.add_parser("run"); p.add_argument("agent", choices=["claude", "codex"]); p.add_argument("scenario", choices=SCENARIOS)
     p.add_argument("condition", choices=["A", "B2", "C", "D"]); p.add_argument("repeat", type=int); p.add_argument("--root", type=Path, required=True)
     p.add_argument("--variant")
+    p.add_argument("--guard", type=Path, help="platform guard rules (experiment 005)")
+    p.add_argument("--tag", default="", help="suffix for the condition label, e.g. +compiled")
     p = sub.add_parser("score"); p.add_argument("--root", type=Path, required=True)
     a = ap.parse_args()
     if a.cmd == "source":
@@ -331,7 +340,7 @@ def main() -> None:
     elif a.cmd == "variant-handoffs":
         cmd_variant_handoffs(a.scenario, a.variant, a.model, a.samples)
     elif a.cmd == "run":
-        cmd_run(a.agent, a.scenario, a.condition, a.repeat, a.root, a.variant)
+        cmd_run(a.agent, a.scenario, a.condition, a.repeat, a.root, a.variant, a.guard, a.tag)
     else:
         cmd_score(a.root)
 

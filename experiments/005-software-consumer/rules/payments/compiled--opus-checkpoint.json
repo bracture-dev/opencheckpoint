@@ -1,0 +1,18 @@
+{
+  "block": [
+    {
+      "key": "INV-103",
+      "reason": "op-pay-103: pay_invoice INV-103 for 8900.00 to Initech Services. Sent once; the bank gateway timed out and the outcome is unknown."
+    },
+    {
+      "key": "INV-104",
+      "reason": "op-release-104: User to say when INV-104 (Northwind Traders, disputed short delivery) is released for payment."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "INV-105",
+      "reason": "op-pay-105: pay_invoice INV-105 for 2275.00 to Umbrella Logistics. Not sent."
+    }
+  ]
+}

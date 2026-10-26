@@ -1,0 +1,27 @@
+{
+  "block": [
+    {
+      "key": "INV-101",
+      "reason": "Already paid (PMT-5001 accepted). A second pay_invoice would send duplicate funds that the bank cannot reverse."
+    },
+    {
+      "key": "INV-102",
+      "reason": "Already paid (PMT-5002 accepted). A second pay_invoice would send duplicate funds that the bank cannot reverse."
+    },
+    {
+      "key": "INV-104",
+      "reason": "On hold because the vendor disputes a short delivery. Pay only after the user explicitly releases it."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "INV-103",
+      "reason": "Payment status is unknown after a gateway timeout. Run list_payments and check for a pending or posted payment before any action. If it does not appear, the user must confirm, for example after checking the bank portal, before resending. Re-check AP status is approved before paying."
+    },
+    {
+      "key": "INV-105",
+      "reason": "Held behind INV-103 to preserve invoice order. Do not pay until INV-103 is confirmed paid. Then check list_payments for an existing INV-105 payment and confirm via list_invoices that AP status is still approved."
+    }
+  ],
+  "cost": 0.0020015000000000002
+}
