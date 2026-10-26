@@ -1,0 +1,484 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "urn:uuid:01937c6e-5b2a-7d4e-9a1f-3c8e5b7d2a10",
+  "created_at": "2026-10-26T13:20:00-10:00",
+  "source": {
+    "producer": {
+      "name": "Claude Code"
+    },
+    "agent": {
+      "name": "accounts-payable agent"
+    },
+    "model": {
+      "provider": "Anthropic",
+      "name": "claude-haiku-5-5"
+    }
+  },
+  "task": {
+    "title": "October vendor payments",
+    "objective": "Pay every approved October vendor invoice in invoice order, except INV-104 (Northwind Traders), which stays on hold until the user releases it.",
+    "outcome": "Each approved invoice other than INV-104 is paid exactly once, in invoice order, and each payment is confirmed in the bank payment list.",
+    "status": "blocked",
+    "success_criteria": [
+      {
+        "id": "cr-101",
+        "description": "INV-101 (Acme Supply, $12,400.00) is paid once.",
+        "state": "met",
+        "evidence": ["r-pmt-5001"]
+      },
+      {
+        "id": "cr-102",
+        "description": "INV-102 (Globex Freight, $3,150.00) is paid once.",
+        "state": "met",
+        "evidence": ["r-pmt-5002"]
+      },
+      {
+        "id": "cr-103",
+        "description": "INV-103 (Initech Services, $8,900.00) is paid exactly once. Its status is unknown.",
+        "state": "unknown",
+        "evidence": ["r-inv-103"]
+      },
+      {
+        "id": "cr-104",
+        "description": "INV-104 (Northwind Traders) is not paid until the user releases it.",
+        "state": "met",
+        "evidence": ["r-inv-104"]
+      },
+      {
+        "id": "cr-105",
+        "description": "INV-105 (Umbrella Logistics, $2,275.00) is paid once.",
+        "state": "unmet",
+        "evidence": ["r-inv-105"]
+      }
+    ],
+    "scope": {
+      "includes": ["Approved October vendor invoices INV-101 through INV-105 on the AP list."],
+      "excludes": ["INV-104 (Northwind Traders) until the user releases it."]
+    }
+  },
+  "progress": {
+    "completed": [
+      {
+        "id": "cs-list-start",
+        "description": "Listed approved invoices and bank payments. The payment list was empty at the start.",
+        "evidence": ["r-list-invoices"]
+      },
+      {
+        "id": "cs-pay-101",
+        "description": "Paid INV-101 (Acme Supply, $12,400.00). Payment PMT-5001 was accepted.",
+        "evidence": ["r-pmt-5001"]
+      },
+      {
+        "id": "cs-pay-102",
+        "description": "Paid INV-102 (Globex Freight, $3,150.00). Payment PMT-5002 was accepted.",
+        "evidence": ["r-pmt-5002"]
+      },
+      {
+        "id": "cs-attempt-103",
+        "description": "Sent pay_invoice for INV-103 (Initech Services, $8,900.00). The bank timed out after 30 seconds, and the payment status is unknown.",
+        "evidence": ["r-inv-103"]
+      }
+    ],
+    "focus": {
+      "description": "Determining whether the INV-103 payment reached the bank before any further payment is sent. The payment-list check failed when the session ended.",
+      "refs": ["o-pay-103"]
+    },
+    "next": [
+      {
+        "id": "ns-check-103",
+        "description": "Confirm whether INV-103 was paid, by checking the bank payment list for a payment to Initech Services for $8,900.00. If the list cannot be reached, ask the user to check the bank portal.",
+        "requires": ["req-list-payments"],
+        "refs": ["o-pay-103"]
+      },
+      {
+        "id": "ns-pay-103",
+        "description": "If INV-103 is confirmed unpaid, pay $8,900.00 to Initech Services with pay_invoice. If it is confirmed paid, record it as completed and skip the payment.",
+        "blocked_by": ["o-pay-103", "q-103-paid"],
+        "requires": ["req-pay-invoice"]
+      },
+      {
+        "id": "ns-pay-105",
+        "description": "After INV-103 is settled, confirm INV-105 still shows approved, then pay $2,275.00 to Umbrella Logistics.",
+        "blocked_by": ["o-pay-103"],
+        "requires": ["req-list-invoices", "req-pay-invoice"]
+      },
+      {
+        "id": "ns-hold-104",
+        "description": "Keep INV-104 (Northwind Traders) on hold until the user releases it.",
+        "blocked_by": ["s-hold-104"]
+      }
+    ]
+  },
+  "statements": [
+    {
+      "id": "s-policy-approved-only",
+      "kind": "constraint",
+      "text": "Pay only invoices whose AP status is approved.",
+      "origin": {
+        "type": "system",
+        "name": "Example Co. AP operator policy"
+      }
+    },
+    {
+      "id": "s-policy-irreversible",
+      "kind": "constraint",
+      "text": "pay_invoice sends money, and the bank does not reverse payments. A repeated send can pay a vendor twice.",
+      "origin": {
+        "type": "system",
+        "name": "Example Co. AP operator policy"
+      }
+    },
+    {
+      "id": "s-instr-pay-run",
+      "kind": "instruction",
+      "text": "Run the October vendor payments: pay every approved invoice, in invoice order.",
+      "origin": {
+        "type": "user",
+        "name": "requesting user"
+      }
+    },
+    {
+      "id": "s-hold-104",
+      "kind": "constraint",
+      "text": "Hold Northwind Traders (INV-104) until the user releases it. The vendor is disputing a short delivery.",
+      "origin": {
+        "type": "user",
+        "name": "requesting user"
+      }
+    },
+    {
+      "id": "s-invoices-approved",
+      "kind": "observation",
+      "text": "The AP list showed INV-101 through INV-105 with ap_status approved: Acme Supply $12,400.00, Globex Freight $3,150.00, Initech Services $8,900.00, Northwind Traders $5,600.00, and Umbrella Logistics $2,275.00.",
+      "origin": {
+        "type": "tool",
+        "name": "list_invoices",
+        "ref": "r-list-invoices"
+      },
+      "verification": {
+        "state": "stale",
+        "method": "list_invoices output from earlier in the session",
+        "revalidate": "before_action"
+      },
+      "evidence": ["r-list-invoices"]
+    },
+    {
+      "id": "s-101-paid",
+      "kind": "observation",
+      "text": "pay_invoice for INV-101 was accepted as PMT-5001.",
+      "origin": {
+        "type": "tool",
+        "name": "pay_invoice",
+        "ref": "r-inv-101"
+      },
+      "verification": {
+        "state": "verified",
+        "method": "pay_invoice acceptance response",
+        "revalidate": "never"
+      },
+      "evidence": ["r-pmt-5001"]
+    },
+    {
+      "id": "s-102-paid",
+      "kind": "observation",
+      "text": "pay_invoice for INV-102 was accepted as PMT-5002.",
+      "origin": {
+        "type": "tool",
+        "name": "pay_invoice",
+        "ref": "r-inv-102"
+      },
+      "verification": {
+        "state": "verified",
+        "method": "pay_invoice acceptance response",
+        "revalidate": "never"
+      },
+      "evidence": ["r-pmt-5002"]
+    },
+    {
+      "id": "s-103-timeout",
+      "kind": "observation",
+      "text": "pay_invoice for INV-103 returned a bank gateway timeout after 30 seconds. The payment status is unknown.",
+      "origin": {
+        "type": "tool",
+        "name": "pay_invoice",
+        "ref": "r-inv-103"
+      },
+      "verification": {
+        "state": "verified",
+        "method": "pay_invoice error response",
+        "revalidate": "before_action"
+      },
+      "evidence": ["r-inv-103"]
+    },
+    {
+      "id": "s-103-status-unchecked",
+      "kind": "observation",
+      "text": "The list_payments check for INV-103 failed because the session ended and the connection to the backend was lost. No action was taken, and the INV-103 payment status has not been checked.",
+      "origin": {
+        "type": "tool",
+        "name": "list_payments"
+      },
+      "verification": {
+        "state": "verified",
+        "method": "list_payments error response",
+        "revalidate": "before_action"
+      }
+    },
+    {
+      "id": "s-no-resend-103",
+      "kind": "decision",
+      "text": "Do not resend INV-103 until its payment status is confirmed.",
+      "origin": {
+        "type": "agent",
+        "name": "accounts-payable agent"
+      },
+      "rationale": "The bank cannot reverse a payment, so a second send could pay Initech Services twice."
+    },
+    {
+      "id": "s-hold-105",
+      "kind": "decision",
+      "text": "Hold INV-105 until INV-103 is settled.",
+      "origin": {
+        "type": "agent",
+        "name": "accounts-payable agent"
+      },
+      "rationale": "The user asked for payments in invoice order, and INV-103 is unresolved."
+    },
+    {
+      "id": "q-103-paid",
+      "kind": "question",
+      "text": "Did the bank process a payment of $8,900.00 to Initech Services for INV-103?",
+      "origin": {
+        "type": "agent",
+        "name": "accounts-payable agent"
+      },
+      "status": "active"
+    }
+  ],
+  "resources": [
+    {
+      "id": "r-list-invoices",
+      "kind": "tool_output",
+      "title": "list_invoices output",
+      "description": "Invoices with AP status at the time of the October listing.",
+      "locator": {
+        "system": "example-co-ap",
+        "type": "tool_output",
+        "key": "list_invoices"
+      },
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-inv-101",
+      "kind": "record",
+      "title": "INV-101, Acme Supply",
+      "description": "Invoice for $12,400.00. Paid as PMT-5001.",
+      "locator": {
+        "system": "example-co-ap",
+        "type": "invoice",
+        "key": "INV-101"
+      },
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-inv-102",
+      "kind": "record",
+      "title": "INV-102, Globex Freight",
+      "description": "Invoice for $3,150.00. Paid as PMT-5002.",
+      "locator": {
+        "system": "example-co-ap",
+        "type": "invoice",
+        "key": "INV-102"
+      },
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-inv-103",
+      "kind": "record",
+      "title": "INV-103, Initech Services",
+      "description": "Invoice for $8,900.00. Payment status unknown after a bank timeout.",
+      "locator": {
+        "system": "example-co-ap",
+        "type": "invoice",
+        "key": "INV-103"
+      },
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-inv-104",
+      "kind": "record",
+      "title": "INV-104, Northwind Traders",
+      "description": "Invoice for $5,600.00. On hold until the user releases it. The vendor is disputing a short delivery.",
+      "locator": {
+        "system": "example-co-ap",
+        "type": "invoice",
+        "key": "INV-104"
+      },
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-inv-105",
+      "kind": "record",
+      "title": "INV-105, Umbrella Logistics",
+      "description": "Invoice for $2,275.00. Not yet paid.",
+      "locator": {
+        "system": "example-co-ap",
+        "type": "invoice",
+        "key": "INV-105"
+      },
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-pmt-5001",
+      "kind": "record",
+      "title": "PMT-5001",
+      "description": "Payment for INV-101, accepted.",
+      "locator": {
+        "system": "bank",
+        "type": "payment",
+        "key": "PMT-5001"
+      },
+      "availability": "available",
+      "sensitivity": "confidential"
+    },
+    {
+      "id": "r-pmt-5002",
+      "kind": "record",
+      "title": "PMT-5002",
+      "description": "Payment for INV-102, accepted.",
+      "locator": {
+        "system": "bank",
+        "type": "payment",
+        "key": "PMT-5002"
+      },
+      "availability": "available",
+      "sensitivity": "confidential"
+    }
+  ],
+  "operations": [
+    {
+      "id": "o-pay-101",
+      "kind": "action",
+      "description": "Pay INV-101 (Acme Supply, $12,400.00) with pay_invoice.",
+      "status": "completed",
+      "target": "r-inv-101",
+      "effect": "non_idempotent"
+    },
+    {
+      "id": "o-pay-102",
+      "kind": "action",
+      "description": "Pay INV-102 (Globex Freight, $3,150.00) with pay_invoice.",
+      "status": "completed",
+      "target": "r-inv-102",
+      "effect": "non_idempotent"
+    },
+    {
+      "id": "o-pay-103",
+      "kind": "action",
+      "description": "Pay INV-103 (Initech Services, $8,900.00) with pay_invoice. The bank timed out after 30 seconds, and the outcome is unknown.",
+      "status": "uncertain",
+      "target": "r-inv-103",
+      "effect": "non_idempotent",
+      "resume": "verify_first"
+    },
+    {
+      "id": "o-pay-104",
+      "kind": "action",
+      "description": "Pay INV-104 (Northwind Traders, $5,600.00) with pay_invoice. Held until the user releases it.",
+      "status": "planned",
+      "target": "r-inv-104",
+      "effect": "non_idempotent",
+      "resume": "ask"
+    },
+    {
+      "id": "o-pay-105",
+      "kind": "action",
+      "description": "Pay INV-105 (Umbrella Logistics, $2,275.00) with pay_invoice, after INV-103 is settled.",
+      "status": "planned",
+      "target": "r-inv-105",
+      "effect": "non_idempotent",
+      "depends_on": ["o-pay-103"],
+      "resume": "ask"
+    }
+  ],
+  "continuation": {
+    "requirements": [
+      {
+        "id": "req-list-invoices",
+        "kind": "tool",
+        "name": "list_invoices",
+        "description": "Lists invoices with their AP status.",
+        "necessity": "required",
+        "fallback": "Ask the user to confirm the current AP status of INV-105 before paying it."
+      },
+      {
+        "id": "req-list-payments",
+        "kind": "tool",
+        "name": "list_payments",
+        "description": "Lists payments the bank has recorded.",
+        "necessity": "required",
+        "fallback": "Ask the user to check the bank portal for a payment to Initech Services for INV-103. Do not pay INV-103 until that answer is given."
+      },
+      {
+        "id": "req-pay-invoice",
+        "kind": "tool",
+        "name": "pay_invoice",
+        "description": "Sends a payment for an invoice. Payments cannot be reversed.",
+        "necessity": "required",
+        "fallback": "None. Stop and report to the user."
+      }
+    ],
+    "preconditions": [
+      {
+        "id": "pc-verify-103",
+        "description": "The INV-103 payment status is confirmed as paid or unpaid in the bank payment list.",
+        "refs": ["o-pay-103"],
+        "on_failure": "halt"
+      },
+      {
+        "id": "pc-ap-status",
+        "description": "list_invoices is re-run, and each invoice to be paid still shows ap_status approved.",
+        "refs": ["r-list-invoices"],
+        "on_failure": "halt"
+      }
+    ],
+    "stop_conditions": [
+      {
+        "id": "sc-no-blind-retry",
+        "description": "Do not call pay_invoice for INV-103 until its payment status is verified.",
+        "refs": ["o-pay-103"]
+      },
+      {
+        "id": "sc-hold-104",
+        "description": "Do not pay INV-104 unless the user releases it.",
+        "refs": ["s-hold-104"]
+      },
+      {
+        "id": "sc-unapproved",
+        "description": "Do not pay any invoice whose AP status is not approved.",
+        "refs": ["s-policy-approved-only"]
+      }
+    ],
+    "recovery": [
+      {
+        "id": "rc-check-payments",
+        "description": "Call list_payments and look for a payment to Initech Services for $8,900.00 for INV-103.",
+        "refs": ["o-pay-103", "req-list-payments"]
+      },
+      {
+        "id": "rc-report",
+        "description": "Tell the user the INV-103 result before paying any further invoice.",
+        "refs": ["q-103-paid"]
+      }
+    ]
+  },
+  "derivation": {
+    "method": "captured"
+  }
+}

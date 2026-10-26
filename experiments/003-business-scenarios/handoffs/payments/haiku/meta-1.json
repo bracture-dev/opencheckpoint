@@ -1,0 +1,25 @@
+{
+  "model": "claude-haiku-5-5",
+  "summary": {
+    "input": 7853,
+    "output": 1654,
+    "cost": 0.0010166700000000001,
+    "seconds": 8.047
+  },
+  "checkpoint": {
+    "input": 32056,
+    "output": 19626,
+    "cost": 0.0102447,
+    "seconds": 76.449
+  },
+  "first_attempt": {
+    "level": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "final": {
+    "level": "ok",
+    "errors": [],
+    "warnings": []
+  }
+}

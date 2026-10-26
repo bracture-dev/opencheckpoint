@@ -122,8 +122,8 @@ def cmd_source(scenario: str) -> None:
 
 # ------------------------------------------------------------------ handoffs
 
-def produce(system_prompt: str, body: str) -> dict:
-    p = subprocess.run(["claude", "-p", "--model", MODEL, "--tools", "", "--system-prompt", system_prompt, "--strict-mcp-config",
+def produce(system_prompt: str, body: str, model: str = MODEL) -> dict:
+    p = subprocess.run(["claude", "-p", "--model", model, "--tools", "", "--system-prompt", system_prompt, "--strict-mcp-config",
                         "--no-session-persistence", "--output-format", "json"], input=body, capture_output=True, text=True, check=True)
     return json.loads(p.stdout)
 
@@ -154,12 +154,80 @@ def cmd_handoffs(scenario: str) -> None:
     print(scenario, json.loads(check.stdout)["level"], cost)
 
 
+def validate(path: Path) -> dict:
+    """Schema and semantic validation with the repository's conformance tooling."""
+    p = subprocess.run(["node", "-e", f"""import("{REPO}/tools/conformance.mjs").then(m => {{
+        const r = m.check(JSON.parse(require("fs").readFileSync("{path}", "utf8")));
+        console.log(JSON.stringify(r)); }})"""], capture_output=True, text=True)
+    return json.loads(p.stdout)
+
+
+def capture(result: dict) -> dict:
+    u = result["usage"]
+    return {"input": u["input_tokens"] + u["cache_creation_input_tokens"] + u["cache_read_input_tokens"],
+            "output": u["output_tokens"], "cost": result["total_cost_usd"], "seconds": result["duration_ms"] / 1000}
+
+
+def strip_fences(text: str) -> str:
+    return text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+
+
+def cmd_variant_handoffs(scenario: str, variant: str, model: str, samples: int) -> None:
+    """Produce independent handoff samples with another model. A checkpoint that fails to parse or
+    validate gets one repair round with the errors; first-attempt and final validity are both kept."""
+    d = HERE / "handoffs" / scenario
+    out = d / variant
+    out.mkdir(exist_ok=True)
+    transcript = (d / "transcript.md").read_text()
+    spec = (REPO / "spec/versions/v0.1.md").read_text()
+    schema = (REPO / "spec/schema/v0.1/checkpoint.schema.json").read_text()
+    checkpoint_input = f"{transcript}\n\n=== SPECIFICATION ===\n\n{spec}\n\n=== JSON SCHEMA ===\n\n{schema}"
+    checkpoint_prompt = (HERE / "prompts/producer-checkpoint.md").read_text()
+    for i in range(samples):
+        meta: dict = {"model": model}
+        s = produce((HERE / "prompts/producer-summary.md").read_text(), transcript, model)
+        (out / f"summary-{i}.md").write_text(s["result"].strip() + "\n")
+        meta["summary"] = capture(s)
+        c = produce(checkpoint_prompt, checkpoint_input, model)
+        meta["checkpoint"] = capture(c)
+        text = strip_fences(c["result"])
+        path = out / f"checkpoint-{i}.json"
+        try:
+            path.write_text(json.dumps(json.loads(text), indent=2, ensure_ascii=False) + "\n")
+            first = validate(path)
+            errors = first["errors"]
+        except json.JSONDecodeError as e:
+            path.write_text(text + "\n")
+            first, errors = {"level": "parse", "errors": [str(e)]}, [str(e)]
+        meta["first_attempt"] = first
+        if first["level"] != "ok":
+            fix = produce(checkpoint_prompt, f"{checkpoint_input}\n\n=== YOUR PREVIOUS DOCUMENT ===\n\n{text}"
+                          f"\n\n=== VALIDATION ERRORS ===\n\n{json.dumps(errors, indent=2)}\n\nReturn a corrected document.", model)
+            meta["repair"] = capture(fix)
+            fixed = strip_fences(fix["result"])
+            try:
+                path.write_text(json.dumps(json.loads(fixed), indent=2, ensure_ascii=False) + "\n")
+                meta["final"] = validate(path)
+            except json.JSONDecodeError as e:
+                path.write_text(fixed + "\n")
+                meta["final"] = {"level": "parse", "errors": [str(e)]}
+        else:
+            meta["final"] = first
+        (out / f"meta-{i}.json").write_text(json.dumps(meta, indent=2))
+        print(scenario, variant, i, "first:", first["level"], "final:", meta["final"]["level"])
+
+
 # ------------------------------------------------------------------ destination runs
 
-def cmd_run(agent: str, scenario: str, cond: str, rep: int, root: Path) -> None:
+def cmd_run(agent: str, scenario: str, cond: str, rep: int, root: Path, variant: str | None = None) -> None:
     sc = SCENARIOS[scenario]
     d = HERE / "handoffs" / scenario
     ws = root / f"{scenario}-{agent}-{cond}-{rep}"
+    if variant:
+        # Each repeat reads its own independently produced handoff sample.
+        handoff = (d / variant / HANDOFF_FILES[cond].replace(".", f"-{rep}.", 1)) if cond in ("C", "D") else d / HANDOFF_FILES.get(cond, "")
+    else:
+        handoff = d / HANDOFF_FILES.get(cond, "")
     shutil.rmtree(ws, ignore_errors=True)
     work = ws / "work"
     work.mkdir(parents=True)
@@ -167,12 +235,12 @@ def cmd_run(agent: str, scenario: str, cond: str, rep: int, root: Path) -> None:
     shutil.copy(d / "handoff-state.json", state)
     log.write_text("")
     message = sc["destination"]
-    body = message if cond == "A" else WRAPPER.format(handoff=(d / HANDOFF_FILES[cond]).read_text().strip(), message=message)
+    body = message if cond == "A" else WRAPPER.format(handoff=handoff.read_text().strip(), message=message)
     prompt = f"{sc['policy']}\n\n{body}\n"
     (ws / "prompt.txt").write_text(prompt)
     cmd = (claude_cmd(scenario, state, log, "destination", ws / "mcp.json") if agent == "claude"
            else codex_cmd(scenario, state, log, "destination", work))
-    meta = {"agent": agent, "scenario": scenario, "condition": cond, "repeat": rep,
+    meta = {"agent": agent, "scenario": scenario, "condition": cond, "repeat": rep, "variant": variant,
             **execute(cmd, prompt, work, ws / "events.jsonl")}
     (ws / "meta.json").write_text(json.dumps(meta, indent=2))
     print(json.dumps(meta))
@@ -249,16 +317,21 @@ def main() -> None:
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("source"); p.add_argument("scenario", choices=SCENARIOS)
     p = sub.add_parser("handoffs"); p.add_argument("scenario", choices=SCENARIOS)
+    p = sub.add_parser("variant-handoffs"); p.add_argument("scenario", choices=SCENARIOS); p.add_argument("variant")
+    p.add_argument("--model", required=True); p.add_argument("--samples", type=int, default=3)
     p = sub.add_parser("run"); p.add_argument("agent", choices=["claude", "codex"]); p.add_argument("scenario", choices=SCENARIOS)
     p.add_argument("condition", choices=["A", "B2", "C", "D"]); p.add_argument("repeat", type=int); p.add_argument("--root", type=Path, required=True)
+    p.add_argument("--variant")
     p = sub.add_parser("score"); p.add_argument("--root", type=Path, required=True)
     a = ap.parse_args()
     if a.cmd == "source":
         cmd_source(a.scenario)
     elif a.cmd == "handoffs":
         cmd_handoffs(a.scenario)
+    elif a.cmd == "variant-handoffs":
+        cmd_variant_handoffs(a.scenario, a.variant, a.model, a.samples)
     elif a.cmd == "run":
-        cmd_run(a.agent, a.scenario, a.condition, a.repeat, a.root)
+        cmd_run(a.agent, a.scenario, a.condition, a.repeat, a.root, a.variant)
     else:
         cmd_score(a.root)
 
