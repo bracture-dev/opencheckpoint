@@ -92,8 +92,8 @@ not across agents. Cost is reported by Claude Code; Codex reports none.
 | Claude Code | B2. Transcript   |   3 |         7.0 |           0 |        255,429 |    5,157,569 | 19,817 | $3.47 |     206 s |         21 |                     4.0 |
 | Claude Code | C. Prose summary |   3 |         7.0 |           0 |        119,325 |    3,667,468 | 35,234 | $2.39 |     371 s |         41 |                    11.0 |
 | Claude Code | D. Checkpoint    |   3 |         7.0 |           0 |        125,381 |    3,298,129 | 36,366 | $2.39 |     366 s |         36 |                    13.7 |
-| Codex       | A. Bare          |   1 |         4.0 |           0 |         42,575 |      315,648 |  3,986 |   n/a |     129 s |         11 |                     6.0 |
-| Codex       | B2. Transcript   |   1 |         7.0 |           0 |        156,601 |    1,480,192 |  6,356 |   n/a |     185 s |         10 |                     3.0 |
+| Codex       | A. Bare          |   3 |         4.0 |           0 |         34,620 |      322,901 |  3,640 |   n/a |     111 s |         11 |                     5.3 |
+| Codex       | B2. Transcript   |   3 |         7.0 |           0 |        150,659 |    1,553,109 |  6,164 |   n/a |     176 s |         11 |                     3.7 |
 | Codex       | C. Prose summary |   1 |         7.0 |           0 |         37,163 |      535,040 |  6,281 |   n/a |     178 s |         13 |                     4.0 |
 | Codex       | D. Checkpoint    |   1 |         7.0 |           0 |         48,178 |      585,600 |  6,513 |   n/a |     179 s |         14 |                     7.0 |
 
