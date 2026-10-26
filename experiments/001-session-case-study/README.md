@@ -122,7 +122,7 @@ discriminate between conditions on this task.
    where typed provenance and operations are designed to matter. Experiment 3 (business
    scenarios) tests those.
 5. **The same checkpoint worked on both agents.** Claude Code and Codex each completed all seven
-   checks from it (Codex n=1).
+   checks from it (Codex n=1 for the checkpoint).
 6. **Transcript replay carried live paths into the original environment.** Two of three Claude
    transcript runs listed the original repository's absolute path, taken from the transcript.
    Redaction had replaced the username, so the path did not exist. Without redaction the agent
@@ -131,9 +131,11 @@ discriminate between conditions on this task.
 
 ### Deviations from the pre-registered plan
 
-- **Codex usage limit.** The operator's ChatGPT plan reached its usage limit during the batch.
-  Seven Codex runs failed on the limit error, three of them partway through, and were excluded.
-  Codex results are n=1 per condition.
+- **Codex usage limit.** The operator's ChatGPT plan reached its usage limit twice. In the first
+  batch, 8 of 12 Codex runs failed on the limit error (6 immediately, 2 partway); a second
+  attempt after a reset completed the bare and transcript cells and lost 4 summary and checkpoint
+  runs the same way. Runs that ended on the limit error are excluded. Codex has n=3 for bare and
+  transcript and n=1 for prose summary and checkpoint.
 - **Contamination rule narrowed after the runs.** The registered rule also flagged four Claude
   runs that touched a non-existent redacted path or their own spilled tool output under
   `~/.claude/projects/<run>`. Their tool calls were inspected: none reached the original
@@ -151,7 +153,8 @@ discriminate between conditions on this task.
 
 ## Next
 
-- **Complete the Codex repeats** once the usage limit resets, for n=3 per condition.
+- **Complete the Codex repeats** for prose summary and checkpoint (2 runs each) once the usage
+  limit resets.
 - **Experiment 3:** business scenarios with pending side effects, approvals, and injected content,
   where structure is expected to matter.
 - **Redaction** before anything from `private/` is published.
