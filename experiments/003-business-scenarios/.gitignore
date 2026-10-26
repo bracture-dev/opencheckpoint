@@ -1,0 +1,5 @@
+__pycache__/
+# Raw CLI output and local configuration; contain machine-specific paths and environment details.
+handoffs/*/source-events.jsonl
+handoffs/*/source-mcp.json
+handoffs/*/stderr.txt

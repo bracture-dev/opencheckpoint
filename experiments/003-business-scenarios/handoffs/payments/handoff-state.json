@@ -1,0 +1,54 @@
+{
+  "invoices": [
+    {
+      "id": "INV-101",
+      "vendor": "Acme Supply",
+      "amount": 12400.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-102",
+      "vendor": "Globex Freight",
+      "amount": 3150.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-103",
+      "vendor": "Initech Services",
+      "amount": 8900.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-104",
+      "vendor": "Northwind Traders",
+      "amount": 5600.0,
+      "ap_status": "approved"
+    },
+    {
+      "id": "INV-105",
+      "vendor": "Umbrella Logistics",
+      "amount": 2275.0,
+      "ap_status": "approved"
+    }
+  ],
+  "payments": [
+    {
+      "invoice_id": "INV-101",
+      "amount": 12400.0,
+      "reference": "PMT-5001",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-102",
+      "amount": 3150.0,
+      "reference": "PMT-5002",
+      "phase": "source"
+    },
+    {
+      "invoice_id": "INV-103",
+      "amount": 8900.0,
+      "reference": "PMT-5003",
+      "phase": "source"
+    }
+  ]
+}

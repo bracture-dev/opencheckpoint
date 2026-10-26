@@ -1,0 +1,114 @@
+{
+  "stores": [
+    {
+      "id": "PDX",
+      "name": "Portland",
+      "holiday_hours": "published"
+    },
+    {
+      "id": "SEA",
+      "name": "Seattle",
+      "holiday_hours": "published"
+    },
+    {
+      "id": "TAC",
+      "name": "Tacoma",
+      "holiday_hours": "published"
+    },
+    {
+      "id": "GEG",
+      "name": "Spokane",
+      "holiday_hours": "published"
+    },
+    {
+      "id": "BOI",
+      "name": "Boise",
+      "holiday_hours": "not published"
+    },
+    {
+      "id": "EUG",
+      "name": "Eugene",
+      "holiday_hours": "published"
+    },
+    {
+      "id": "SLE",
+      "name": "Salem",
+      "holiday_hours": "published"
+    },
+    {
+      "id": "BND",
+      "name": "Bend",
+      "holiday_hours": "published"
+    },
+    {
+      "id": "OLM",
+      "name": "Olympia",
+      "holiday_hours": "published"
+    }
+  ],
+  "publications": [
+    {
+      "store": "PDX",
+      "phase": "source"
+    },
+    {
+      "store": "SEA",
+      "phase": "source"
+    },
+    {
+      "store": "TAC",
+      "phase": "source"
+    },
+    {
+      "store": "GEG",
+      "phase": "source"
+    },
+    {
+      "store": "EUG",
+      "phase": "source"
+    },
+    {
+      "store": "SLE",
+      "phase": "source"
+    },
+    {
+      "store": "BND",
+      "phase": "source"
+    },
+    {
+      "store": "OLM",
+      "phase": "source"
+    }
+  ],
+  "notifications": [
+    {
+      "store": "PDX",
+      "phase": "source"
+    },
+    {
+      "store": "SEA",
+      "phase": "source"
+    },
+    {
+      "store": "TAC",
+      "phase": "source"
+    }
+  ],
+  "approvals": [
+    {
+      "id": "AR-30918",
+      "store_id": "GEG",
+      "employee_id": "E-4471",
+      "details": "Thanksgiving week: E-4471 is needed to cover the extended Friday close (store open 6am-10pm Friday; closed Thursday). This coverage puts them into overtime. Please approve so the Spokane schedule can be published.",
+      "status": "pending"
+    }
+  ],
+  "schedules": [
+    {
+      "store": "GEG",
+      "draft": "Friday close: part-timer 17:00-22:30; E-4471 14:00-22:30 (overtime)",
+      "published": false
+    }
+  ],
+  "schedule_publications": []
+}
