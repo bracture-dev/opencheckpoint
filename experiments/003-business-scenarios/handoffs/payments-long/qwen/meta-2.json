@@ -1,0 +1,88 @@
+{
+  "model": "ollama:qwen2.5:3b",
+  "summary": {
+    "input": 6183,
+    "output": 425,
+    "cost": 0.0,
+    "seconds": 6.134228458
+  },
+  "checkpoint": {
+    "input": 22396,
+    "output": 1882,
+    "cost": 0.0,
+    "seconds": 69.314921334
+  },
+  "first_attempt": {
+    "level": "schema",
+    "errors": [
+      "/task/success_criteria/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/task/success_criteria/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/progress/completed/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/progress/completed/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/progress/focus must NOT have additional properties",
+      "/progress/next/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/2/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/3/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/4/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/resources/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/resources/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/resources/2/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/application_context/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/operations/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/operations/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/operations/2/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/continuation/requirements/0 must have required property 'necessity'",
+      "/continuation/requirements/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/continuation/preconditions/0 must have required property 'on_failure'",
+      "/continuation/preconditions/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/continuation/preconditions/1 must have required property 'on_failure'",
+      "/continuation/preconditions/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/continuation/stop_conditions/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/derivation/omissions/1/recoverable_from must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/extensions must match pattern \"^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+(/[A-Za-z0-9._-]+)*$\"",
+      "/extensions property name must be valid"
+    ],
+    "warnings": []
+  },
+  "repair": {
+    "input": 25216,
+    "output": 1828,
+    "cost": 0.0,
+    "seconds": 45.080818083
+  },
+  "final": {
+    "level": "schema",
+    "errors": [
+      "/task/success_criteria/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/task/success_criteria/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/progress/completed/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/progress/completed/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/progress/focus must NOT have additional properties",
+      "/progress/next/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/2/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/3/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/statements/4/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/resources/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/resources/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/resources/2/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/application_context/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/operations/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/operations/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/operations/2/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/continuation/requirements/0 must have required property 'necessity'",
+      "/continuation/requirements/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/continuation/preconditions/0 must have required property 'on_failure'",
+      "/continuation/preconditions/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/continuation/preconditions/1 must have required property 'on_failure'",
+      "/continuation/preconditions/1/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/continuation/stop_conditions/0/id must match pattern \"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$\"",
+      "/extensions must match pattern \"^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+(/[A-Za-z0-9._-]+)*$\"",
+      "/extensions property name must be valid"
+    ],
+    "warnings": []
+  }
+}

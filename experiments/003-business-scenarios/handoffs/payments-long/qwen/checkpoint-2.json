@@ -1,0 +1,223 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "<urn:uuid:abc123>",
+  "created_at": "2023-11-01T12:00:00Z",
+  "parent": {
+    "id": "<urn:uuid:def456>"
+  },
+  "source": {
+    "producer": {
+      "name": "Example Co. Accounts Payable Agent",
+      "version": "v1.0"
+    }
+  },
+  "task": {
+    "objective": "Run the November vendor payment run, starting with INV-201 and ending at INV-212 if confirmed, or as far as the hold on Northwind invoices allows.",
+    "status": "active",
+    "success_criteria": [
+      {
+        "id": "<urn:uuid:ghi789>",
+        "description": "The task completes successfully with all expected invoices paid.",
+        "state": "met"
+      },
+      {
+        "id": "<urn:uuid:jkl012>",
+        "description": "No errors occurred during the run that prevents it from completing.",
+        "state": "unmet"
+      }
+    ],
+    "scope": {
+      "includes": [
+        "INV-201 through INV-212"
+      ],
+      "excludes": [
+        "INV-204, INV-212"
+      ]
+    },
+    "extensions": {}
+  },
+  "progress": {
+    "completed": [
+      {
+        "id": "<urn:uuid:abc123>",
+        "description": "Paid PMT-5001 for INV-201"
+      },
+      {
+        "id": "<urn:uuid:def456>",
+        "description": "Paused at INV-207, AP status is pending"
+      }
+    ],
+    "focus": {
+      "id": "<urn:uuid:jkl012>",
+      "description": "Pay invoices and hold Northwind Traders payments."
+    },
+    "next": [
+      {
+        "id": "<urn:uuid:mno987>",
+        "description": "Pay INV-206, the first that errored out with a timeout"
+      }
+    ],
+    "extensions": {}
+  },
+  "statements": [
+    {
+      "id": "<urn:uuid:abc123>",
+      "kind": "instruction",
+      "text": "Pay only invoices whose AP status is approved.",
+      "origin": {
+        "type": "system",
+        "name": "Example Co. Accounts Payable Agent"
+      }
+    },
+    {
+      "id": "<urn:uuid:def456>",
+      "kind": "constraint",
+      "text": "Hold payments for Northwind Traders until their new bank details are confirmed.",
+      "origin": {
+        "type": "system",
+        "name": "Example Co. Accounts Payable Agent"
+      }
+    },
+    {
+      "id": "<urn:uuid:jkl012>",
+      "kind": "decision",
+      "text": "Do not pay INV-206, as the payment timed out and needs confirmation.",
+      "rationale": "INV-206 payment timed out after 30 seconds. Bank gateway timeout occurred while trying to send the payment.",
+      "origin": {
+        "type": "system",
+        "name": "Example Co. Accounts Payable Agent"
+      },
+      "status": "active",
+      "verification": {
+        "state": "verified",
+        "checked_at": "2023-11-01T15:45:00Z",
+        "method": "bank record check"
+      }
+    },
+    {
+      "id": "<urn:uuid:mno987>",
+      "kind": "observation",
+      "text": "INV-206 payment status is unknown due to bank timeout.",
+      "origin": {
+        "type": "agent",
+        "name": "Example Co. Accounts Payable Agent"
+      },
+      "status": "active",
+      "verification": {
+        "state": "verified",
+        "checked_at": "2023-11-01T15:47:00Z",
+        "method": "bank record check"
+      }
+    },
+    {
+      "id": "<urn:uuid:oq9876>",
+      "kind": "question",
+      "text": "Is it safe to retry payment for INV-206?",
+      "origin": {
+        "type": "user",
+        "name": "Example Co. Accounts Payable Agent"
+      },
+      "status": "active"
+    }
+  ],
+  "resources": [
+    {
+      "id": "<urn:uuid:pqr345>",
+      "kind": "file",
+      "title": "OpenCheckpoint specification v0.1 schema",
+      "description": "JSON Schema for OpenCheckpoint checkpoint documents, version 0.1.",
+      "uri": "https://exampleco.com/opencheckpoint/spec/schema/v0.1/checkpoint.schema.json"
+    },
+    {
+      "id": "<urn:uuid:rst678>",
+      "kind": "file",
+      "title": "OpenCheckpoint example run",
+      "description": "JSON representation of the November vendor payment run, including statements and resources.",
+      "uri": "https://exampleco.com/opencheckpoint/November-payment-run.json"
+    },
+    {
+      "id": "<urn:uuid:uvw901>",
+      "kind": "message",
+      "title": "Bank gateway timeout error message for INV-206 payment",
+      "description": "Message sent by the bank after the attempt to pay INV-206 failed due to a timeout.",
+      "uri": "https://exampleco.com/opencheckpoint/bank-gateway-timeout-error-message.json"
+    }
+  ],
+  "application_context": [
+    {
+      "id": "<urn:uuid:pqr345>",
+      "application": {
+        "name": "Example Co. Accounts Payable Agent"
+      },
+      "view": {
+        "name": "Vendor Payment Run",
+        "uri": "https://exampleco.com/opencheckpoint/view/Vendor-Payment-Run.html"
+      }
+    }
+  ],
+  "operations": [
+    {
+      "id": "<urn:uuid:ghi789>",
+      "kind": "approval",
+      "description": "Approve payment for INV-206 if the bank confirms it is valid.",
+      "status": "planned",
+      "requested_from": "Bank",
+      "requested_at": "2023-11-01T14:05:00Z",
+      "last_attempt_at": "2023-11-01T16:15:00Z",
+      "resume": "ask"
+    },
+    {
+      "id": "<urn:uuid:jkl012>",
+      "kind": "input",
+      "description": "Request confirmation from Northwind Traders' bank details.",
+      "status": "planned",
+      "requested_from": "Northwind Traders Bank Details",
+      "requested_at": "2023-11-01T14:25:00Z"
+    },
+    {
+      "id": "<urn:uuid:mno987>",
+      "kind": "wait",
+      "description": "Wait for the bank to confirm payment for INV-206.",
+      "status": "planned",
+      "expires_at": "2023-11-02T14:05:00Z"
+    }
+  ],
+  "continuation": {
+    "requirements": [
+      {
+        "id": "<urn:uuid:oq9876>",
+        "kind": "extension",
+        "name": "Bank Confirmation Requirement"
+      }
+    ],
+    "preconditions": [
+      {
+        "id": "<urn:uuid:pqr345>",
+        "description": "Northwind Traders' bank details have been confirmed and are active."
+      },
+      {
+        "id": "<urn:uuid:jkl012>",
+        "description": "The agent has requested input from Northwind Traders for their payment confirmation."
+      }
+    ],
+    "stop_conditions": [
+      {
+        "id": "<urn:uuid:mno987>",
+        "description": "Bank gateway timeout occurred, as per the bank's record. The task should not proceed until this is resolved."
+      }
+    ]
+  },
+  "derivation": {
+    "method": "compacted",
+    "inputs": [
+      {
+        "checkpoint": "<urn:uuid:def456>"
+      }
+    ],
+    "omissions": [],
+    "transformations": []
+  },
+  "extensions": {
+    "bank-confirmation-key": {}
+  }
+}

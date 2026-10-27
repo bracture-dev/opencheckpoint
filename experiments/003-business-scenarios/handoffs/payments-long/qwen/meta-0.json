@@ -1,0 +1,47 @@
+{
+  "model": "ollama:qwen2.5:3b",
+  "summary": {
+    "input": 6183,
+    "output": 421,
+    "cost": 0.0,
+    "seconds": 9.570678792
+  },
+  "checkpoint": {
+    "input": 22396,
+    "output": 6963,
+    "cost": 0.0,
+    "seconds": 108.973247125
+  },
+  "first_attempt": {
+    "level": "parse",
+    "errors": [
+      "Expecting ',' delimiter: line 221 column 3 (char 6966)"
+    ]
+  },
+  "repair": {
+    "input": 29401,
+    "output": 7446,
+    "cost": 0.0,
+    "seconds": 206.58943341699998
+  },
+  "final": {
+    "level": "schema",
+    "errors": [
+      "/ must have required property 'opencheckpoint'",
+      "/ must have required property 'id'",
+      "/ must have required property 'created_at'",
+      "/ must have required property 'source'",
+      "/ must have required property 'task'",
+      "/ must NOT have additional properties",
+      "/ must NOT have additional properties",
+      "/ must NOT have additional properties",
+      "/ must NOT have additional properties",
+      "/ must NOT have additional properties",
+      "/ must NOT have additional properties",
+      "/ must NOT have additional properties",
+      "/ must NOT have additional properties",
+      "/ must NOT have additional properties"
+    ],
+    "warnings": []
+  }
+}

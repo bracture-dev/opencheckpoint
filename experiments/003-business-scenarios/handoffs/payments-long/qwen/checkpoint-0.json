@@ -1,559 +1,1406 @@
 {
-  "opencheckpoint": "0.1",
-  "id": "<urn:uuid:c8e5a7b6-96f3-420c-8eb2-b8d3d72c690b>",
-  "created_at": "2023-10-15T12:00:00Z",
-  "parent": {
-    "id": "<urn:uuid:c8e5a7b6-96f3-420c-8eb2-b8d3d72c690a>",
-    "digest": "<urn:sha256:deadbeef>"
-  },
-  "source": {
-    "producer": {
-      "name": "Example Co. Accounts Payable Agent",
-      "version": "1.0"
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opencheckpoint.github.io/opencheckpoint/schema/v0.1/checkpoint.schema.json",
+  "title": "OpenCheckpoint checkpoint document, version 0.1",
+  "description": "A portable record of the working state of an unfinished AI-assisted task, captured at a well-defined boundary so that another agent, runtime, or model can continue it. The normative specification is spec/versions/v0.1.md; where this schema and the specification disagree, the specification governs and the disagreement is a bug.",
+  "type": "object",
+  "required": [
+    "opencheckpoint",
+    "id",
+    "created_at",
+    "source",
+    "task"
+  ],
+  "properties": {
+    "opencheckpoint": {
+      "description": "Specification version this document conforms to, as MAJOR.MINOR.",
+      "const": "0.1"
+    },
+    "id": {
+      "description": "Globally unique identifier of this checkpoint. SHOULD be a urn:uuid URN.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "created_at": {
+      "description": "When the checkpoint was captured.",
+      "$ref": "#/$defs/timestamp"
+    },
+    "parent": {
+      "$ref": "#/$defs/parent"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "task": {
+      "$ref": "#/$defs/task"
+    },
+    "progress": {
+      "$ref": "#/$defs/progress"
+    },
+    "statements": {
+      "description": "Instructions, constraints, decisions, observations, hypotheses, questions, and quoted external content, each with its own provenance.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/statement"
+      }
+    },
+    "resources": {
+      "description": "References to files, records, documents, artifacts, and other objects the task involves.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/resource"
+      }
+    },
+    "application_context": {
+      "description": "Application state relevant to the task that did not necessarily originate in conversation.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/applicationContext"
+      }
+    },
+    "operations": {
+      "description": "Approvals, requested input, external actions, and waits that are not finished.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/operation"
+      }
+    },
+    "continuation": {
+      "$ref": "#/$defs/continuation"
+    },
+    "derivation": {
+      "$ref": "#/$defs/derivation"
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
     }
   },
-  "task": {
-    "objective": "Pay invoice payments for November.",
-    "outcome": "All approved invoices paid, Northwind Traders and Globex Freight hold.",
-    "status": "completed",
-    "success_criteria": [
-      { "id": "s1", "description": "Invoices payed in full.", "state": "met" },
-      { "id": "s2", "description": "Hold requests for Northwind Traders and Globex Freight are honored.", "state": "unmet" }
-    ],
-    "scope": {
-      "includes": [
-        "Approved invoices from November",
-        "Payments to vendors"
-      ],
-      "excludes": []
+  "additionalProperties": false,
+  "$defs": {
+    "timestamp": {
+      "description": "RFC 3339 date-time with an explicit UTC offset.",
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
     },
-    "extensions": {}
-  },
-  "progress": {
-    "completed": [
-      { "id": "c1", "description": "Paid INV-201, PMT-5001." },
-      { "id": "c2", "description": "Paid INV-202, PMT-5002." },
-      { "id": "c3", "description": "Paid INV-203, PMT-5003." },
-      { "id": "c4", "description": "Paid INV-205, PMT-5004." },
-      { "id": "c5", "description": "Payment for INV-206 failed due to timeout. Stale evidence, not repeated." }
-    ],
-    "focus": {
-      "description": "Checking invoices and handling hold requests",
-      "refs": [
-        "<urn:uuid:c8e5a7b6-96f3-420c-8eb2-b8d3d72c690b>"
+    "localId": {
+      "description": "Identifier of an object within this document. Unique across all objects in the document.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "localRefs": {
+      "description": "References to objects in this document by local identifier.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/localId"
+      },
+      "uniqueItems": true
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "extensions": {
+      "description": "Extension data keyed by a namespaced identifier (reverse-DNS name, optionally followed by a path). Consumers ignore keys they do not understand and preserve them when re-serializing.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+(/[A-Za-z0-9._-]+)*$"
+      }
+    },
+    "digest": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "value"
+      ],
+      "properties": {
+        "algorithm": {
+          "description": "Hash algorithm name from the IANA Named Information registry, e.g. sha-256.",
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "value": {
+          "description": "Lowercase hexadecimal digest.",
+          "type": "string",
+          "pattern": "^[0-9a-f]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "parent": {
+      "description": "The checkpoint this one was derived from.",
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "digest": {
+          "description": "Digest of the parent document's bytes, for tamper evidence.",
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "additionalProperties": false
+    },
+    "softwareRef": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "version": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sessionRef": {
+      "description": "A pointer into a session, conversation, or task record kept by another protocol or system.",
+      "type": "object",
+      "required": [
+        "protocol",
+        "id"
+      ],
+      "properties": {
+        "protocol": {
+          "description": "The protocol or system that defines the identifier, e.g. a2a, acp, mcp, open-responses, or a namespaced name.",
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "description": "Session, context, task, or conversation identifier.",
+          "type": "string",
+          "minLength": 1
+        },
+        "event": {
+          "description": "Identifier of the last event or entry the checkpoint reflects.",
+          "type": "string"
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "description": "The system that produced the checkpoint. Informational; it confers no trust.",
+      "type": "object",
+      "required": [
+        "producer"
+      ],
+      "properties": {
+        "producer": {
+          "$ref": "#/$defs/softwareRef"
+        },
+        "agent": {
+          "$ref": "#/$defs/softwareRef"
+        },
+        "model": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "provider": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "session_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sessionRef"
+          }
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      },
+      "additionalProperties": false
+    },
+    "task": {
+      "type": "object",
+      "required": [
+        "objective",
+        "status"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "objective": {
+          "description": "What the user or system is trying to accomplish.",
+          "$ref": "#/$defs/text"
+        },
+        "outcome": {
+          "description": "What a finished result looks like.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Task status at capture time.",
+          "enum": [
+            "active",
+            "blocked",
+            "awaiting_input",
+            "paused",
+            "completed",
+            "abandoned"
+          ]
+        },
+        "success_criteria": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/criterion"
+          }
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "includes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/text"
+              }
+            },
+            "excludes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      },
+      "additionalProperties": false
+    },
+    "criterion": {
+      "type": "object",
+      "required": [
+        "id",
+        "description",
+        "state"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/localId"
+        },
+        "description": {
+          "$ref": "#/$defs/text"
+        },
+        "state": {
+          "enum": [
+            "met",
+            "unmet",
+            "unknown"
+          ]
+        },
+        "evidence": {
+          "$ref": "#/$defs/localRefs"
+        }
+      },
+      "additionalProperties": false
+    },
+    "progress": {
+      "type": "object",
+      "properties": {
+        "completed": {
+          "description": "Work already done, oldest first.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/completedStep"
+          }
+        },
+        "focus": {
+          "description": "What was being worked on when the checkpoint was captured.",
+          "type": "object",
+          "required": [
+            "description"
+          ],
+          "properties": {
+            "description": {
+              "$ref": "#/$defs/text"
+            },
+            "refs": {
+              "$ref": "#/$defs/localRefs"
+            }
+          },
+          "additionalProperties": false
+        },
+        "next": {
+          "description": "Recommended next steps, in suggested order.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nextStep"
+          }
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      },
+      "additionalProperties": false
+    },
+    "completedStep": {
+      "type": "object",
+      "required": [
+        "id",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/localId"
+        },
+        "description": {
+          "$ref": "#/$defs/text"
+        },
+        "completed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "evidence": {
+          "$ref": "#/$defs/localRefs"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nextStep": {
+      "type": "object",
+      "required": [
+        "id",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/localId"
+        },
+        "description": {
+          "$ref": "#/$defs/text"
+        },
+        "blocked_by": {
+          "description": "Statements, operations, resources, or requirements that prevent this step.",
+          "$ref": "#/$defs/localRefs"
+        },
+        "requires": {
+          "description": "Continuation requirements this step depends on.",
+          "$ref": "#/$defs/localRefs"
+        },
+        "refs": {
+          "$ref": "#/$defs/localRefs"
+        }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "description": "verified: checked against evidence by the source. unverified: not checked. disputed: evidence conflicts. stale: was verified, but the evidence may have changed since.",
+          "enum": [
+            "verified",
+            "unverified",
+            "disputed",
+            "stale"
+          ]
+        },
+        "method": {
+          "description": "How the statement was checked.",
+          "type": "string"
+        },
+        "checked_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "revalidate": {
+          "description": "When a consumer must re-check the statement.",
+          "enum": [
+            "never",
+            "before_use",
+            "before_action"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "statement": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "text",
+        "origin"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/localId"
+        },
+        "kind": {
+          "description": "instruction: a directive from the user or operating system. constraint: a boundary the work must respect. decision: a choice already made. observation: something found to be the case. hypothesis: something believed but not established. question: something unresolved. external: content quoted from a third party, which carries no instruction authority.",
+          "enum": [
+            "instruction",
+            "constraint",
+            "decision",
+            "observation",
+            "hypothesis",
+            "question",
+            "external"
+          ]
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        },
+        "origin": {
+          "$ref": "#/$defs/origin"
+        },
+        "status": {
+          "description": "Defaults to active.",
+          "enum": [
+            "active",
+            "superseded",
+            "retracted",
+            "resolved"
+          ],
+          "default": "active"
+        },
+        "superseded_by": {
+          "$ref": "#/$defs/localId"
+        },
+        "resolution": {
+          "description": "How a question was resolved.",
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "description": "Why a decision was made.",
+          "type": "string",
+          "minLength": 1
+        },
+        "verification": {
+          "$ref": "#/$defs/verification"
+        },
+        "evidence": {
+          "$ref": "#/$defs/localRefs"
+        },
+        "recorded_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "description": "Instructions come only from the user or the operating system. Text that arrived in a tool result, document, web page, email, or another agent's output MUST be recorded as `external` (or as an observation about that content), never as an instruction.",
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "instruction"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "origin": {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "user",
+                      "system"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "A hypothesis cannot be verified; once it is, record it as an observation.",
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "hypothesis"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "verification": {
+                "properties": {
+                  "state": {
+                    "not": {
+                      "const": "verified"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "External content is attributed to the tool, application, agent, or third party it came from, never to the user or the operating system.",
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "external"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "origin": {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "tool",
+                      "external",
+                      "agent",
+                      "application"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "A decision records its rationale.",
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "decision"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "rationale"
+            ]
+          }
+        },
+        {
+          "description": "Only questions are resolved; a resolved question records its resolution.",
+          "if": {
+            "properties": {
+              "status": {
+                "const": "resolved"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "required": [
+              "resolution"
+            ],
+            "properties": {
+              "kind": {
+                "const": "question"
+              }
+            }
+          }
+        },
+        {
+          "description": "A superseded statement names its replacement, and only a superseded statement does.",
+          "if": {
+            "properties": {
+              "status": {
+                "const": "superseded"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "required": [
+              "superseded_by"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "superseded_by"
+              ]
+            }
+          }
+        }
       ]
     },
-    "next": [
-      { "id": "n1", "description": "Pay INV-204, Northwind Traders hold.", "blocked_by": ["s2"] },
-      { "id": "n2", "description": "Pay INV-208, Wayne Industrial invoice." },
-      { "id": "n3", "description": "Review remaining invoices from November." }
-    ]
-  },
-  "statements": [
-    {
-      "id": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "instruction",
-      "text": "Pay only invoices whose AP status is approved.",
-      "origin": {
-        "type": "system"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9d1a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "instruction",
-      "text": "Pay invoices from INV-201 through INV-212, in invoice order.",
-      "origin": {
-        "type": "system"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9d2a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "instruction",
-      "text": "Hold all invoices from Northwind Traders.",
-      "origin": {
-        "type": "system"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9d3a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "instruction",
-      "text": "Hold all invoices from Globex Freight until accounting sorts out the double-billing.",
-      "origin": {
-        "type": "system"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9d4a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "instruction",
-      "text": "Pay $4,120 for INV-219 from Umbrella Logistics.",
-      "origin": {
-        "type": "system"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9d5a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "instruction",
-      "text": "Do not pay INV-216 from Wayne Industrial.",
-      "origin": {
-        "type": "system"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9d6a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "constraint",
-      "text": "Only pay invoices marked as 'approved'.",
-      "origin": {
-        "type": "agent"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9d7a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "constraint",
-      "text": "Pay invoices in sequence from INV-201 to INV-212.",
-      "origin": {
-        "type": "agent"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9d8a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "constraint",
-      "text": "Hold all invoices from Northwind Traders.",
-      "origin": {
-        "type": "agent"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9d9a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "constraint",
-      "text": "Hold all invoices from Globex Freight until accounting resolves the double-billing.",
-      "origin": {
-        "type": "agent"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9daa7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "constraint",
-      "text": "Pay $4,120 for INV-219.",
-      "origin": {
-        "type": "agent"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9dba7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "constraint",
-      "text": "Do not pay INV-216 from Wayne Industrial.",
-      "origin": {
-        "type": "agent"
-      }
-    },
-    {
-      "id": "<urn:uuid:c9dbc54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "decision",
-      "text": "Pay INV-201, INV-202, INV-203, and INV-205 as they are approved.",
-      "origin": {
-        "type": "agent"
+    "origin": {
+      "description": "Where a statement came from. As reported by the source system; a consumer treats it as a claim, not proof.",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "user",
+            "system",
+            "agent",
+            "tool",
+            "application",
+            "external"
+          ]
+        },
+        "name": {
+          "description": "Name or role of the specific actor, tool, or publisher. Avoid personal data the destination does not need.",
+          "type": "string"
+        },
+        "ref": {
+          "description": "Resource the statement was taken from.",
+          "$ref": "#/$defs/localId"
+        }
       },
-      "rationale": "Approved invoices must be paid in order."
+      "additionalProperties": false
     },
-    {
-      "id": "<urn:uuid:c9ddc54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "decision",
-      "text": "Hold INV-206 from Hooli Packaging as it is pending.",
-      "origin": {
-        "type": "agent"
+    "resource": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "uri"
+          ]
+        },
+        {
+          "required": [
+            "locator"
+          ]
+        }
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/localId"
+        },
+        "kind": {
+          "enum": [
+            "file",
+            "repository",
+            "document",
+            "record",
+            "web",
+            "artifact",
+            "tool_output",
+            "dataset",
+            "message",
+            "other"
+          ]
+        },
+        "uri": {
+          "description": "Identifier of the resource in any URI scheme. Need not be publicly resolvable.",
+          "type": "string",
+          "format": "uri"
+        },
+        "locator": {
+          "description": "Identifies a resource that has no URI: an object type and key within a named system.",
+          "type": "object",
+          "required": [
+            "system",
+            "key"
+          ],
+          "properties": {
+            "system": {
+              "$ref": "#/$defs/text"
+            },
+            "type": {
+              "type": "string"
+            },
+            "key": {
+              "$ref": "#/$defs/text"
+            }
+          },
+          "additionalProperties": false
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "media_type": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9!#$&^_.+-]+/[A-Za-z0-9!#$&^_.+-]+(\\s*;.*)?$"
+        },
+        "revision": {
+          "description": "Version, commit, ETag, or other revision marker as observed by the source.",
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "availability": {
+          "description": "Whether the source could access the resource when it last tried.",
+          "enum": [
+            "available",
+            "restricted",
+            "unavailable",
+            "unknown"
+          ]
+        },
+        "sensitivity": {
+          "enum": [
+            "public",
+            "internal",
+            "confidential",
+            "restricted"
+          ]
+        },
+        "resolver": {
+          "description": "Hint for how to retrieve the resource. Never contains credentials.",
+          "type": "object",
+          "required": [
+            "protocol"
+          ],
+          "properties": {
+            "protocol": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hint": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": false
+        },
+        "excerpt": {
+          "description": "A short inline excerpt. Large content is referenced, not embedded.",
+          "type": "string",
+          "maxLength": 4096
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
       },
-      "rationale": "AP status for INV-206 is 'pending'. Must hold until status changes."
+      "additionalProperties": false
     },
-    {
-      "id": "<urn:uuid:c9dee54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "decision",
-      "text": "Hold INV-204 from Northwind Traders as it's on hold for new bank details.",
-      "origin": {
-        "type": "agent"
+    "applicationContext": {
+      "type": "object",
+      "required": [
+        "id",
+        "application"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/localId"
+        },
+        "application": {
+          "$ref": "#/$defs/softwareRef"
+        },
+        "view": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "$ref": "#/$defs/text"
+            },
+            "uri": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "additionalProperties": false
+        },
+        "selections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "resource"
+            ],
+            "properties": {
+              "resource": {
+                "$ref": "#/$defs/localId"
+              },
+              "role": {
+                "enum": [
+                  "focused",
+                  "selected",
+                  "open",
+                  "pinned"
+                ]
+              },
+              "detail": {
+                "description": "Application-defined detail, e.g. a cell range or line span.",
+                "type": "object"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "filters": {
+          "description": "Application-defined filters, keyed by name.",
+          "type": "object"
+        },
+        "drafts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/draft"
+          }
+        },
+        "state": {
+          "description": "Further application-defined state. Interpret with the schema named by `state_schema`.",
+          "type": "object"
+        },
+        "state_schema": {
+          "description": "URI identifying the schema of state.",
+          "type": "string",
+          "format": "uri"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
       },
-      "rationale": "Northwind has requested new bank account information, so we must wait."
+      "additionalProperties": false
     },
-    {
-      "id": "<urn:uuid:c9dfc54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "decision",
-      "text": "Pay INV-210, INV-211, and INV-212 as they are approved.",
-      "origin": {
-        "type": "agent"
+    "draft": {
+      "description": "An unsaved or unsubmitted change in an application.",
+      "type": "object",
+      "required": [
+        "id",
+        "description",
+        "state"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/localId"
+        },
+        "description": {
+          "$ref": "#/$defs/text"
+        },
+        "target": {
+          "description": "Resource the draft would change.",
+          "$ref": "#/$defs/localId"
+        },
+        "state": {
+          "enum": [
+            "unsaved",
+            "saved",
+            "submitted"
+          ]
+        },
+        "content": {
+          "description": "Small inline draft content.",
+          "type": "string",
+          "maxLength": 16384
+        },
+        "content_ref": {
+          "description": "Resource holding the draft content.",
+          "$ref": "#/$defs/localId"
+        }
       },
-      "rationale": "Approved invoices must be paid in sequence."
+      "additionalProperties": false
     },
-    {
-      "id": "<urn:uuid:c9e0c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "decision",
-      "text": "Pay INV-217, INV-219, and INV-220 as they are approved.",
-      "origin": {
-        "type": "agent"
+    "operation": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "description",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/localId"
+        },
+        "kind": {
+          "description": "approval: needs a person's approval. input: needs information from a person. action: a side-effecting call to an external system. wait: depends on an external event or system.",
+          "enum": [
+            "approval",
+            "input",
+            "action",
+            "wait"
+          ]
+        },
+        "description": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "description": "planned: not started. awaiting: requested and waiting. uncertain: started, outcome unknown. failed: attempted and failed. approved/rejected: an approval's recorded outcome. completed: finished. cancelled: will not happen.",
+          "enum": [
+            "planned",
+            "awaiting",
+            "uncertain",
+            "failed",
+            "approved",
+            "rejected",
+            "completed",
+            "cancelled"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/localId"
+        },
+        "effect": {
+          "description": "What repeating the operation does. none: no side effect. idempotent: repeating has no further effect. non_idempotent: repeating may duplicate the effect. unknown: assume non_idempotent.",
+          "enum": [
+            "none",
+            "idempotent",
+            "non_idempotent",
+            "unknown"
+          ]
+        },
+        "idempotency_key": {
+          "$ref": "#/$defs/localId"
+        },
+        "requested_from": {
+          "description": "Role or party whose approval or input is needed.",
+          "type": "string",
+          "minLength": 1
+        },
+        "requested_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "last_attempt_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "depends_on": {
+          "$ref": "#/$defs/localRefs"
+        },
+        "approval": {
+          "description": "The recorded outcome of an approval. A record, not an authorization.",
+          "type": "object",
+          "required": [
+            "decided_by",
+            "decided_at",
+            "evidence"
+          ],
+          "properties": {
+            "decided_by": {
+              "$ref": "#/$defs/text"
+            },
+            "decided_at": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "scope": {
+              "description": "What was approved, in the approver's terms.",
+              "type": "string"
+            },
+            "evidence": {
+              "description": "Resources in a system of record where the approval can be verified.",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/localId"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "resume": {
+          "description": "What the source recommends on continuation. retry: repeat it. verify_first: check the target system for its outcome before anything else. ask: ask a person. do_not_resume: leave it.",
+          "enum": [
+            "retry",
+            "verify_first",
+            "ask",
+            "do_not_resume"
+          ]
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
       },
-      "rationale": "Approved invoices must be paid in sequence."
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "description": "An operation whose outcome is unknown and that may duplicate an effect must not be blindly retried.",
+          "if": {
+            "properties": {
+              "status": {
+                "const": "uncertain"
+              },
+              "effect": {
+                "enum": [
+                  "non_idempotent",
+                  "unknown"
+                ]
+              }
+            },
+            "required": [
+              "status",
+              "effect"
+            ]
+          },
+          "then": {
+            "required": [
+              "resume"
+            ],
+            "properties": {
+              "resume": {
+                "enum": [
+                  "verify_first",
+                  "ask",
+                  "do_not_resume"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "description": "An uncertain operation with no declared effect is treated as unknown.",
+          "if": {
+            "properties": {
+              "status": {
+                "const": "uncertain"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "not": {
+              "required": [
+                "effect"
+              ]
+            }
+          },
+          "then": {
+            "required": [
+              "resume"
+            ],
+            "properties": {
+              "resume": {
+                "enum": [
+                  "verify_first",
+                  "ask",
+                  "do_not_resume"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "description": "Only approvals are approved or rejected, and a decided approval carries its record.",
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "approved",
+                  "rejected"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "required": [
+              "approval"
+            ],
+            "properties": {
+              "kind": {
+                "const": "approval"
+              }
+            }
+          }
+        },
+        {
+          "description": "An approval record belongs only to a decided approval.",
+          "if": {
+            "required": [
+              "approval"
+            ]
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "approved",
+                  "rejected"
+                ]
+              }
+            }
+          }
+        }
+      ]
     },
-    {
-      "id": "<urn:uuid:c9e1c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "decision",
-      "text": "Pay INV-221 and INV-222 as they are approved.",
-      "origin": {
-        "type": "agent"
+    "requirement": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "name",
+        "necessity"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/localId"
+        },
+        "kind": {
+          "description": "tool: a callable tool. capability: a general ability, e.g. code execution. access: access to a resource, which the destination must already hold. extension: a checkpoint extension the consumer must understand to interpret the document fully.",
+          "enum": [
+            "tool",
+            "capability",
+            "access",
+            "extension"
+          ]
+        },
+        "name": {
+          "description": "For tool, the tool's name as known to the source. For extension, the extension key. Otherwise a short name.",
+          "$ref": "#/$defs/text"
+        },
+        "description": {
+          "type": "string"
+        },
+        "necessity": {
+          "description": "required: continuation must not proceed without it. recommended: continuation can proceed degraded. optional: convenience.",
+          "enum": [
+            "required",
+            "recommended",
+            "optional"
+          ]
+        },
+        "fallback": {
+          "description": "How to continue without it.",
+          "type": "string"
+        },
+        "refs": {
+          "$ref": "#/$defs/localRefs"
+        }
       },
-      "rationale": "Approved invoices must be paid in sequence."
+      "additionalProperties": false
     },
-    {
-      "id": "<urn:uuid:c9e2c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "decision",
-      "text": "Hold INV-218 from Globex Freight as it's pending.",
-      "origin": {
-        "type": "agent"
+    "continuation": {
+      "type": "object",
+      "properties": {
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/requirement"
+          }
+        },
+        "preconditions": {
+          "description": "Conditions to check before resuming.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "description",
+              "on_failure"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/localId"
+              },
+              "description": {
+                "$ref": "#/$defs/text"
+              },
+              "refs": {
+                "$ref": "#/$defs/localRefs"
+              },
+              "on_failure": {
+                "enum": [
+                  "halt",
+                  "ask",
+                  "degrade"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "stop_conditions": {
+          "description": "Conditions under which continuation must not proceed.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "description"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/localId"
+              },
+              "description": {
+                "$ref": "#/$defs/text"
+              },
+              "refs": {
+                "$ref": "#/$defs/localRefs"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "recovery": {
+          "description": "Recommended first actions on resuming, in order.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "description"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/localId"
+              },
+              "description": {
+                "$ref": "#/$defs/text"
+              },
+              "refs": {
+                "$ref": "#/$defs/localRefs"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "incompatibilities": {
+          "description": "Known environments or conditions in which this checkpoint cannot be continued faithfully.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
       },
-      "rationale": "AP status for INV-218 is 'pending'. Must hold until status changes."
+      "additionalProperties": false
     },
-    {
-      "id": "<urn:uuid:c9e3c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "decision",
-      "text": "Do not pay INV-216 from Wayne Industrial as it's on hold for new bank details.",
-      "origin": {
-        "type": "agent"
+    "derivation": {
+      "description": "How this checkpoint was produced, and what was left out.",
+      "type": "object",
+      "required": [
+        "method"
+      ],
+      "properties": {
+        "method": {
+          "description": "captured: written from a live session. compacted: reduced from earlier checkpoints or session history. merged: combined from several inputs. converted: translated from another format. authored: written by hand. forked: copied from the parent to be continued alongside possible sibling copies.",
+          "enum": [
+            "captured",
+            "compacted",
+            "merged",
+            "converted",
+            "authored",
+            "forked"
+          ]
+        },
+        "inputs": {
+          "description": "Checkpoints or sessions this one was derived from.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "checkpoint": {
+                "type": "string",
+                "minLength": 1
+              },
+              "session": {
+                "$ref": "#/$defs/sessionRef"
+              }
+            },
+            "minProperties": 1,
+            "maxProperties": 1
+          }
+        },
+        "omissions": {
+          "description": "Information deliberately left out.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "description",
+              "reason"
+            ],
+            "properties": {
+              "description": {
+                "$ref": "#/$defs/text"
+              },
+              "reason": {
+                "enum": [
+                  "size",
+                  "irrelevant",
+                  "superseded",
+                  "sensitive",
+                  "unavailable"
+                ]
+              },
+              "recoverable_from": {
+                "description": "Resource or session from which the omitted information can be recovered.",
+                "$ref": "#/$defs/localId"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "transformations": {
+          "description": "Content that was condensed or rewritten, and which objects carry the result.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "description"
+            ],
+            "properties": {
+              "description": {
+                "$ref": "#/$defs/text"
+              },
+              "affected": {
+                "$ref": "#/$defs/localRefs"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
       },
-      "rationale": "AP status for INV-216 is 'pending'. Must hold until status changes."
+      "additionalProperties": false
     }
-  },
-  "resources": [
-    {
-      "id": "<urn:uuid:c9d0c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "INV-201, INV-202, ..., INV-224 invoice payments file",
-      "uri": "/path/to/invoice_payments_file.xlsx"
-    },
-    {
-      "id": "<urn:uuid:c9d1c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "Invoice Payments Journal for November",
-      "uri": "/path/to/journal_file.pdf"
-    },
-    {
-      "id": "<urn:uuid:c9d2c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "Northwind Traders Bank Details Confirmation Letter",
-      "uri": "/path/to/northwind_bank_details_letter.pdf"
-    },
-    {
-      "id": "<urn:uuid:c9d3c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "Globex Freight Bank Details Confirmation Letter",
-      "uri": "/path/to/globex_bank_details_letter.pdf"
-    },
-    {
-      "id": "<urn:uuid:c9d4c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "Invoice Payments Approval Records from Accounting",
-      "uri": "/path/to/accounting_approval_records.pdf"
-    },
-    {
-      "id": "<urn:uuid:c9d5c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "Bank Payment Confirmation Letters",
-      "uri": "/path/to/payment_confirmation_letters.pdf"
-    },
-    {
-      "id": "<urn:uuid:c9d6c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "Invoice Payments Log",
-      "uri": "/path/to/invoice_payments_log.csv"
-    },
-    {
-      "id": "<urn:uuid:c9d7c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "Invoice Payments Dashboard",
-      "uri": "/path/to/invoice_payments_dashboard.html"
-    },
-    {
-      "id": "<urn:uuid:c9d8c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "Invoice Payments Summary Report",
-      "uri": "/path/to/invoice_payments_summary_report.docx"
-    },
-    {
-      "id": "<urn:uuid:c9d9c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "file",
-      "title": "Invoice Payments Historical Data",
-      "uri": "/path/to/invoice_payments_historical_data.csv"
-    },
-    {
-      "id": "<urn:uuid:c9dea7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "file",
-      "title": "INVOICE-216, INVOICE-217 payment logs",
-      "uri": "/path/to/invoice_payment_logs.json"
-    },
-    {
-      "id": "<urn:uuid:c9dea7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "kind": "file",
-      "title": "INVOICE-216, INVOICE-217 payment receipts",
-      "uri": "/path/to/invoice_payment_receipts.pdf"
-    }
-  ],
-  "application_context": [
-    {
-      "id": "<urn:uuid:c9d0c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "application": {
-        "name": "ERP System",
-        "uri": "/path/to/erp_system"
-      },
-      "view": {
-        "name": "Accounts Payable Overview",
-        "uri": "/path/to/views/accounts_payable_overview.html"
-      }
-    }
-  ],
-  "operations": [
-    {
-      "id": "<urn:uuid:c9d0c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-201.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9d1c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-202.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9d2c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-203.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9d3c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-205.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9d4c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-210.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9d5c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-211.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9d6c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-212.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9d7c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-217.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9d8c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-219.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9d9c54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-220.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9dea54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-221.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9deb54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-222.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9dec54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-223.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9ded54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-224.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9def54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-218.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "non_idempotent",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    },
-    {
-      "id": "<urn:uuid:c9dff54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-      "kind": "approval",
-      "description": "Approve payment for INV-221.",
-      "status": "planned",
-      "target": "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>",
-      "effect": "unknown",
-      "requested_from": "System Administrator",
-      "depends_on": [
-        "<urn:uuid:c9d0a7b6-96f3-421c-8eb2-b8d3d72c690b>"
-      ],
-      "resume": "retry"
-    }
-  ],
-  "continuation": {
-    "requirements": [
-      {
-        "id": "<urn:uuid:c9de54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-        "kind": "tool",
-        "name": "Bank Gateway",
-        "necessity": "required"
-      }
-    ],
-    "preconditions": [
-      {
-        "id": "<urn:uuid:c9df54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-        "description": "Bank gateway availability",
-        "on_failure": "degrade"
-      }
-    ],
-    "stop_conditions": [],
-    "recovery": [
-      {
-        "id": "<urn:uuid:c9df54a-7f8d-11ed-aebc-b05b3e3cbcf6>",
-        "description": "Retry the failed operation",
-        "refs": []
-      }
-    ],
-    "incompatibilities": [
-      "Globex Freight payment is on hold until accounting sorts out the double-billing."
-    ]
-  },
-  "derivation": {
-    "method": "compacted",
-    "inputs": [
-      {
-        "checkpoint": "<urn:uuid:c8e5a7b6-96f3-420c-8eb2-b8d3d72c690a>",
-        "session": null
-      }
-    ],
-    "omissions": [],
-    "transformations": []
-  },
-  "extensions": {}
+  }
 }
