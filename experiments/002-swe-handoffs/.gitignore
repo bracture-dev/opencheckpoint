@@ -5,3 +5,5 @@ harness-check/
 __pycache__/
 handoffs/*/source-events.jsonl
 handoffs/*/stderr.txt
+# Handoffs contain absolute workspace paths; sanitized copies are added after the runs.
+handoffs/

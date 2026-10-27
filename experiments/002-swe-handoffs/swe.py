@@ -242,7 +242,7 @@ def cmd_evaluate() -> None:
         p.write_text("".join(json.dumps(r) + "\n" for r in rows))
         subprocess.run(["uv", "run", "-q", "--no-project", "--with", "swebench==5.0.2", "python", "-m",
                         "swebench.harness.run_evaluation", "--dataset_name", DATASET, "--predictions_path", str(p),
-                        "--max_workers", "4", "--run_id", label, "--cache_level", "instance"], cwd=evald, check=False)
+                        "--max_workers", "4", "--run_id", label], cwd=evald, check=False)
 
 
 def cmd_score() -> None:
