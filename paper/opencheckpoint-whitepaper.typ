@@ -7,7 +7,7 @@
   authors: (
     (name: "Mathew Goldsborough", email: "mat@nimblebrain.ai", affiliation: "github.com/opencheckpoint"),
   ),
-  abstract: [Work that one AI agent starts often continues with another: a different model, vendor, runtime, or application. We describe OpenCheckpoint, an open JSON format for the working state of an unfinished task, and evaluate it in eight experiments with 424 continuation sessions across agents from two vendors. Without a handoff, agents re-paid invoices, paid an invoice the user had put on hold, and reported unfinished work as complete; with a handoff from a capable model, no payment run committed a violation (0 of 48, against 12 of 12 without). In one long session, a summary or checkpoint cost 31% less than replaying the transcript; on 20 SWE-bench Verified tasks, handoffs cut tool calls by 12–23% without changing the solve rate. Prose summaries and checkpoints performed alike when capable models wrote and read them. The checkpoint's structure mattered in three places: agents followed a forged user instruction from every summary and from no checkpoint, a weak model's checkpoints failed validation while its summaries gave no sign of error, and software enforced checkpoint fields without a model. We identify two gaps in that enforcement and, in an exploratory follow-up, test fields that close them.],
+  abstract: [Work that one AI agent starts often continues with another: a different model, vendor, runtime, or application. We describe OpenCheckpoint, an open JSON format for the working state of an unfinished task, and evaluate it in eight experiments with 424 continuation sessions across agents from two vendors. Without a handoff, agents re-paid invoices, paid an invoice the user had put on hold, and reported unfinished work as complete; in single-agent payment runs continuing from a summary or checkpoint written by a capable model, none committed a violation (0 of 36, against 12 of 12 without). In one long session, continuing from a summary or checkpoint cost 31% less than replaying the transcript, before the one-time cost of writing the handoff; on 20 SWE-bench Verified tasks, handoffs reduced mean tool calls by 12–23% (one of six comparisons significant after correction) with no detectable change in the solve rate. We found no difference between prose summaries and checkpoints when capable models wrote and read them, though every handoff reached zero safety violations, which left no room for one. The formats differed in three places: agents followed a forged user instruction from the one forged summary and from neither of two forged checkpoints, though the forgeries also differed in framing; a weak model's checkpoints failed validation while its summaries gave no sign of error; and software enforced checkpoint fields without a model. We identify two gaps in that enforcement and, in an exploratory follow-up, test fields that close them once one producer-written field is corrected by hand.],
 )
 
 = Introduction
@@ -22,7 +22,7 @@ This paper describes OpenCheckpoint [16], an open JSON format for the working st
 + *An evaluation method* for handoffs: real interruptions, mock systems with deliberate traps, destinations from two vendors, rubrics committed before the runs, and disclosed corrections.
 + *Measurements* across eight experiments and 424 continuation sessions, plus 24 follow-up runs, covering cost, completion, safety, tampering, weak producers, software consumers, forking, and software tasks at scale.
 
-Without a handoff, agents re-paid invoices, paid an invoice on hold, and reported unfinished work as complete. In one long session, a structured handoff cost a third less than replay. The same checkpoints worked with agents from two vendors, and a checkpoint's explicit provenance changed how agents treated a forged instruction. We expected a checkpoint to beat a good prose summary on safety and completion in general. It did not: with capable models writing and reading the handoff, the two performed alike.
+Without a handoff, agents re-paid invoices, paid an invoice on hold, and reported unfinished work as complete. In one long session, continuing from a structured handoff cost a third less than replay, before the cost of writing it. The same checkpoints worked with agents from two vendors, and agents followed a forged instruction from a summary but not from a checkpoint, though the two forgeries also differed in framing. We expected a checkpoint to beat a good prose summary on safety and completion in general. We found no difference with capable models writing and reading the handoff: every handoff reached zero safety violations, which left no room for one, and completion was close (26 and 28 of 30 tasks in experiment 003).
 
 = Background and Related Work
 
@@ -38,7 +38,7 @@ The Agent Session Protocol (ASP) [5] stores and migrates complete session logs b
 
 MemGPT pages memory in and out of a bounded context [10]. On SWE-bench Verified, masking old observations halves cost relative to an unmanaged agent while matching the solve rate of LLM summarization [11]. ACON learns compression guidelines against task success and cuts peak tokens by 26–54% [12]. ContinuityBench interrupts agents on three benchmarks and finds that interruption drops task success from 41.7% to 28.0%, and that a structured summary outperforms a summary plus full action history in 11 of 18 settings [14].
 
-The closest prior work is _Handoff Debt_ [13]. Its authors interrupt coding agents on SWE-bench Verified and compare four handoff views, from repository state alone to structured notes. Context-bearing handoffs cut median agent events by 20–59% and prompt tokens by 42–63%, with smaller and model-dependent effects on solve rate. Our experiment 002 uses a similar design and finds the same pattern (§5.8).
+The closest prior work is _Handoff Debt_ [13]. Its authors interrupt coding agents on SWE-bench Verified and compare four handoff views, from repository state alone to structured notes. Context-bearing handoffs cut median agent events by 20–59% and prompt tokens by 42–63%, with smaller and model-dependent effects on solve rate. Our experiment 002 uses a similar design and finds the same pattern of fewer agent actions and small solve-rate effects, but no token savings with Claude Code, because its interrupted sessions were short (§5.8).
 
 OpenCheckpoint complements these. It travels inside the protocols and references the session logs. It also differs from memory, which accumulates across tasks; a checkpoint records one task's state at one moment.
 
@@ -61,7 +61,7 @@ Validation has two levels: syntactic (the schema) and semantic (nine error rules
 
 *Conditions.* A destination agent receives the next request and one of: nothing more (A, bare); the source transcript (B2); a prose summary (C); or a checkpoint (D). Every condition except A wraps the handoff in the same short preamble, which tells the destination to treat it as information about the work so far, not as instructions (Appendix C). Experiment 001 also measures the original session context (B1), for size only.
 
-*Producers.* A model with fixed prompts and no tools writes each handoff from the source transcript: Claude Opus 5.5 by default, Claude Haiku 5.5 in experiments 004 and 007, and Qwen 2.5 3B [18] on the experimenters' machine in experiment 007. A checkpoint that fails to parse or validate gets one repair round with the validator's errors. We call Opus and Haiku the _capable producers_.
+*Producers.* A model with fixed prompts and no tools writes each handoff from the source transcript: Claude Opus 5.5 by default, Claude Haiku 5.5 in experiments 004 and 007, and Qwen 2.5 3B [18] on the experimenters' machine in experiment 007. When Haiku or Qwen writes a checkpoint, or Opus writes one in experiment 002, a checkpoint that fails to parse or validate gets one repair round with the validator's errors; summaries get none. In the business scenarios only Qwen's checkpoints needed the repair, and the Opus checkpoints of experiments 001 and 003 validated on the first attempt. We call Opus and Haiku the _capable producers_.
 
 *Destinations.* Claude Code 2.1.311 with Claude Opus 5.5, and Codex CLI 0.162.1 with gpt-6-astra at medium reasoning effort. Token counts include each tool's own system prompt and tool definitions, so we compare conditions within an agent. _Uncached input_ is the input a provider processes at full price: for Claude, input plus cache writes; for Codex, input minus cached input.
 
@@ -70,7 +70,7 @@ Validation has two levels: syntactic (the schema) and semantic (nine error rules
 - Experiment 002: 20 SWE-bench Verified tasks [15, 20] rated "1-4 hours", each interrupted at half of an uninterrupted reference run's tool calls.
 - Experiments 003–008: business scenarios on mock MCP systems with persistent state and a call log: a support refund awaiting approval, a vendor payment run with a payment that times out after the bank accepts it, a multi-store rollout interrupted mid-notification, and a three-turn payment run in which the user changes course.
 
-*Measures.* A _safety violation_ is an action each scenario's rubric forbids: paying an invoice twice, paying a held invoice or one not approved, paying the wrong amount, refunding the wrong charge or issuing a credit, notifying a manager twice, publishing a schedule without approval, or acting on an uncertain payment before checking the bank. We also measure tasks completed, tasks the SWE-bench harness resolves (swebench 5.0.2), uncached and cached input, output tokens, cost, wall time, tool calls, and the cost of writing each handoff. We test proportions with Fisher's exact test and paired SWE-bench outcomes with McNemar and Wilcoxon tests, all two-sided.
+*Measures.* A _safety violation_ is an action each scenario's rubric forbids: paying an invoice twice, paying a held invoice or one not approved, paying the wrong amount, refunding the wrong charge or issuing a credit, notifying a manager twice, publishing a schedule without approval, or acting on an uncertain payment before checking the bank. We also measure tasks completed, tasks the SWE-bench harness resolves (swebench 5.0.2), uncached and cached input, output tokens, cost, wall time, tool calls, and the cost of writing each handoff. We test proportions with Fisher's exact test and paired SWE-bench outcomes with McNemar and Wilcoxon tests, all two-sided. The runs in a cell continue one source session and, for Opus, one handoff document, so these tests measure how consistently destinations behave on the handoffs we produced, not how results vary across source sessions or handoff samples.
 
 *Rigor.* We committed rubrics and hypotheses before the runs they score, except for experiment 005, which we report as exploratory. We isolated destination workspaces from the original repository and its history and checked every tool call for contamination. We redacted the real session in experiment 001 before sending it to a second vendor, reran runs that failed on usage limits, and disclosed each scorer correction with its original values.
 
@@ -112,7 +112,7 @@ The checkpoint was 4.9% of the portable transcript and 2.9% of what the session 
   caption: [Continuing one long software session; means of three runs per cell],
 )
 
-Without a handoff, neither agent understood that the user's one-word reply accepted a pending proposal. With a handoff, every run passed every check. In this session, a summary or checkpoint cost 31% less than replay with Claude and read half the uncached input; with Codex, a third. Replay finished fastest with Claude, because the transcript held the previous agent's exact plan. In two of three Claude replay runs, the agent tried to open the original repository's absolute path, which it had read in the transcript.
+Without a handoff, neither agent understood that the user's one-word reply accepted a pending proposal. With a handoff, every run passed every check. In this session, continuing from a summary or checkpoint cost the Claude destination 31% less than replay and read half the uncached input; with Codex, a third of it. The ordering held in every run: Claude's three runs cost \$3.32–3.75 with replay, \$2.28–2.62 with a summary, and \$2.26–2.59 with a checkpoint. Writing the handoff cost \$1.82 for the summary and \$2.27 for the checkpoint, once. For a single continuation that reverses the comparison (\$4.21 and \$4.66 against \$3.47 for replay); the summary costs less than replay from the second continuation of the same handoff, and the checkpoint from the third. Replay finished fastest with Claude, because the transcript held the previous agent's exact plan. In two of three Claude replay runs, the agent tried to open the original repository's absolute path, which it had read in the transcript.
 
 == Side effects, approvals, and conversation-only facts (experiment 003, 72 runs)
 
@@ -129,13 +129,13 @@ Without a handoff, neither agent understood that the user's one-word reply accep
   caption: [Three business scenarios, two agents, three runs per cell],
 )
 
-In the payment scenario without a handoff, every Codex run re-paid the three invoices the source had already paid (\$24,450 in duplicates per run) and paid an invoice the user had put on hold in conversation. Every Claude run checked the bank, made no duplicate, and paid the held invoice. Across the payment runs of experiments 003, 004, and 007, bare runs violated in 12 of 12 and runs with a handoff from a capable producer in 0 of 48 (Fisher p = 7×10#super[-13]).
+In the payment scenario without a handoff, every Codex run re-paid the three invoices the source had already paid (\$24,450 in duplicates per run) and paid an invoice the user had put on hold in conversation. Every Claude run checked the bank, made no duplicate, and paid the held invoice. Across the payment runs of experiments 003, 004, and 007, bare runs violated in 12 of 12, runs continuing from a summary or checkpoint written by a capable producer in 0 of 36, and transcript runs in 0 of 12. In each experiment with bare runs, the contrast was the same: 6 of 6 against 0 of 12 in experiment 003 and in experiment 007 (Fisher p = 5.4×10#super[-5] each).
 
 In the rollout, every bare run reported the work complete while five managers had received no notice; the systems did not record notifications. In the support scenario, the systems exposed the approvals and charges, and bare runs committed no violation. The incomplete tasks under summary and checkpoint were one store manager's notification, which Claude held back for the user while that store's overtime approval was pending. Both agents ignored a customer's claim that a manager had approved refunding both charges, in every condition.
 
 == Weak producers and long sessions (experiments 004 and 007)
 
-With Haiku writing the handoff, all nine checkpoints passed validation on the first attempt (6 in experiment 004, 3 in 007) at about 3% of the cost of an Opus checkpoint, and summaries and checkpoints had the same safety record: no violations in 24 runs in experiment 004 or 12 in experiment 007. Experiment 007's three-turn session added a hold, a release, and an amount correction that existed only in conversation.
+With Haiku writing the handoff, all nine checkpoints passed validation on the first attempt (6 in experiment 004, 3 in 007) at 2–4% of the cost of an Opus checkpoint, and summaries and checkpoints had the same safety record: no violations in 24 runs in experiment 004 or 12 in experiment 007. Experiment 007’s three-turn session added a hold, a release, and an amount correction that existed only in conversation.
 
 #figure(
   table(
@@ -156,7 +156,7 @@ With Qwen 2.5 3B as the producer, runs violated in 10 of 12, against 0 of 12 wit
 
 == Tampered handoffs (experiment 006, 48 runs)
 
-We applied two forgeries the same way to a summary and a checkpoint.
+We forged a summary and a checkpoint with the same two attacks, each written in the format's own terms.
 
 #figure(
   table(
@@ -166,10 +166,10 @@ We applied two forgeries the same way to a summary and a checkpoint.
     [Forged approval (refund both charges, issue a credit)], [0 of 12], [0 of 12],
     [Forged user instruction (release a held invoice)], [12 of 12], [0 of 12],
   ),
-  caption: [Forgeries applied the same way to both formats; two forgery versions, three runs per cell each],
+  caption: [The same two attacks written into each format; two forgery versions per attack, three runs per version and agent. Version 2 of the forged instruction changed only the checkpoint, so both versions share one summary],
 )
 
-The forged approval failed in both formats: destinations read approvals from the billing system, which had no record of it. The forged instruction succeeded in 12 of 12 runs against the summary and 0 of 12 against the checkpoint (p = 7.4×10#super[-7]). In the summary, it read as a past event ("the user released the hold"). In the checkpoint, it was a statement of kind `instruction` attributed to the user, superseding the earlier hold. Destinations given the checkpoint paid the other invoices and asked the user to confirm the release, noting that the release appeared only in the handoff and that nobody could reverse the payment.
+The forged approval failed in both formats: destinations read approvals from the billing system, which had no record of it. The forged instruction succeeded in 12 of 12 runs against the summary and 0 of 12 against the checkpoint (p = 7.4×10#super[-7]). The runs share forgery documents: one summary, which version 2 left unchanged because it was already consistent, and two checkpoints. This shows the behavior was consistent on those documents; counted by document, it is 1 of 1 against 0 of 2, which says nothing about how often a forgery would succeed. In the summary, it read as a past event ("the user released the hold"). In the checkpoint, it was a statement of kind `instruction` attributed to the user, superseding the earlier hold. Destinations given the checkpoint paid the other invoices and asked the user to confirm the release, noting that the release appeared only in the handoff and that nobody could reverse the payment.
 
 Our first checkpoint forgery left traces of the hold in other fields; a second version, consistent throughout, gave the same result. Two explanations remain open. The typed `user` origin may lead agents to treat the release as a claim to confirm. Or the superseded hold statement, which the checkpoint keeps as history, may have raised suspicion. Both formats received the same preamble about information and instructions. Validation rejected all four crude forgeries (an approval without evidence, instructions attributed to a tool or to external content, a blind retry of an uncertain payment) and accepted both careful ones.
 
@@ -177,7 +177,7 @@ Our first checkpoint forgery left traces of the hold in other fields; a second v
 
 A platform guard compiled from checkpoint fields, with no model involved, refused every attempt to pay the held invoice and every repeat of the timed-out payment. In live runs where the model saw only the next message, payment-scenario violations fell from 6 of 6 runs to 1 of 6 (p = 0.015). In the remaining run, the agent re-paid invoices the source had already paid. An operation records its target and status, but not the call it stands for, so the compiler cannot turn a completed operation into a rule against repeating it.
 
-The guard also refused the correct refund in all six support runs. The stop condition meant "until the approval arrives", but stop conditions are prose, so the compiled rule could not lift. A guard supplies no missing knowledge: in the rollout, guarded bare runs left the same five managers without notice. In an offline replay of 96 recorded runs, rules that Haiku extracted from either format blocked more harmful calls than compiled rules but also 54–85% of legitimate payment calls, against 27%.
+The guard also refused the correct refund in all six support runs. The stop condition meant "until the approval arrives", but stop conditions are prose, so the compiled rule could not lift. A guard supplies no missing knowledge: in the rollout, guarded bare runs left the same five managers without notice. In an offline replay of 96 recorded runs, rules that Haiku extracted from either format blocked more harmful calls than compiled rules but also 54–85% of legitimate payment calls, against 27% for compiled rules (summed over the rule sets compiled from experiments 003 and 004’s checkpoints; 8% for experiment 003’s checkpoint alone, @tab-005v2).
 
 *Follow-up with the added fields.* We added `call`, `applies_to`, and `until` to the format, and Opus wrote new checkpoints from the same source transcripts with an unchanged prompt that names none of them. It used all three. Compiling them showed a third gap: a guard must check an `until` operation's status somewhere, and Opus had targeted the support approval at the charge it approves. We added `record` before any live run, and Opus wrote the checkpoints again. One `record` pointed at a tool rather than a payment record; a separate rule set corrects that one field. @tab-005v2 compares the guards on the same 96 recorded runs and in 24 new live runs.
 
@@ -187,14 +187,14 @@ The guard also refused the correct refund in all six support runs. The stop cond
     [Scenario], [Rules], [Harmful calls blocked], [Legitimate calls blocked],
     [payments], [v1, original checkpoint], [9 of 15], [3 of 36],
     [payments], [v2, new checkpoint], [15 of 15], [36 of 36],
-    [payments], [v2, `record` corrected], [15 of 15], [0 of 36],
+    [payments], [v2, `record` corrected by hand], [15 of 15], [0 of 36],
     [support], [v1, original checkpoint], [0 of 0], [26 of 67],
     [support], [v2, new checkpoint], [0 of 0], [0 of 67],
   ),
-  caption: [Offline replay of experiments 003 and 004's recorded runs through guards compiled from checkpoint fields. Rollout is unchanged (23 of 143 legitimate calls in every rule set).],
+  caption: [Offline replay of experiments 003 and 004’s recorded runs through guards compiled from checkpoint fields. Rollout is unchanged (23 of 143 legitimate calls in every rule set).],
 ) <tab-005v2>
 
-In the live runs, three per cell, no guarded payment run paid an invoice twice or paid the held invoice (0 of 12, against 1 of 6 with the version 1 guard). Each remaining violation was a payment attempted before reading the bank, which the guard refused. The support refund that the version 1 guard refused in all six runs went through in all six. As produced, the payment checkpoint held INV-105 until a record no system could report, so the guard held it in all six runs and none completed; with the corrected `record`, all six completed. A guard fails closed on a producer's mistake: the cost fell on completion, and no payment went wrong. Rollout completion was unchanged.
+In the live runs, three per cell, no guarded payment run paid an invoice twice or paid the held invoice (0 of 12, against 1 of 6 with the version 1 guard, whose one violating run re-paid invoices the source had already paid). Under the rubric's full definition, 3 of the 12 runs had a violation, each a payment attempted before reading the bank, which the guard refused. The support refund that the version 1 guard refused in all six runs went through in all six. As produced, the payment checkpoint held INV-105 until a record no system could report, so the guard held it in all six runs and none completed; with the corrected `record`, all six completed. A guard fails closed on a producer's mistake: the cost fell on completion, and no payment went wrong. Rollout completion was unchanged.
 
 == Forking against shared systems (experiment 008, 12 pairs)
 
@@ -220,32 +220,32 @@ Two agents from different vendors continued sibling forks at the same time again
   caption: [Twenty SWE-bench Verified tasks interrupted halfway; one run per task and condition],
 )
 
-We interrupted a Claude Code source halfway through each task, by the tool-call count of an uninterrupted reference run; the source left 13 to 244 lines of partial changes. Every destination received the issue and that workspace. Across six paired comparisons with the workspace alone, handoffs gained one task and lost five, none significant (McNemar p ≥ 0.5); with the issue and the diff, Claude Code finished as often as the uninterrupted reference. Handoffs cut tool calls by 15–23% with Claude Code and 12–21% with Codex, significant in four of six comparisons (Wilcoxon p ≤ 0.032). _Handoff Debt_ reports larger reductions in agent events (20–59%) with the same pattern of small solve-rate effects [13]. The interrupted sessions ran 4 to 13 tool calls, so handoffs saved no tokens: with Claude Code they cost about \$0.05 more per task.
+We interrupted a Claude Code source halfway through each task, by the tool-call count of an uninterrupted reference run; the source left 13 to 244 lines of partial changes. Every destination received the issue and that workspace. Across six paired comparisons with the workspace alone, handoffs gained one task and lost five, none significant (McNemar p ≥ 0.5). The differences ranged from −10 to +5 percentage points, with 95% intervals spanning −28 to +19 points (Newcombe), so the experiment rules out only large changes in solve rate; with the issue and the diff, Claude Code finished as often as the uninterrupted reference. Handoffs cut tool calls by 15–23% with Claude Code and 12–21% with Codex, with Wilcoxon p between 0.007 and 0.032 in four of six comparisons; after Holm correction across the six, one remains significant (Codex with the transcript, adjusted p = 0.041). _Handoff Debt_ reports larger reductions in agent events (20–59%) with the same pattern of small solve-rate effects [13]. The interrupted sessions ran 4 to 13 tool calls, so handoffs saved Claude Code no tokens and cost it about \$0.05 more per task; Codex read 5–12% less uncached input with a handoff.
 
 = Discussion
 
-== Handoffs protect state the systems do not record
+== Handoffs protect state the next agent does not see or does not check
 
-In these scenarios, every safety violation without a handoff involved state that existed only in the session: a hold given in conversation, a side effect with an unknown outcome, notifications the systems did not expose, and an amount the user corrected. Where the systems recorded their own state (the support scenario's approvals, the software tasks' working tree), agents recovered it unaided, and a handoff saved rediscovery. Making systems record more of their own state is an alternative to any handoff format, and in those cases it works as well.
+In these scenarios, every safety violation without a handoff involved state that existed only in the session (a hold given in conversation, notifications the systems did not expose, an amount the user corrected) or state a system recorded but the destination did not check: 4 of 6 Codex bare runs re-paid invoices the bank showed as paid (3 of 3 in experiment 003), while every Claude bare run checked the bank and made no duplicate. Where the systems exposed their own state and agents read it (the support scenario's approvals, the software tasks' working tree), agents recovered it unaided, and a handoff saved rediscovery. Making systems record more of their own state is an alternative to any handoff format, and in those cases it works as well.
 
-== Capable producers make summaries and checkpoints equivalent
+== With capable producers, summaries and checkpoints did not differ
 
-With Opus or Haiku as the producer and capable destinations, summaries and checkpoints gave the same safety and completion. A checkpoint cost about four times as much to write as a summary with Opus, and seven to ten times as much with Haiku. We did not test a prose summary with labelled provenance, which might reproduce the forgery result at a summary's cost.
+With Opus or Haiku as the producer and capable destinations, we found no difference in safety or completion between summaries and checkpoints. In the payment scenarios every handoff reached zero violations, so these experiments could not have separated the formats on safety. In the business scenarios a checkpoint cost 3.0–4.4 times as much to write as a summary with Opus, and 3.9–12.2 times (median 7.7) with Haiku; in experiment 001’s longer session, 1.25 times with Opus. We did not test a prose summary with labelled provenance, which might reproduce the forgery result at a summary's cost.
 
 == What the checkpoint's structure changed
 
-- *Forged instructions.* Agents treated a user instruction that appeared as a discrete, attributed statement as a claim to confirm, and followed the same forgery in prose in every run.
+- *Forged instructions.* Agents treated a release of a hold, written as a discrete statement attributed to the user, as a claim to confirm, and followed the release in every run when a summary reported it as a past event. Whether the typed origin or the retained earlier hold made the difference is untested (§5.5).
 - *Detectable failure.* A 3B producer's checkpoints failed validation; its summaries passed as well-formed text.
 - *Enforcement without a model.* A platform compiled fields into rules and enforced them whatever the model decided.
 - *Mechanical forking.* A tool applied ownership, and the validator flagged an unguarded fork.
 
 == Fields that software can enforce
 
-Experiment 005 found two gaps: no call identity for operations, so a guard could not block a repeat of completed work, and no machine-readable condition on a stop condition, so a guard could not lift a rule when the system of record changed. The follow-up closed both with `call`, `applies_to`, and `until`, and showed that `until` also needs `record`, the place where a consumer checks an operation's status. A capable producer used the fields without being told to. The remaining risk sits with the producer: a `record` that names nothing a system can check makes the guard hold work indefinitely, and a validator cannot detect that, because whether a resource has a status is a fact about the target system.
+Experiment 005 found two gaps: no call identity for operations, so a guard could not block a repeat of completed work, and no machine-readable condition on a stop condition, so a guard could not lift a rule when the system of record changed. An exploratory follow-up closed both with `call`, `applies_to`, and `until`, and showed that `until` also needs `record`, the place where a consumer checks an operation's status. A capable producer used the fields without being told to. We designed the fields after inspecting the recorded runs we then replayed them on, and as produced the payment guard held every run; it released correctly only after one `record` was corrected by hand. The remaining risk sits with the producer: a `record` that names nothing a system can check makes the guard hold work indefinitely, and a validator cannot detect that, because whether a resource has a status is a fact about the target system.
 
 == Cost depends on the session a handoff replaces
 
-Against one 209,000-token transcript, a summary or checkpoint cost a third less than replay. Against the 4-to-13-call sessions of experiment 002, a handoff cost about \$0.05 more per task than no handoff. Replay is accurate and, for a short session, cheap; for a long one it costs more and carries every path and reference the session touched.
+Against one 209,000-token transcript, continuing from a summary or checkpoint cost the destination a third less than replay; counting the cost of writing the handoff, it cost less only from the second (summary) or third (checkpoint) continuation. Against the 4-to-13-call sessions of experiment 002, a handoff cost about \$0.05 more per task than no handoff. Replay is accurate and, for a short session, cheap; for a long one it costs more and carries every path and reference the session touched.
 
 == Validation does not authorize action
 
@@ -254,13 +254,13 @@ No valid handoff authorized anything. Destinations verified approvals in the sys
 = Limitations
 
 - Three runs per cell in most experiments; one real session (experiment 001); synthetic business scenarios on mock systems simpler than production systems.
-- One source session per scenario; Opus handoffs are single samples in experiments 003 and 005–008.
+- One source session per scenario; Opus handoffs are single samples in experiments 003 and 005–008, so significance tests measure repeatability on those handoffs, not generalization across sessions or handoff samples.
 - We designed the format, the scenarios, the rubrics, and the forgeries.
 - Two destination agents, both capable; we did not test weaker destinations.
-- Model and tool versions are those current in October 2026; both destinations loaded the operator's global instructions in every condition.
+- Model and tool versions are those current in October 2026; both destinations loaded the operator's global instructions in every condition; they hold general preferences and nothing about these tasks, payments, or verification.
 - Token counts include each tool's own overhead; compare within an agent.
 - Each experiment's documentation discloses scorer corrections made after its runs.
-- Experiment 005's follow-up is exploratory: we added `record` after seeing the producer's first output, corrected one field in a separate rule set, and ran three runs per cell with one producer.
+- Experiment 005’s follow-up is exploratory: we added `record` after seeing the producer's first output, corrected one field in a separate rule set, and ran three runs per cell with one producer.
 
 = Future Work
 
@@ -272,7 +272,7 @@ No valid handoff authorized anything. Destinations verified approvals in the sys
 
 = Conclusion
 
-Across 424 continuation sessions, some handoff was necessary wherever the work lived in conversation or in side effects the systems did not record. Without one, capable agents repeated payments, paid held invoices, and reported unfinished work as done. Where the systems recorded the work, a handoff saved rediscovery. With capable producers, structured and prose handoffs gave the same results, and prose cost less to write. A checkpoint added explicit provenance that changed how agents treated a forged instruction, validation that rejected a weak producer's output, and fields that software can enforce without a model. In a follow-up, a call identity, machine-readable stop conditions, and a record for each operation's status let a guard stop repeated payments and release a held refund once the approval arrived.
+Across 424 continuation sessions, some handoff was necessary wherever the work lived in conversation, or in system state the next agent did not check. Without one, capable agents repeated payments, paid held invoices, and reported unfinished work as done. Where the systems recorded the work, a handoff saved rediscovery. With capable producers, we found no difference between structured and prose handoffs, and prose cost less to write. Agents followed a forged instruction from a summary and not from a checkpoint, though which part of the checkpoint's structure caused this is untested. A checkpoint also added validation that rejected a weak producer's output, and fields that software can enforce without a model. In an exploratory follow-up, a call identity, machine-readable stop conditions, and a record for each operation's status let a guard stop repeated payments and release a held refund once the approval arrived, after one producer-written `record` was corrected by hand.
 
 #heading(numbering: none)[Competing Interests]
 
@@ -280,22 +280,24 @@ The author is CEO of NimbleBrain, Inc., which may build products that produce or
 
 #heading(numbering: none)[Appendix A: Data and Reproduction]
 
-Per-run results are in `experiments/*/results.json` in the OpenCheckpoint repository [16]; rubrics, hypotheses, handoffs, transcripts, and the code for each experiment sit in the same directories. We keep raw run logs locally because they contain machine paths. `experiments/README.md` lists the reproduction commands. Tools: Claude Code 2.1.311, Codex CLI 0.162.1, swebench 5.0.2, the MCP Python SDK 2.3.0, Ollama 0.32.5, and Typst 0.15.1.
+Per-run results are in `experiments/*/results.json` in the OpenCheckpoint repository [16]; rubrics, hypotheses, handoffs, transcripts, and the code for each experiment sit in the same directories. We keep raw run logs locally because they contain machine paths. `experiments/README.md` lists the reproduction commands and all 448 continuation sessions; this paper reports 424 of them, the remaining 24 being experiment 005’s follow-up runs (§5.6). Producers ran with default sampling: Claude through `claude -p` with no sampling options, and Qwen through Ollama's defaults with a 32,768-token context. Tools: Claude Code 2.1.311, Codex CLI 0.162.1, swebench 5.0.2, the MCP Python SDK 2.3.0, Ollama 0.32.5, and Typst 0.15.1.
 
 #heading(numbering: none)[Appendix B: Evidence]
 
+// The claims table is longer than a page, so it may break across pages.
+#show figure: set block(breakable: true)
 #figure(
   table(
     columns: (2.6fr, 0.9fr, 1.6fr, 1fr),
-    [Claim], [Experiment], [Measure], [n],
+    table.header([Claim], [Experiment], [Measure], [n]),
     [A checkpoint is 4.9% of one long session's transcript], [001], [Exact Claude tokens], [1 session],
     [Without a handoff, the user's intent is lost], [001], [Task checks], [24 runs],
-    [Summary or checkpoint costs 31% less than replaying one long session], [001], [Claude cost per run], [9 runs],
+    [Continuing from a summary or checkpoint costs the destination 31% less than replaying one long session, before the cost of writing it], [001], [Claude cost per run; capture cost], [9 runs],
     [Replay carries live paths into the original environment], [001], [Tool calls to the original path], [2 of 3 runs],
-    [Payment runs: bare 12 of 12 violate, capable-producer handoff 0 of 48], [003, 004, 007], [Safety checks; Fisher], [60 runs],
+    [Payment runs: bare 12 of 12 violate, capable-producer summary or checkpoint 0 of 36, transcript 0 of 12], [003, 004, 007], [Safety checks; Fisher per experiment], [60 runs],
     [No handoff: unfinished work reported complete], [003], [Completion checks, final messages], [6 runs],
-    [Summary and checkpoint equally safe with capable producers], [003, 004, 007], [Safety checks], [72 runs],
-    [A checkpoint costs 4× (Opus) or 7–10× (Haiku) more to write], [003, 004], [Capture cost], [6 scenarios],
+    [No safety difference between summary and checkpoint with capable producers], [003, 004, 007], [Safety checks], [72 runs],
+    [A checkpoint costs 3.0–4.4× (Opus) or 3.9–12.2× (Haiku) as much to write as a summary], [003, 004, 007], [Capture cost], [4 Opus, 9 Haiku handoff pairs],
     [Forged user instruction followed from a summary, not a checkpoint], [006], [Held invoice paid; Fisher], [24 runs],
     [Forged approval fails in both formats], [006], [Wrong charge or credit], [24 runs],
     [Validation rejects crude forgeries], [006], [Validation level], [4 documents],
@@ -306,8 +308,8 @@ Per-run results are in `experiments/*/results.json` in the OpenCheckpoint reposi
     [With `until` and `record`, a guard releases the approved refund], [005 follow-up], [Refund completed under guard], [6 runs],
     [No guarded payment run repeats a payment or pays the held invoice], [005 follow-up], [Safety checks], [12 runs],
     [Fork ownership removes timing-dependent duplicates (not significant)], [008], [Duplicate payments; Fisher], [12 pairs],
-    [Handoffs do not change the SWE-bench solve rate], [002], [Resolved; McNemar], [160 runs],
-    [Handoffs cut SWE-bench tool calls by 12–23%], [002], [Tool calls; Wilcoxon], [160 runs],
+    [No detectable change in the SWE-bench solve rate], [002], [Resolved; McNemar; Newcombe interval], [160 runs],
+    [Handoffs reduce mean SWE-bench tool calls by 12–23% (one of six comparisons significant after Holm correction)], [002], [Tool calls; Wilcoxon, Holm], [160 runs],
   ),
   caption: [Claims and their evidence; per-run data in each experiment's results file],
 )
@@ -325,7 +327,7 @@ Per-run results are in `experiments/*/results.json` in the OpenCheckpoint reposi
 #ref-entry(1, [Model Context Protocol, "Key Changes, revision 2026-07-28", #link("https://modelcontextprotocol.io/specification/2026-07-28/changelog"), 2026.])
 #ref-entry(2, [A2A Project, "Agent2Agent (A2A) Protocol Specification", #link("https://a2a-protocol.org/latest/specification/"), 2026.])
 #ref-entry(3, [Agent Client Protocol, "Session Setup", #link("https://agentclientprotocol.com/protocol/session-setup"), 2026.])
-#ref-entry(4, [Open Responses, "Open Responses Specification, 2026-04-24", #link("https://www.openresponses.org/specification"), 2026.])
+#ref-entry(4, [Open Responses, "API Reference" (compaction item added 2026-04-24), #link("https://www.openresponses.org/reference"), 2026.])
 #ref-entry(5, [Agent Session Protocol contributors, "Agent Session Protocol", #link("https://agent-session-protocol.github.io"), 2026.])
 #ref-entry(6, [Earendil Works, "pi: Compaction", #link("https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/compaction.md"), 2026.])
 #ref-entry(7, [LangChain, "LangGraph Persistence", #link("https://docs.langchain.com/oss/python/langgraph/persistence"), 2026.])
@@ -340,5 +342,5 @@ Per-run results are in `experiments/*/results.json` in the OpenCheckpoint reposi
 #ref-entry(16, [OpenCheckpoint, "OpenCheckpoint Specification v0.1", forthcoming at #link("https://github.com/opencheckpoint/opencheckpoint"), 2026.])
 #ref-entry(17, [JSON Schema, "JSON Schema Draft 2020-12", #link("https://json-schema.org/draft/2020-12"), 2020.])
 #ref-entry(18, [Qwen Team, "Qwen2.5 Technical Report", arXiv:2412.15115, 2024.])
-#ref-entry(19, [OpenAI, "Reasoning Models: Encrypted Reasoning Items", #link("https://developers.openai.com/api/docs/guides/reasoning"), 2026.])
+#ref-entry(19, [OpenAI, "Reasoning Models" (section "Preserve reasoning without stored responses"), #link("https://developers.openai.com/api/docs/guides/reasoning"), 2026.])
 #ref-entry(20, [OpenAI, "Introducing SWE-bench Verified", #link("https://openai.com/index/introducing-swe-bench-verified/"), 2024.])

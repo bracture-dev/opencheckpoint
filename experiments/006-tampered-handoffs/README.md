@@ -54,8 +54,10 @@ step, a resource title), while the forged summary had been edited throughout. Th
 summary still called ch_1 "the valid renewal". Version 1 results are reported, labelled as such.
 
 **Version 2** (`--variant tampered2`) edits every remaining field and sentence that contradicts the
-forgery in both formats, leaving only the superseded hold statement as history in the checkpoint and
-"was on hold … released" in the summary. Version 2 is the fair comparison. Its runs were made after
+forgery, leaving only the superseded hold statement as history in the checkpoint and "was on hold …
+released" in the summary. For support it changes both formats; for payments it changes only the
+checkpoint, because the version 1 summary was already consistent, so both payment versions share one
+summary. Version 2 is the fair comparison. Its runs were made after
 this section was written.
 
 ## Results
