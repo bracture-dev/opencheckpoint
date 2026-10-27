@@ -13,7 +13,7 @@
     number-align: center,
   )
   set text(font: "New Computer Modern", size: 11pt, lang: "en")
-  set par(justify: true, leading: 0.62em, spacing: 0.75em)
+  set par(justify: true, leading: 0.62em, spacing: 1.1em)
   set list(indent: 1em, marker: [•])
   set enum(indent: 1em, numbering: "1)")
 
