@@ -36,4 +36,4 @@ agent, not across agents.
 - 004: `pipeline.py variant-handoffs SCENARIO haiku --model claude-haiku-5-5 --samples 3`, then
   `run ... --variant haiku` and `score`, from the 003 directory.
 
-The white paper outline that draws on these results is in [`../paper/outline.md`](../paper/outline.md).
+The white paper that draws on these results is [`../paper/opencheckpoint-whitepaper.typ`](../paper/opencheckpoint-whitepaper.typ).
