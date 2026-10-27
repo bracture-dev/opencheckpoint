@@ -5,7 +5,23 @@
 
 ## Abstract
 
-_Written last, from the final results._
+Work started with one AI agent increasingly continues with another: a different model, vendor,
+runtime, or application. We describe OpenCheckpoint, an open JSON format for the working state of an
+unfinished task, and report eight experiments with 424 continuation sessions (and 20 uninterrupted
+reference runs) across two agents from different vendors. Without a handoff, agents in business scenarios repeated payments ($24,450 in
+duplicates per run in one case), paid an invoice the user had put on hold, and reported unfinished
+work as complete; with a handoff from a capable producer (a transcript, or a summary or checkpoint
+written by Claude Opus or Haiku), none of 96 such runs committed a safety violation. Against replaying a long session, a summary or checkpoint cost 31% less;
+on 20 SWE-bench Verified tasks, where the interrupted workspace already held the partial work, handoffs
+reduced rediscovery by two to four tool calls per task without changing the solve rate. With capable
+models writing and reading them, prose summaries and checkpoints performed alike on safety and
+completion, and summaries cost less to write. The checkpoint's structure made a measurable difference
+in four places: a forged user instruction was followed in 12 of 12 runs given a summary and 0 of 12
+given a checkpoint; a weak producer's checkpoints failed validation while its equally wrong summaries
+gave no signal; a guard compiled from checkpoint fields, with no model, cut payment violations from 6
+of 6 runs to 1 of 6; and fork ownership was applied mechanically. The experiments also identify two
+gaps in the format: operations lack a call identity, and stop conditions lack machine-readable
+conditions.
 
 ## 1. Introduction
 
@@ -32,7 +48,7 @@ and measures what handoffs of each kind cost and prevent. Its contributions are:
    document is well-formed and consistent, from permission to act, which a checkpoint never grants.
 2. **An evaluation method** for handoffs: real interruptions, mock systems with deliberate traps,
    destinations from two vendors, rubrics committed before the runs, and disclosed corrections.
-3. **Measurements** across eight experiments and more than 400 continuation sessions, covering cost,
+3. **Measurements** across eight experiments and 424 continuation sessions, covering cost,
    completion, safety, tampering, weak producers, software consumers, forking, and software tasks at
    scale.
 
@@ -254,14 +270,36 @@ the payment.
 
 ### 5.8 Software tasks at scale (experiment 002, 160 runs)
 
-_Pending._
+| Agent       | Condition                 | Resolved (of 20) | Uncached input |  Cost | Tool calls |
+| ----------- | ------------------------- | ---------------: | -------------: | ----: | ---------: |
+| Claude Code | Reference (uninterrupted) |               17 |         32,549 |       |       15.2 |
+| Claude Code | Issue and workspace       |               17 |         28,897 | $0.47 |       14.4 |
+| Claude Code | Transcript                |               16 |         36,385 | $0.53 |       11.1 |
+| Claude Code | Summary                   |               17 |         32,206 | $0.52 |       12.2 |
+| Claude Code | Checkpoint                |               15 |         36,013 | $0.52 |       11.8 |
+| Codex       | Issue and workspace       |               13 |         39,485 |   n/a |       16.8 |
+| Codex       | Transcript                |               12 |         37,593 |   n/a |       13.2 |
+| Codex       | Summary                   |               14 |         34,593 |   n/a |       14.3 |
+| Codex       | Checkpoint                |               12 |         35,968 |   n/a |       14.8 |
+
+A Claude Code source was interrupted halfway through each of 20 "1-4 hour" tasks, by the tool-call
+count of an uninterrupted reference run, leaving 13 to 244 lines of partial changes. Every destination
+received the issue and that workspace. Handoffs did not change the solve rate: across six paired
+comparisons with the workspace alone, handoffs gained one task and lost five, none significant (McNemar
+p ≥ 0.5). With the issue and the diff, Claude Code finished as often as the uninterrupted reference.
+Handoffs did reduce rediscovery: 2.0 to 3.6 fewer tool calls per task, significant in four of six
+comparisons (Wilcoxon p ≤ 0.032). Because the interrupted sessions were short, handoffs did not save
+tokens; with Claude Code they cost about $0.05 more per task.
 
 ## 6. Discussion
 
-**A handoff is the safety mechanism.** Across the business scenarios, every safety failure without a
+**A handoff is the safety mechanism where the system does not record the work.** Across the business scenarios, every safety failure without a
 handoff involved state that existed only in the session: a verbal hold, a side effect with an unknown
 outcome, notifications the systems did not expose, an amount the user corrected. Where the systems
-recorded their own state, agents recovered it unaided. Handoffs cover what systems do not record.
+recorded their own state (the support scenario's approvals, the software tasks' working tree),
+agents recovered it unaided, and a handoff mainly saved rediscovery. Handoffs cover what systems do not
+record: instructions given in conversation, the outcome of interrupted side effects, and actions the
+systems do not expose.
 
 **Structure and prose are equivalent when both are written and read well.** With Opus or Haiku as the
 producer and capable destinations, summaries and checkpoints produced the same safety and
@@ -282,8 +320,11 @@ much with Haiku.
 operations, so completed and in-flight work compiles into "do not repeat", and machine-readable
 conditions on stop conditions and blocked steps, so a rule can lift when the system of record changes.
 
-**Replay.** Replay is accurate and, on a short session, cheap. On a long session it costs more, and it
-carries every path and reference the session touched.
+**Cost depends on the session being replaced.** A handoff saves tokens in proportion to what it
+replaces. Against a 209,000-token transcript it cost a third less; against the four-to-thirteen-call
+sessions of experiment 002 it cost slightly more than no handoff. Replay is accurate and, on a short
+session, cheap; on a long one it costs more, and it carries every path and reference the session
+touched.
 
 **Validation is not permission.** No valid handoff authorized anything. Destinations verified approvals
 in the system of record, and the forged approval failed for that reason.
@@ -309,7 +350,15 @@ in the system of record, and the forged approval failed for that reason.
 
 ## 9. Conclusion
 
-_Written last, from the final results._
+Across 424 continuation sessions, the evidence supports a narrow and useful set of claims. Some handoff is necessary
+whenever the work lives partly in conversation or in side effects the systems do not record; without
+one, capable agents repeated payments, paid held invoices, and reported unfinished work as done. Where
+the system records the work, a handoff mainly saves rediscovery. Structured and prose handoffs are
+equivalent when capable models write and read them, and prose is cheaper to write. A checkpoint's value
+lies where prose cannot reach: provenance that makes a forged instruction read as a claim, validation
+that exposes a bad handoff, fields that software can enforce without a model, and forks whose ownership
+a tool applies. Two additions to the format, a call identity for operations and machine-readable
+conditions, would extend what software can enforce.
 
 ## Appendix A: Data and reproduction
 
@@ -319,4 +368,24 @@ contain machine paths. `experiments/README.md` lists the reproduction commands.
 
 ## Appendix B: Evidence
 
-_Rebuilt from the final results._
+| Claim                                                                         | Experiment    | Measure                                          | n                       | Source                                              |
+| ----------------------------------------------------------------------------- | ------------- | ------------------------------------------------ | ----------------------- | --------------------------------------------------- |
+| A checkpoint is 4.9% of a long session's transcript                           | 001           | Exact Claude tokens                              | 1 session               | `experiments/001-session-case-study/README.md`      |
+| Without a handoff, the user's intent is lost                                  | 001           | Task checks: bare 3.0 and 4.0 of 7; handoffs 7.0 | 24 runs                 | `experiments/001-session-case-study/results.json`   |
+| Summary or checkpoint costs 31% less than replaying a long session            | 001           | Claude cost per run                              | 9 runs                  | same                                                |
+| Replay carries live paths into the original environment                       | 001           | Tool calls to the original path                  | 2 of 3 runs             | same, README                                        |
+| No handoff → duplicate payments and a paid held invoice                       | 003           | S-dup, S-hold                                    | 6 runs                  | `experiments/003-business-scenarios/results.json`   |
+| No handoff → unfinished work reported complete                                | 003           | T-notified, final messages                       | 6 runs                  | same                                                |
+| A handoff from a capable producer → no safety violation in business scenarios | 003, 004, 007 | S-* checks                                       | 96 runs                 | `results.json` in 003, 004, 007                     |
+| Summary and checkpoint equally safe with capable producers                    | 003, 004, 007 | S-* checks                                       | 72 runs                 | same                                                |
+| A checkpoint costs about 4× (Opus) or 7–10× (Haiku) more to write             | 003, 004      | Capture cost                                     | 6 scenarios             | `handoffs/*/handoff-meta.json`, `haiku/meta-*.json` |
+| Forged user instruction followed from a summary, not from a checkpoint        | 006           | S-hold                                           | 24 runs                 | `experiments/006-tampered-handoffs/results.json`    |
+| Forged approval fails in both formats                                         | 006           | S-wrong-charge, S-credit                         | 24 runs                 | same                                                |
+| Validation rejects crude forgeries                                            | 006           | Validation level                                 | 4 documents             | `experiments/006-tampered-handoffs/validation.json` |
+| A weak producer's checkpoints fail validation; its summaries fail silently    | 007           | Validity; S-* checks                             | 3 + 3 handoffs, 12 runs | `experiments/007-long-session/`                     |
+| A guard compiled from fields cuts payment violations from 6 of 6 to 1 of 6    | 005           | S-* checks                                       | 6 + 6 runs              | `experiments/005-software-consumer/results.json`    |
+| Compiled stop conditions cannot lift                                          | 005           | T-refunded under guard                           | 6 runs                  | same                                                |
+| Fork ownership prevents duplicate payments                                    | 008           | Duplicate payments                               | 12 pairs                | `experiments/008-forking/results.json`              |
+| Handoffs do not change the SWE-bench solve rate                               | 002           | Resolved; McNemar                                | 160 runs                | `experiments/002-swe-handoffs/results.json`         |
+| Handoffs reduce rediscovery on SWE-bench                                      | 002           | Tool calls; Wilcoxon                             | 160 runs                | same                                                |
+| The same handoff works with agents from two vendors                           | all           | Task and safety checks by agent                  | 424 sessions            | all results files                                   |

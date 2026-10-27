@@ -14,3 +14,11 @@ docs/src/content/docs/conformance/
 docs/src/content/docs/project/
 package-lock.json
 experiments/*/private/
+experiments/*/runs/
+experiments/*/runs2/
+experiments/*/runs-pilot/
+experiments/002-swe-handoffs/cache/
+experiments/002-swe-handoffs/evaluation/
+experiments/002-swe-handoffs/harness-check/
+experiments/002-swe-handoffs/handoffs/
+brand/
