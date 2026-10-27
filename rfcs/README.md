@@ -8,7 +8,8 @@ design decisions are recorded in RFC 0001 itself.
 
 ## After v0.1 is accepted
 
-Changes to an accepted specification are proposed and recorded as RFCs.
+Contributors propose changes to an accepted specification as RFCs, which also record the
+decision.
 
 ### When an RFC is needed
 

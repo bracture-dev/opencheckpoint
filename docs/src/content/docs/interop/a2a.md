@@ -33,5 +33,5 @@ agent may retrieve history; one without it relies on the checkpoint alone.
 | `Part` with `url`               | a `resource` with `uri` and `media_type`                             |
 | `contextId`, `referenceTaskIds` | `source.session_refs`                                                |
 
-A checkpoint does not replace A2A task history. It is the distilled state that lets a different
-agent continue without that history.
+A checkpoint sits alongside A2A task history and holds the distilled state a different agent needs
+to continue without that history.

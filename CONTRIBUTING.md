@@ -1,8 +1,8 @@
 # Contributing to OpenCheckpoint
 
-OpenCheckpoint is judged first as an open standard, second as a developer experience, and third
-as a reference implementation. Contributions that improve the specification's clarity,
-correctness, or neutrality are as valuable as code.
+OpenCheckpoint ranks its goals in order: an open standard first, a developer experience second,
+and a reference implementation third. A contribution that makes the specification clearer, more
+correct, or more neutral counts as much as code.
 
 ## Ways to contribute
 
@@ -64,5 +64,5 @@ names and systems.
 
 - Specification text uses RFC 2119 keywords only for requirements, and describes the current
   state of the format.
-- JSON uses two-space indentation; Markdown and JSON are formatted with Prettier.
+- JSON uses two-space indentation. Prettier formats Markdown and JSON.
 - Prefer a small, precise change over a broad one.

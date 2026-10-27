@@ -15,7 +15,8 @@
     "check": "node tools/conformance.mjs && prettier --check .",
     "format": "prettier --write .",
     "docs:dev": "npm run dev --workspace docs",
-    "docs:build": "npm run build --workspace docs"
+    "docs:build": "npm run build --workspace docs",
+    "paper": "typst compile paper/opencheckpoint-whitepaper.typ docs/public/opencheckpoint-whitepaper.pdf"
   },
   "devDependencies": {
     "ajv": "8.20.0",

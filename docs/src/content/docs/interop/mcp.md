@@ -14,8 +14,8 @@ An MCP server that produces or stores checkpoints can list each one as a resourc
 - The resource contents are the checkpoint document as text.
 
 A client or host that restores the checkpoint follows the
-[restoration procedure](../../specification/#107-restoration-procedure). Fetching a checkpoint
-through MCP does not make it trusted; it is still untrusted input.
+[restoration procedure](../../specification/#107-restoration-procedure). A checkpoint fetched
+through MCP is still untrusted input.
 
 ## Referencing MCP resources
 

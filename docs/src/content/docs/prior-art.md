@@ -3,8 +3,8 @@ title: Prior art
 description: How existing protocols, session formats, and runtimes represent task state, and the gap OpenCheckpoint fills.
 ---
 
-Facts below were checked against each project's repository or published specification on
-2026-10-24. Versions and dates are as found that day.
+The facts below come from each project's repository or published specification, checked on
+2026-10-24. Versions and dates are as of that day.
 
 ## Survey
 
@@ -29,8 +29,8 @@ Facts below were checked against each project's repository or published specific
 
 - **Solves:** how applications expose tools, resources, and prompts to models. Version
   2026-07-28. TypeScript source of truth,
-  generated JSON Schema 2020-12, JSON-RPC 2.0 transport. Code and specification moving from MIT
-  to Apache-2.0; documentation CC-BY-4.0.
+  generated JSON Schema 2020-12, JSON-RPC 2.0 transport. New code and specification contributions are Apache-2.0;
+  contributions not yet relicensed remain MIT; documentation is CC-BY-4.0.
 - **State:** `Resource {uri, name, title, description, mimeType, annotations, size}`;
   `ResourceLink`; `Annotations {audience, priority, lastModified}`. URIs per RFC 3986 with
   custom schemes allowed.
@@ -62,9 +62,9 @@ Facts below were checked against each project's repository or published specific
 - **Portability:** the message format is portable; context and history stay on the serving
   agent, and the protocol defines no export or cross-agent handoff of a task's state.
 - **Compaction:** none beyond `historyLength` truncation.
-- **Reuse:** an A2A Artifact with a data part is a natural envelope for a checkpoint;
-  `contextId` and task ids are natural session references; `INPUT_REQUIRED` and
-  `AUTH_REQUIRED` confirm that "awaiting a person" deserves first-class representation.
+- **Reuse:** an A2A Artifact with a data part can carry a checkpoint; `contextId` and task
+  ids can serve as session references; `INPUT_REQUIRED` and `AUTH_REQUIRED` show that
+  "awaiting a person" needs its own first-class state.
 
 ### Agent Client Protocol (ACP)
 
@@ -122,10 +122,9 @@ archived and folded into A2A.)
   entries only in what the model sees.
 - **Application state:** none beyond `cwd`.
 - **Portability:** native to pi.
-- **Reuse:** the summary's sections map almost one to one onto `task`, `statements`
-  (constraints, decisions), and `progress` (completed, focus, next). The same sections appear in
-  OpenCheckpoint's data model. Read
-  and modified file lists map to resources.
+- **Reuse:** the summary's sections map almost one to one onto OpenCheckpoint's `task`,
+  `statements` (constraints, decisions), and `progress` (completed, focus, next). The read and
+  modified file lists map to resources.
 
 ### LangGraph checkpointing
 
@@ -167,18 +166,18 @@ archived and folded into A2A.)
   edits only, not remote side effects.
 - **Portability:** summary text is readable by anyone; the signed blocks are for the same API.
 - **Reuse:** the default summary categories (state, next steps, learnings) again match the
-  data model; "checkpoints cover local files, not remote effects" is exactly the gap
+  data model; "checkpoints cover local files, not remote effects" is the gap
   `operations` fills.
 
 ### Research
 
 | Work                                                               | Takeaway for OpenCheckpoint                                                                                                                                                                                               |
 | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Packer et al., _MemGPT_ (2023), arXiv:2310.08560                   | Tiered memory lets an agent work beyond its context window. Complementary, not overlapping: memory holds what persists across tasks; a checkpoint holds one task's state at a boundary (specification §1.3).              |
-| Lindenbauer et al., _The Complexity Trap_ (2025), arXiv:2508.21433 | Masking old observations matches LLM summarization on SWE-bench Verified at about half the cost. Cheap structural reduction is a strong baseline; compaction needs measurement, not assumption.                           |
+| Packer et al., _MemGPT_ (2023), arXiv:2310.08560                   | Tiered memory lets an agent work beyond its context window. The two complement each other: memory holds what persists across tasks; a checkpoint holds one task's state at a boundary (specification §1.3).               |
+| Lindenbauer et al., _The Complexity Trap_ (2025), arXiv:2508.21433 | Masking old observations matches LLM summarization on SWE-bench Verified at about half the cost. Cheap structural reduction is a strong baseline, so any compaction method should be measured against it.                 |
 | Kang et al., _ACON_ (2025), arXiv:2510.00615                       | Compression guidelines can be optimized against task success and peak tokens.                                                                                                                                             |
 | KC and Budathoki, _Handoff Debt_ (2026), arXiv:2606.02875          | On 181 handoff points from SWE-bench Verified, carrying context cut median agent events by 20–59% and prompt tokens by 42–63%; effects on solve rate were smaller and model-dependent. Repeated work is a primary metric. |
-| Gulati, _ContinuityBench_ (ICML 2026 workshop)                     | Interruption cut success from 41.7% to 28.0%; a structured summary beat summary plus full action history in 11 of 18 settings. More context is not always better.                                                         |
+| Gulati, _ContinuityBench_ (ICML 2026 workshop)                     | Interruption cut success from 41.7% to 28.0%; a structured summary beat summary plus full action history in 11 of 18 settings. Adding history can hurt continuation.                                                      |
 
 These sources measure task success, tokens and cost, agent steps (a proxy for repeated work),
 latency, and consistency. The [Compaction and restoration](../compaction/) page adopts these metrics.
@@ -202,8 +201,8 @@ Nothing in the survey offers a standalone, vendor-readable record of _working st
 being attempted, what is known and how, what was decided, what is pending, and what must be
 checked. Protocols move messages and expose live state; session formats preserve history;
 runtime checkpoints preserve executable state for one engine; compaction outputs are prose or
-encrypted. ASP comes closest on portability and fidelity, but it preserves the log, not a
-distilled state, and it has no typed provenance for claims or application context.
+encrypted. ASP comes closest on portability and fidelity, but it preserves the log rather
+than a distilled state, and it has no typed provenance for claims or application context.
 
 ## How OpenCheckpoint relates
 

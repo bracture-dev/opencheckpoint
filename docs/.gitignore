@@ -10,3 +10,5 @@ src/content/docs/conformance/
 src/content/docs/project/
 public/schema/
 public/examples/
+# Compiled from paper/ by `npm run paper` and the Pages workflow
+public/opencheckpoint-whitepaper.pdf

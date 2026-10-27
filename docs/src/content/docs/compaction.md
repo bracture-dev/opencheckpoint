@@ -4,10 +4,10 @@ description: Rules for reducing a checkpoint safely, how a destination restores 
 ---
 
 Compaction makes working context smaller. Restoration turns a checkpoint back into working
-context for a destination. Both are separate from the format: the specification constrains what a
+context for a destination. Neither is part of the format: the specification constrains what a
 compacted checkpoint may claim ([§9.2](../specification/#92-compacting-a-checkpoint)) and how a
-destination restores ([§10.7](../specification/#107-restoration-procedure)), without defining an
-algorithm.
+destination restores ([§10.7](../specification/#107-restoration-procedure)) but prescribes no
+algorithm for either.
 
 ## Four strategies
 
@@ -52,8 +52,8 @@ safety, and cost.
 
 ### Representing stale context
 
-Context becomes stale when the world changes after it was observed. The format represents
-this at three points:
+Context goes stale when the world changes after an agent observed it. The format records
+staleness at three points:
 
 - A resource records `revision`, `digest`, and `observed_at`, so a destination can detect
   change.
@@ -69,8 +69,8 @@ compare requirements with capabilities; resolve resources and mark stale ones; e
 preconditions; reconcile operations without executing them; continue from focus and next
 steps; report.
 
-How a destination presents a checkpoint to its model is an implementation choice, but the
-following practices follow from the trust model:
+Each destination chooses how to present a checkpoint to its model. The trust model implies
+these practices:
 
 - Present the checkpoint as delimited, imported data, distinct from the destination's own
   instructions.
@@ -84,7 +84,8 @@ following practices follow from the trust model:
 ## Measuring continuation
 
 A strategy is better only if it measurably helps a destination continue. Implementations that
-compare strategies, including future compaction services, should report the following.
+compare strategies, including future compaction services, should follow this protocol and
+report these metrics.
 
 ### Protocol
 
@@ -116,5 +117,5 @@ tokens but raises duplicate side effects or safety violations is worse, regardle
 ### What v0.1 provides
 
 The scenarios in [behavioral scenarios](../conformance/scenarios/) give the checkpoints, the environment state, and the
-expected behaviors for each domain. Running them against agents, and automating the scoring,
-is Phase 3 work.
+expected behaviors for each domain. Running them against agents and automating the scoring are on the
+[roadmap](../project/roadmap/) as the interoperability demonstration.

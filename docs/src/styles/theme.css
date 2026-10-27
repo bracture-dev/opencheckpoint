@@ -10,8 +10,7 @@
 
 /* Brand colors from brand/kit/tokens.css. */
 /* Public Sans: SIL OFL 1.1. Dark is Starlight's default.
- * gray-5/6/7 are surfaces or decorative dividers, never text.
- * gray-4 is the essential UI border; --oc-step-border uses it. */
+ * gray-5/6/7 are surfaces or decorative dividers, never text. */
 :root {
   --sl-color-accent-low: #1d3428;
   --sl-color-accent: #9bcbaa;
@@ -25,7 +24,6 @@
   --sl-color-gray-6: #222d3b;
   --sl-color-gray-7: #192331;
   --sl-color-black: #121a24;
-  --oc-step-border: var(--sl-color-gray-4);
 }
 
 :root[data-theme="light"] {
@@ -41,7 +39,6 @@
   --sl-color-gray-6: #eff2f6;
   --sl-color-gray-7: #f7f9fb;
   --sl-color-black: #ffffff;
-  --oc-step-border: var(--sl-color-gray-4);
 }
 
 :root {
@@ -54,37 +51,152 @@ h1#_top {
   font-weight: 600;
 }
 
-/* Homepage handoff walkthrough. */
-.handoff {
-  display: grid;
-  /* minmax(0, 1fr) lets long code lines scroll inside a step instead of widening the page. */
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
-  margin-top: 1.5rem;
+/* Homepage. Only the homepage sets `hero`, so `data-has-hero` scopes these rules.
+ * Spacing follows one scale (0.5, 1, 2, 4, 5 rem): sections are 4rem apart, a heading sits 1rem
+ * above its text, and a question 0.5rem above its answer. */
+:root {
+  --oc-band: #214832;
+  --oc-band-text: #e3f0e8;
+  --oc-band-line: #9bcbaa;
 }
-.handoff-step {
-  min-width: 0;
-  border: 1px solid var(--oc-step-border);
-  border-radius: 0.5rem;
-  padding: 1rem 1.25rem;
-}
-.handoff-step > :first-child {
-  margin-top: 0;
-}
-.handoff-label {
-  font-size: var(--sl-text-xs);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--sl-color-accent);
-}
-.handoff-step blockquote {
-  margin: 0.5rem 0;
+html[data-has-hero]:not([data-has-sidebar]) {
+  /* Starlight widens pages without a sidebar to 67.5rem; keep homepage lines under 80 characters. */
+  --sl-content-width: 44rem;
 }
 
-.status-note {
-  border-inline-start: 3px solid var(--sl-color-accent);
-  padding: 0.5rem 1rem;
-  background: var(--sl-color-accent-low);
-  border-radius: 0 0.375rem 0.375rem 0;
+.oc-band {
+  /* The shadow paints the band edge to edge; clip-path trims it to the band's own height. */
+  background: var(--oc-band);
+  box-shadow: 0 0 0 100vmax var(--oc-band);
+  clip-path: inset(0 -100vmax);
+  color: #ffffff;
+  margin-top: -1.5rem;
+  padding-block: 5rem;
+}
+.oc-band > * + * {
+  margin-top: 0;
+}
+.oc-version {
+  display: inline-block;
+  margin: 0 0 1.5rem;
+  padding: 0.125rem 0.625rem;
+  border: 1px solid var(--oc-band-line);
+  border-radius: 999px;
+  font-size: var(--sl-text-sm);
+  color: var(--oc-band-text);
+}
+.oc-version a {
+  color: inherit;
+}
+.oc-band h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  color: #ffffff;
+}
+.oc-tagline {
+  margin: 0 0 1rem;
+  max-width: 40ch;
+  font-size: var(--sl-text-xl);
+  line-height: 1.5;
+  color: var(--oc-band-text);
+}
+.oc-paper {
+  margin: 0 0 2rem;
+  font-size: var(--sl-text-lg);
+  color: var(--oc-band-text);
+}
+.oc-paper a {
+  color: #ffffff;
+  font-weight: 600;
+}
+.oc-paper span {
+  margin-left: 0.5rem;
+  font-size: var(--sl-text-sm);
+}
+.oc-file .expressive-code {
+  margin: 0;
+}
+.oc-file-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--oc-band-text);
+  font-size: var(--sl-text-sm);
+}
+
+html[data-has-hero] .sl-markdown-content {
+  margin-top: 4rem;
+}
+html[data-has-hero] .sl-markdown-content .sl-heading-wrapper:has(> h2) {
+  margin-top: 4rem;
+}
+html[data-has-hero] .sl-markdown-content > .sl-heading-wrapper:first-child {
+  margin-top: 0;
+}
+html[data-has-hero] .sl-markdown-content .sl-heading-wrapper:has(> h3) {
+  margin-top: 2rem;
+}
+html[data-has-hero]
+  .sl-markdown-content
+  .sl-heading-wrapper:has(> h2)
+  + .sl-heading-wrapper:has(> h3) {
+  margin-top: 1rem;
+}
+html[data-has-hero] .sl-markdown-content .sl-heading-wrapper:has(> h3) + * {
+  margin-top: 0.5rem;
+}
+html[data-has-hero] .sl-markdown-content h2 {
+  font-size: var(--sl-text-2xl);
+  line-height: 1.25;
+  color: var(--sl-color-accent-high);
+}
+html[data-has-hero] .sl-markdown-content h3 {
+  font-size: var(--sl-text-base);
+}
+html[data-has-hero] .sl-markdown-content ol li + li {
+  margin-top: 0.5rem;
+}
+
+.oc-rules {
+  list-style: none;
+  padding: 0;
+  border-top: 1px solid var(--sl-color-gray-5);
+}
+/* MDX wraps multi-line list items in paragraphs; keep them flush so every rule has the same padding. */
+.sl-markdown-content .oc-rules li > p {
+  margin: 0;
+}
+.sl-markdown-content .oc-rules li {
+  margin: 0;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+}
+.oc-kinds {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem 1.5rem;
+}
+.sl-markdown-content .oc-kinds :is(dt, dd) {
+  margin: 0;
+}
+.oc-kinds dd {
+  color: var(--sl-color-gray-3);
+}
+.sl-markdown-content .oc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin-top: 2rem;
+  font-weight: 600;
+}
+@media (max-width: 32rem) {
+  .oc-kinds {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .sl-markdown-content .oc-kinds dd {
+    margin-bottom: 0.5rem;
+  }
 }

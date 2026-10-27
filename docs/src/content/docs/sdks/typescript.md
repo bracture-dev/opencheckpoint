@@ -4,13 +4,13 @@ description: Status and planned scope of the OpenCheckpoint TypeScript SDK.
 ---
 
 **Status: not started.** The TypeScript SDK is Phase 2 of the [roadmap](../../project/roadmap/),
-and the CLI, the MCP server, and the documentation site's validator are built on it. This page
+and the planned CLI, MCP server, and documentation site validator will build on it. This page
 describes its planned scope so that implementers and reviewers can comment before code exists. It
 documents no API, because none has been designed.
 
 ## Planned scope
 
-Targets modern Node.js, Bun, and browsers. Types will be generated from the schema; validation will use Ajv with the canonical schema file. Proposed package name, subject to registry availability: `@opencheckpoint/sdk`.
+It will target modern Node.js, Bun, and browsers. Types will be generated from the schema; validation will use Ajv with the canonical schema file. Proposed package name, subject to registry availability: `@opencheckpoint/sdk`.
 
 Like every OpenCheckpoint SDK, it will:
 
@@ -23,7 +23,7 @@ Like every OpenCheckpoint SDK, it will:
 - Pass the shared [conformance manifest](../../conformance/) in CI.
 
 It will not call a network service, a model, or a database, and it will not offer a generic
-"resume" function. Restoring work into a specific runtime is the job of adapters built on top.
+"resume" function. Adapters built on top of it will restore work into a specific runtime.
 
 ## Design notes
 
@@ -31,4 +31,4 @@ It will not call a network service, a model, or a database, and it will not offe
 explains why types are generated from the schema while builders, semantic rules, and errors are
 handwritten.
 
-Want to help build it? See [contributing](../../project/contributing/).
+To help build it, see [contributing](../../project/contributing/).

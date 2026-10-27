@@ -4,12 +4,11 @@ description: How a checkpoint is captured mid-conversation, moved, and restored,
 ---
 
 A checkpoint moves through three steps: an agent **captures** it, something **moves** it, and
-another agent **restores** it. This page describes each step and the pieces that support it. The
-tooling is [planned](../project/roadmap/); until it exists, every step below also works by hand.
+another agent **restores** it. The tooling is [planned](../project/roadmap/); until it exists, every step below also works by hand.
 
 ## Capture
 
-Mid-conversation, the agent you are working with is the one that holds the context, so it writes
+Mid-conversation, the agent you are working with holds the context, so it writes
 the checkpoint. You ask for one ("checkpoint this"), or the application asks for one when the
 context window fills or work is about to change hands.
 

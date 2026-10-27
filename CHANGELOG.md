@@ -1,7 +1,7 @@
 # Changelog
 
-All notable changes to the specification, schema, conformance suite, and tooling are recorded
-here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the
+This file records all notable changes to the specification, schema, conformance suite, and
+tooling. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the
 specification follows the version policy in §5 of the specification.
 
 ## [Unreleased]

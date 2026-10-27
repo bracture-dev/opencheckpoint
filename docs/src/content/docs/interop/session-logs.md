@@ -7,9 +7,9 @@ sidebar:
 
 ## Agent Session Protocol
 
-ASP stores and migrates complete session logs between harnesses. OpenCheckpoint is the distilled
-working state. They complement each other: a handoff can carry an ASP session alongside a
-checkpoint, and a checkpoint can reference ASP session and event ids:
+ASP stores and migrates complete session logs between harnesses. OpenCheckpoint holds the distilled
+working state. A handoff can carry an ASP session alongside a checkpoint, and a checkpoint can
+reference ASP session and event ids:
 
 ```json
 { "protocol": "asp", "id": "6f0d2c1e9b", "event": "evt-a91f" }
@@ -20,7 +20,7 @@ ASP's per-axis fidelity declarations correspond to `derivation.omissions`, and i
 
 ## pi compaction summaries
 
-pi's compaction summaries use fixed sections that map directly onto checkpoint fields:
+pi's compaction summaries use fixed sections that map onto checkpoint fields:
 
 | pi summary section                     | OpenCheckpoint                                                            |
 | -------------------------------------- | ------------------------------------------------------------------------- |
@@ -36,13 +36,13 @@ A converter from pi compaction entries is a planned early producer.
 ## Runtime checkpoints (LangGraph, OpenAI Agents SDK)
 
 Runtime checkpoints serialize execution state for one engine: graph channels, run state, the
-current agent object. They are the right tool for resuming in the same runtime and are not
-portable. A runtime can emit an OpenCheckpoint document alongside its own checkpoint when work
+current agent object. They suit resuming in the same runtime and do not carry over to another
+one. A runtime can emit an OpenCheckpoint document alongside its own checkpoint when work
 must leave the runtime. Pending writes and approval interruptions become `operations`; thread ids
 become `session_refs`.
 
 ## Open Responses and provider compaction
 
 Provider compaction produces encrypted or signed items that only the issuing provider can use.
-OpenCheckpoint is readable by any consumer and complements them. A checkpoint may reference a
+Any consumer can read an OpenCheckpoint document, so the two complement each other. A checkpoint may reference a
 response id in `session_refs` so the same provider can use its own state when available.

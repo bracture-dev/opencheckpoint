@@ -5,20 +5,20 @@ sidebar:
   order: 0
 ---
 
-OpenCheckpoint is a document format, not a protocol. It defines no transport, RPC, or storage,
-so it can travel inside whatever channel already connects the systems involved, and it points
-back into the session records those systems keep.
+OpenCheckpoint is a document format. It defines no transport, RPC, or storage, so it can travel
+inside whatever channel already connects the systems involved, and it points back into the session
+records those systems keep.
 
 Two mechanisms connect it to other standards:
 
 - **Carrying a checkpoint.** A protocol transports the document, using the proposed media type
   `application/vnd.opencheckpoint+json`.
 - **Referencing history.** `source.session_refs` points to sessions, tasks, or events in another
-  protocol's records, so a consumer that can read them may, and one that cannot still understands
-  the checkpoint.
+  protocol's records. A consumer that can read those records may use them; one that cannot still
+  understands the checkpoint.
 
-The guides below describe patterns for each. They are informative. A normative binding, such as
-an extension identifier in another protocol, belongs to that protocol's own process.
+The guides below are informative and describe patterns for each. A normative binding, such as an
+extension identifier in another protocol, belongs to that protocol's own process.
 
 | Guide                                      | Covers                                                                    |
 | ------------------------------------------ | ------------------------------------------------------------------------- |

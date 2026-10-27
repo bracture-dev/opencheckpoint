@@ -3,8 +3,8 @@ title: Forking a baseline
 description: Start several agents from one checkpoint to compare, test, explore, or delegate.
 ---
 
-A fork is a new checkpoint derived from a parent so that it can be continued alongside other
-copies. Forking lets the costly part of a task, building context, happen once: an agent captures a
+A fork is a new checkpoint derived from a parent and continued alongside other copies. With
+forking, the costly part of a task (building context) happens once: an agent captures a
 **baseline**, and any number of forks start from it. The normative rules are in
 [§9.3 of the specification](../specification/#93-forking-a-checkpoint).
 
@@ -13,7 +13,7 @@ copies. Forking lets the costly part of a task, building context, happen once: a
 1. An agent does the groundwork and captures a baseline checkpoint.
 2. A producer creates N forks: new checkpoints whose `parent` is the baseline, each optionally
    varied (a different constraint, hypothesis, or instruction).
-3. Each fork is continued independently, by the same or different agents, runtimes, or models.
+3. The same or different agents, runtimes, or models continue each fork independently.
 
 ## Uses
 
@@ -37,8 +37,8 @@ pending operations. It does not carry:
 - **The world's history.** Restarting from a baseline does not undo side effects a previous branch
   performed.
 - **Freshness.** A baseline ages like any checkpoint. Forks created long after the baseline
-  re-check the statements marked for revalidation. A starting state reused over weeks is captured
-  afresh rather than reused, because a long-lived baseline behaves like
+  re-check the statements marked for revalidation. When you need the same starting state over
+  weeks, capture a new baseline instead of reusing the old one, because a long-lived baseline behaves like
   [memory](../concepts/#checkpoints-and-memory).
 
 ## Cost
@@ -96,10 +96,10 @@ Several runtimes fork within themselves: LangGraph forks threads with `update_st
 store, ACP defines an unstable `session/fork`, and the Agent Session Protocol records `fork` as a
 lineage relation. Handoff research builds test sets the same way, continuing recorded trajectories
 from fixed points ([Prior art](../prior-art/)). A checkpoint fork works across runtimes and models,
-and its baseline is a document a person can read and edit before fanning out.
+and a person can read and edit its baseline before anyone creates the forks.
 
 ## Not yet defined
 
-- **Merging forks.** `derivation.method: merged` with several inputs exists; how to reconcile
-  forks that reach different decisions is not yet specified.
+- **Merging forks.** `derivation.method: merged` with several inputs exists, but the
+  specification does not yet say how to reconcile forks that reach different decisions.
 - **Forking environments.** Checkpoints reference resources and never contain them.

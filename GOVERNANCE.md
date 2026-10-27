@@ -1,16 +1,17 @@
 # Governance
 
-This document describes how OpenCheckpoint is run today and how governance is meant to evolve.
+This document describes how OpenCheckpoint runs today and how its governance will change as the
+project grows.
 
 ## Principles
 
-- **Open:** all technical decisions are made in public, on GitHub issues, discussions, and pull
-  requests.
+- **Open:** the project makes all technical decisions in public, on GitHub issues, discussions,
+  and pull requests.
 - **Neutral:** no single company controls the specification. Maintainers disclose their
   affiliations, and governance will require maintainers from multiple organizations as the
   project grows.
-- **Evidence-based:** changes to the format are justified by implementation experience,
-  examples, or measurement, not preference.
+- **Evidence-based:** a change to the format must rest on implementation experience, examples,
+  or measurement. Preference alone does not justify one.
 - **Conservative:** the specification grows only when a need is demonstrated.
 
 ## Roles
@@ -23,27 +24,27 @@ This document describes how OpenCheckpoint is run today and how governance is me
 
 ## Becoming a maintainer
 
-A contributor with a sustained record of high-quality contributions and reviews may be nominated
-by any maintainer. Nominations are decided by the maintainers by lazy consensus (below). The
-project actively seeks maintainers from organizations not yet represented.
+Any maintainer may nominate a contributor with a sustained record of high-quality contributions
+and reviews. The maintainers decide nominations by lazy consensus (below). The project seeks
+maintainers from organizations not yet represented.
 
-Maintainers who are inactive for six months may be moved to emeritus status by the other
-maintainers.
+The other maintainers may move a maintainer who has been inactive for six months to emeritus
+status.
 
 ## Decision-making
 
-- **Lazy consensus.** Most decisions are made on pull requests. A pull request with approval
+- **Lazy consensus.** Maintainers make most decisions on pull requests. A pull request with approval
   from a maintainer (and an editor, for `spec/`) and no unresolved objection after the review
   period may be merged. The review period is two business days for editorial and tooling
   changes and seven days for normative changes.
 - **RFCs.** Normative changes follow the [RFC process](rfcs/README.md). An RFC is accepted when
   the shepherd calls for consensus and no maintainer objects within seven days.
-- **Voting.** If consensus cannot be reached, any maintainer may call a vote. A proposal passes
+- **Voting.** If the maintainers cannot reach consensus, any maintainer may call a vote. A proposal passes
   with a majority of maintainers. Normative changes and changes to this document need two thirds.
 - **Conflicts of interest.** Maintainers abstain from votes where they have a conflict of
   interest beyond their disclosed affiliation.
 
-While maintainers come from a single organization, normative changes additionally require a
+While maintainers come from a single organization, normative changes also require a
 public comment period of at least fourteen days, announced in GitHub Discussions, so that
 outside reviewers can object.
 
@@ -51,7 +52,7 @@ outside reviewers can object.
 
 The specification follows the version policy in §5 of the specification. A release tags the
 specification, the schema, the fixtures, and the documentation together. Each release has a
-changelog entry. Published schemas are never edited.
+changelog entry. Maintainers never edit a published schema.
 
 ## Code of conduct
 

@@ -23,7 +23,7 @@ Like every OpenCheckpoint SDK, it will:
 - Pass the shared [conformance manifest](../../conformance/) in CI.
 
 It will not call a network service, a model, or a database, and it will not offer a generic
-"resume" function. Restoring work into a specific runtime is the job of adapters built on top.
+"resume" function. Adapters built on top of it will restore work into a specific runtime.
 
 ## Design notes
 
@@ -31,4 +31,4 @@ It will not call a network service, a model, or a database, and it will not offe
 explains why types are generated from the schema while builders, semantic rules, and errors are
 handwritten.
 
-Want to help build it? See [contributing](../../project/contributing/).
+To help build it, see [contributing](../../project/contributing/).

@@ -16,11 +16,11 @@ private format, or someone's head.
 
 ## Transcripts, summaries, and starting over
 
-| Approach              | Limitation                                                                                                                                                                                        |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Replay the transcript | Expensive, grows with history, and often impossible across vendors because reasoning and compaction data are encrypted or runtime-specific. The next agent must re-derive what matters.           |
-| Write a prose summary | Cheap, and provenance is lost. A summary does not say what the user said, what the AI guessed, or what came from a web page. Guesses become facts and quoted text becomes instructions, silently. |
-| Start over            | The person re-explains, the agent redoes work, and side effects can happen twice.                                                                                                                 |
+| Approach              | Limitation                                                                                                                                                                                                      |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Replay the transcript | Expensive, grows with history, and often impossible across vendors because reasoning and compaction data are encrypted or runtime-specific. The next agent must re-derive what matters.                         |
+| Write a prose summary | Cheap, but it loses provenance. A summary does not say what the user said, what the AI guessed, or what came from a web page, so the next reader can take a guess for a fact or quoted text for an instruction. |
+| Start over            | The person re-explains, the agent redoes work, and side effects can happen twice.                                                                                                                               |
 
 Research on handoffs between coding agents found that carrying context cut agent steps by 20–59%
 and prompt tokens by 42–63%; separate work found that more context did not reliably improve
@@ -35,8 +35,8 @@ execution state.
 
 None of them defines a standalone, vendor-readable record of _working state_ with typed
 provenance, pending side effects, and application context. OpenCheckpoint defines that record,
-and travels inside those protocols.
-[Prior art](../prior-art/) compares them in detail.
+and it travels inside those protocols.
+[Prior art](../prior-art/) compares them.
 
 ## Design commitments
 

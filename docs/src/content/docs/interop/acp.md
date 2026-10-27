@@ -6,8 +6,8 @@ sidebar:
 ---
 
 ACP connects editors to coding agents. It defines no on-disk session format, and a session id
-means something only to the agent that issued it, so moving work between agents is out of its
-scope. A checkpoint fills that gap.
+means something only to the agent that issued it, so ACP leaves moving work between agents out of
+scope; a checkpoint covers that case.
 
 ## Passing a checkpoint to an agent
 

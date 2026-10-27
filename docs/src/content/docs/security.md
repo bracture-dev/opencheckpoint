@@ -3,10 +3,10 @@ title: Security and trust
 description: Why checkpoints are untrusted input, and what producers and consumers must do.
 ---
 
-A checkpoint is **untrusted input** that is likely to be shown to a model and acted on. It may
-come from a manipulated agent, be edited in transit, or be replayed. The normative requirements
-are in [§10 and §11 of the specification](../specification/#10-consumer-requirements-security-and-trust);
-The threat model is at the end of this page.
+A checkpoint is **untrusted input**, and a model will likely read it and act on it. A manipulated
+agent may have produced it, someone may have edited it in transit, or someone may be replaying it.
+The normative requirements are in [§10 and §11 of the specification](../specification/#10-consumer-requirements-security-and-trust);
+the threat model is at the end of this page.
 
 ## No transfer of authority
 
@@ -28,8 +28,8 @@ own credentials, as if the checkpoint did not exist.
 ## Side effects and approvals
 
 - Restoring a checkpoint never executes pending operations.
-- An `uncertain` action that may not be idempotent must be checked in the target system before it
-  is retried; the schema forbids recommending a blind retry.
+- The destination must check an `uncertain` action that may not be idempotent in the target system
+  before retrying it; the schema forbids recommending a blind retry.
 - An approval record must cite evidence in a system of record, and the destination must verify it
   there, including scope and expiry, before relying on it.
 - An operation that is complete, cancelled, or rejected in one checkpoint cannot reappear as
@@ -37,9 +37,9 @@ own credentials, as if the checkpoint did not exist.
 
 ## Stale state
 
-Resources change. Statements with `revalidate: before_use` or `before_action`, and resources with
-recorded revisions or digests, must be re-checked, or the destination continues without them and
-says so.
+Resources change after capture. The destination must re-check statements with `revalidate: before_use`
+or `before_action`, and resources with recorded revisions or digests, or continue without them and
+say so.
 
 ## Credentials and privacy
 
@@ -57,8 +57,8 @@ for an extension:
 - **DSSE envelope:** wrap the document bytes with a payload type and signatures.
 
 Either should bind the signer's identity to the producer, and neither should be required to
-read a checkpoint. A signature would establish who produced a checkpoint, not that its content
-is true or that the destination may act on it.
+read a checkpoint. A signature would establish who produced a checkpoint. It would not show that
+the content is true or that the destination may act on it.
 
 ## Threat model
 

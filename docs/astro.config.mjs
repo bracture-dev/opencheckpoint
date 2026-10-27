@@ -3,9 +3,10 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
-// Served as a GitHub Pages project site until the project has its own domain.
-const site = process.env.SITE_URL ?? "https://opencheckpoint.github.io";
-const base = process.env.SITE_BASE ?? "/opencheckpoint";
+// Served at the root of opencheckpoint.org. SITE_URL and SITE_BASE override it for previews.
+const site = process.env.SITE_URL ?? "https://opencheckpoint.org";
+const base = process.env.SITE_BASE ?? "/";
+const prefix = base.replace(/\/$/, "");
 
 export default defineConfig({
   site,
@@ -25,14 +26,25 @@ export default defineConfig({
       head: [
         {
           tag: "link",
-          attrs: { rel: "icon", type: "image/png", sizes: "32x32", href: `${base}/favicon-32.png` },
+          attrs: {
+            rel: "icon",
+            type: "image/png",
+            sizes: "32x32",
+            href: `${prefix}/favicon-32.png`,
+          },
         },
         {
           tag: "link",
-          attrs: { rel: "icon", type: "image/png", sizes: "16x16", href: `${base}/favicon-16.png` },
+          attrs: {
+            rel: "icon",
+            type: "image/png",
+            sizes: "16x16",
+            href: `${prefix}/favicon-16.png`,
+          },
         },
       ],
       customCss: ["./src/styles/theme.css"],
+      components: { Hero: "./src/components/Hero.astro" },
       social: [
         {
           icon: "github",
@@ -88,6 +100,7 @@ export default defineConfig({
             { label: "RFC 0001: OpenCheckpoint v0.1", slug: "rfcs/0001-opencheckpoint" },
             { label: "RFC process", slug: "rfcs" },
             { label: "Prior art", slug: "prior-art" },
+            { label: "White paper (PDF)", link: `${prefix}/opencheckpoint-whitepaper.pdf` },
           ],
         },
         { label: "Project", items: [{ autogenerate: { directory: "project" } }] },

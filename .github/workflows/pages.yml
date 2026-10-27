@@ -25,6 +25,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Build the white paper
+        run: |
+          curl -sSfL https://github.com/typst/typst/releases/download/v0.15.1/typst-x86_64-unknown-linux-musl.tar.xz | tar -xJ
+          ./typst-x86_64-unknown-linux-musl/typst compile paper/opencheckpoint-whitepaper.typ docs/public/opencheckpoint-whitepaper.pdf
       - run: npm run docs:build
       - uses: actions/upload-pages-artifact@v3
         with:

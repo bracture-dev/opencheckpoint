@@ -8,10 +8,11 @@ OpenCheckpoint is a specification. Security issues include:
   unsafe action: authority transfer, prompt injection that the statement model fails to contain,
   replay of side effects, or acceptance of forged approvals.
 - Gaps in the [threat model](docs/src/content/docs/security.md#threat-model).
-- Vulnerabilities in the repository's tooling, documentation site, or (later) SDKs.
+- Vulnerabilities in the repository's tooling, documentation site, or any SDK published from this
+  repository.
 
-A vulnerability in a third-party product that implements OpenCheckpoint should be reported to
-that product's maintainers.
+Report a vulnerability in a third-party product that implements OpenCheckpoint to that product's
+maintainers.
 
 ## Reporting
 
@@ -24,8 +25,8 @@ possible, a fixture that demonstrates it.
 ## Process
 
 Maintainers acknowledge reports within five business days, agree on a disclosure timeline with
-the reporter (normally no more than 90 days), and credit the reporter unless asked not to. A
-specification flaw is fixed in a new version, with the change and its rationale published in the
+the reporter (normally no more than 90 days), and credit the reporter unless asked not to. Maintainers
+fix a specification flaw in a new version and publish the change and its rationale in the
 changelog and the threat model.
 
 ## Supported versions
