@@ -205,6 +205,7 @@
       "description": "Billing lead approves a $1,188.00 refund of charge ch_2.",
       "status": "awaiting",
       "target": "r-charge-2",
+      "record": "r-refund-request",
       "requested_from": "billing lead",
       "requested_at": "2026-10-23T16:55:00Z"
     },
@@ -216,6 +217,7 @@
       "target": "r-charge-2",
       "effect": "non_idempotent",
       "idempotency_key": "refund-88213-ch_2",
+      "call": { "tool": "billing.refund_charge", "arguments": { "charge_id": "ch_2" } },
       "depends_on": ["op-refund-approval"]
     }
   ],
@@ -254,6 +256,12 @@
         "id": "stop-both",
         "description": "Never refund both charges; the customer owes one renewal.",
         "refs": ["s-obs-dup"]
+      },
+      {
+        "id": "stop-refund-early",
+        "description": "Refund nothing until the billing lead's approval is recorded in the billing system.",
+        "applies_to": ["op-refund"],
+        "until": [{ "operation": "op-refund-approval", "status": "approved" }]
       }
     ]
   },

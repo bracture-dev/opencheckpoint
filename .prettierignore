@@ -17,6 +17,7 @@ experiments/*/private/
 experiments/*/runs/
 experiments/*/runs2/
 experiments/*/runs-pilot/
+experiments/*/runs-v2/
 experiments/002-swe-handoffs/cache/
 experiments/002-swe-handoffs/evaluation/
 experiments/002-swe-handoffs/harness-check/
@@ -24,6 +25,9 @@ experiments/002-swe-handoffs/handoffs/
 brand/
 # Experiment inputs and outputs are kept byte-exact.
 experiments/*/handoffs/
-experiments/*/results.json
+experiments/*/handoffs-v2/
+experiments/*/results*.json
 experiments/*/rules/
+experiments/*/rules-v2/
+experiments/*/replay*.json
 experiments/*/crude/

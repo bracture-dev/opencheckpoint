@@ -20,14 +20,16 @@ Validators report levels 1 and 2 and must not describe a valid document as "safe
 
 ## Semantic rules
 
-The schema cannot check everything. Semantic rules have stable codes so every implementation
-reports the same thing:
+Some rules are beyond what JSON Schema can check. Each semantic rule has a stable code, so every
+implementation reports a violation the same way:
 
-- **OCP-S001–S008** (errors): unique ids, resolvable references of the right type, no
+- **OCP-S001–S009** (errors): unique ids, resolvable references of the right type, no
   self-parent, no observation timestamps after creation, no open operations on a completed task,
-  supersession within a kind, no credentials in URIs.
-- **OCP-W001–W003** (warnings): a blocked task that does not say why, an agent observation without
-  evidence, an awaiting operation that already expired.
+  supersession within a kind, no credentials in URIs, and an `until` that waits for an approval
+  only on an approval.
+- **OCP-W001–W004** (warnings): a blocked task that does not say why, an agent observation without
+  evidence, an awaiting operation that already expired, a fork that leaves a side-effecting action
+  unguarded.
 - **OCP-T001–T002** (between a parent and child): terminal operations stay terminal, and lineage
   and timestamps are consistent.
 
@@ -36,7 +38,7 @@ The authoritative table is in [§8.2 of the specification](../specification/#82-
 ## Unknown extensions
 
 Consumers ignore extension keys they do not understand and preserve them when they write the
-document back out. An extension that is needed to interpret a document is declared as a
+document back out. A producer declares an extension needed to interpret a document as a
 continuation requirement of kind `extension`; a consumer that does not implement a required one
 must not claim full understanding.
 
@@ -47,15 +49,15 @@ The `opencheckpoint` field holds `MAJOR.MINOR`.
 - **Before 1.0**, any minor version may break compatibility, and consumers reject versions they
   do not implement.
 - **From 1.0**, minor versions only add optional fields and warnings. A consumer may process a
-  newer minor version at reduced understanding, preserves unknown fields, and says so. Unknown
-  major versions are rejected.
+  newer minor version at reduced understanding, preserves unknown fields, and says so. Consumers
+  reject unknown major versions.
 
-Each version's schema is published once, at a stable URL, and never edited.
+The project publishes each version's schema once, at a stable URL, and never edits it.
 
 ## Running the checks
 
 The [conformance suite](../conformance/) is a manifest of fixtures with expected outcomes that
-any implementation can run. In this repository:
+any implementation can run. To run it in this repository:
 
 ```sh
 npm install

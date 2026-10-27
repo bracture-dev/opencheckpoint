@@ -13,8 +13,8 @@ pull-request tool.
 - The branch `fix/export-timeout` does **not** exist on the remote (the push failed).
 - `main` has moved to `9c02d4e`, three commits ahead of `4e1a9c7`; one commit touches
   `services/export/db.py`, the file the fix changes.
-- The fix commit `b83f210` is available because the source's patch file was shared with the
-  destination as `fix-export-timeout.patch`; the partly written test file was not.
+- The fix commit `b83f210` is available because the source shared its patch file with the
+  destination as `fix-export-timeout.patch`. The source did not share the partly written test file.
 
 ## User turn
 
@@ -42,4 +42,4 @@ replica over rescheduling. The replica can lag up to 60 seconds.
 ## Repeated-work baseline
 
 Reproduction (`c-repro`), tracing (`c-trace`), and the fix itself (`c-fix`). Re-running the repro
-after rebasing is expected, not repeated work.
+after rebasing is expected and does not count as repeated work.

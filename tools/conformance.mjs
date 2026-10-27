@@ -45,6 +45,9 @@ const REF_TARGETS = {
   requires: ["requirement"],
   blocked_by: ["statement", "operation", "resource", "requirement"],
   recoverable_from: ["resource"],
+  record: ["resource"],
+  applies_to: ["operation"],
+  "until.operation": ["operation"],
   refs: ANY,
   affected: ANY,
 };
@@ -110,6 +113,7 @@ function* references(doc) {
   for (const [i, o] of (doc.operations ?? []).entries()) {
     const p = `/operations/${i}`;
     yield* one("target", o.target, p);
+    yield* one("record", o.record, p);
     yield* list("depends_on", o.depends_on, p);
     yield* list("approval.evidence", o.approval?.evidence, p);
   }
@@ -117,6 +121,11 @@ function* references(doc) {
   for (const key of ["requirements", "preconditions", "stop_conditions", "recovery"])
     for (const [i, x] of (c[key] ?? []).entries())
       yield* list("refs", x.refs, `/continuation/${key}/${i}`);
+  for (const [i, x] of (c.stop_conditions ?? []).entries()) {
+    const p = `/continuation/stop_conditions/${i}`;
+    yield* list("applies_to", x.applies_to, p);
+    for (const u of x.until ?? []) yield* one("until.operation", u.operation, p);
+  }
   for (const [i, o] of (doc.derivation?.omissions ?? []).entries())
     yield* one("recoverable_from", o.recoverable_from, `/derivation/omissions/${i}`);
   for (const [i, t] of (doc.derivation?.transformations ?? []).entries())
@@ -208,6 +217,20 @@ export function checkSemantics(doc) {
         `uri of "${r.id}" contains userinfo; credentials must not appear in a checkpoint`,
       );
 
+  const operations = new Map((doc.operations ?? []).map((o) => [o.id, o]));
+  for (const [i, x] of (doc.continuation?.stop_conditions ?? []).entries())
+    for (const u of x.until ?? [])
+      if (
+        (u.status === "approved" || u.status === "rejected") &&
+        operations.has(u.operation) &&
+        operations.get(u.operation).kind !== "approval"
+      )
+        err(
+          "OCP-S009",
+          `/continuation/stop_conditions/${i}`,
+          `until waits for "${u.operation}" to be ${u.status}, but it is not an approval`,
+        );
+
   if (doc.task?.status === "blocked") {
     const stepBlocked = (doc.progress?.next ?? []).some((s) => s.blocked_by?.length);
     const opWaiting = (doc.operations ?? []).some((o) => o.status === "awaiting");
@@ -220,7 +243,12 @@ export function checkSemantics(doc) {
       warn("OCP-W002", `/statements/${i}`, `observation "${s.id}" by an agent cites no evidence`);
 
   if (doc.derivation?.method === "forked") {
-    const guarded = new Set((doc.continuation?.stop_conditions ?? []).flatMap((s) => s.refs ?? []));
+    const guarded = new Set(
+      (doc.continuation?.stop_conditions ?? []).flatMap((s) => [
+        ...(s.refs ?? []),
+        ...(s.applies_to ?? []),
+      ]),
+    );
     for (const [i, o] of (doc.operations ?? []).entries())
       if (
         o.kind === "action" &&

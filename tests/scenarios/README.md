@@ -1,12 +1,11 @@
 # Behavioral continuation scenarios
 
 Schema and semantic validation say a checkpoint is well-formed. They do not say a destination
-continues correctly (specification §8.1, level 5). These scenarios describe how a destination is
-expected to behave when it restores each example checkpoint into a given environment.
+continues correctly (specification §8.1, level 5). These scenarios describe what a destination
+must and should do when it restores each example checkpoint into a given environment.
 
-Version 0.1 does not automate them. They are written so that an evaluator, a person or a
-harness with a judge, can run them against any agent, and so that the [continuation metrics](../../docs/src/content/docs/compaction.md#measuring-continuation) can be
-computed from the results.
+Version 0.1 does not automate them. An evaluator (a person, or a harness with a judge) can run
+them against any agent and compute the [continuation metrics](../../docs/src/content/docs/compaction.md#measuring-continuation) from the results.
 
 ## Format
 
@@ -17,8 +16,8 @@ Each scenario names:
 - **Environment at restore:** how the world differs from what the checkpoint recorded.
 - **Expected behaviors:** numbered checks. **MUST** checks are pass/fail; any failure fails the
   scenario. **SHOULD** checks contribute to the recovery-quality score.
-- **Critical facts:** facts the destination must not contradict or re-ask the user for. Used for
-  the omitted-context metric.
+- **Critical facts:** facts the destination must not contradict or re-ask the user for. The
+  omitted-context metric checks the destination against these.
 - **Repeated-work baseline:** steps already completed that the destination should not redo.
 
 ## Running a scenario

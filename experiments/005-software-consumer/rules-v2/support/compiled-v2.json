@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "block": [],
+  "verify_first": [
+    {
+      "key": "ch_2",
+      "reason": "op-approval-ra1192: Billing lead approval to refund $1,188.00 of duplicate charge ch_2."
+    }
+  ],
+  "hold": [
+    {
+      "key": "ch_2",
+      "reason": "stop-no-refund-until-approved: Do not refund ch_2 until get_refund_approval confirms that RA-1192 is approved. If it is rejected, do not refund. Tell the customer instead.",
+      "until": [
+        {
+          "key": "RA-1192",
+          "status": "approved"
+        }
+      ]
+    }
+  ]
+}

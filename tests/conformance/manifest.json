@@ -93,6 +93,14 @@
       }
     },
     {
+      "id": "valid/call-and-release",
+      "description": "Actions that record the call they stand for, and a stop condition that names the operation it forbids and the approval that lifts it.",
+      "file": "../fixtures/valid/call-and-release.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
       "id": "valid/transition-parent",
       "description": "Parent of a valid transition pair.",
       "file": "../fixtures/valid/transition-parent.json",
@@ -262,6 +270,14 @@
       }
     },
     {
+      "id": "schema/call-on-approval",
+      "description": "Only an operation of kind action records a call.",
+      "file": "../fixtures/invalid/call-on-approval.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
       "id": "semantic/duplicate-id",
       "description": "Local ids are unique across the whole document.",
       "file": "../fixtures/invalid/duplicate-id.json",
@@ -331,6 +347,24 @@
       "expect": {
         "result": "semantic",
         "errors": ["OCP-S008"]
+      }
+    },
+    {
+      "id": "semantic/applies-to-wrong-type",
+      "description": "A stop condition's applies_to must reference operations.",
+      "file": "../fixtures/invalid/applies-to-wrong-type.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S003"]
+      }
+    },
+    {
+      "id": "semantic/until-approved-non-approval",
+      "description": "Only an approval can be awaited as approved or rejected.",
+      "file": "../fixtures/invalid/until-approved-non-approval.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S009"]
       }
     },
     {

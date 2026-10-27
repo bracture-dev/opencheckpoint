@@ -1,0 +1,13 @@
+{
+  "block": [
+    {
+      "key": "GEG",
+      "reason": "op-notify-geg: Notify the GEG manager of the holiday hours and the pending AR-30918. The drafted text said the Spokane schedule 'will be published once it is approved', which may conflict with the GEG publish already done. Revise it before sending."
+    },
+    {
+      "key": "BOI",
+      "reason": "op-publish-boi: Publish BOI holiday hours. Held for user confirmation; the hours may differ (closed all week)."
+    }
+  ],
+  "verify_first": []
+}

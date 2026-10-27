@@ -1,0 +1,105 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e43",
+  "created_at": "2026-10-23T17:05:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Refund a duplicate renewal charge.",
+    "status": "awaiting_input"
+  },
+  "resources": [
+    {
+      "id": "r-charge-1",
+      "kind": "record",
+      "locator": {
+        "system": "billing",
+        "type": "charge",
+        "key": "ch_1"
+      }
+    },
+    {
+      "id": "r-charge-2",
+      "kind": "record",
+      "locator": {
+        "system": "billing",
+        "type": "charge",
+        "key": "ch_2"
+      }
+    },
+    {
+      "id": "r-approval",
+      "kind": "record",
+      "locator": {
+        "system": "billing",
+        "type": "refund_approval",
+        "key": "RA-1192"
+      }
+    }
+  ],
+  "operations": [
+    {
+      "id": "op-verify",
+      "kind": "action",
+      "description": "Verify the requester owns the account.",
+      "status": "completed",
+      "effect": "non_idempotent",
+      "call": {
+        "tool": "verify_identity",
+        "arguments": {
+          "ticket_id": "88213"
+        }
+      }
+    },
+    {
+      "id": "op-approval",
+      "kind": "approval",
+      "description": "Billing lead approves refunding ch_2.",
+      "status": "awaiting",
+      "target": "r-approval",
+      "requested_from": "billing lead"
+    },
+    {
+      "id": "op-refund",
+      "kind": "action",
+      "description": "Refund ch_2 in full.",
+      "status": "planned",
+      "target": "r-charge-2",
+      "effect": "non_idempotent",
+      "depends_on": ["op-approval"],
+      "call": {
+        "tool": "refund_charge",
+        "arguments": {
+          "charge_id": "ch_2"
+        }
+      }
+    }
+  ],
+  "progress": {
+    "next": [
+      {
+        "id": "n-refund",
+        "description": "Refund ch_2 once approved.",
+        "blocked_by": ["op-approval"]
+      }
+    ]
+  },
+  "continuation": {
+    "stop_conditions": [
+      {
+        "id": "stop-refund",
+        "description": "Do not refund ch_2 until the billing lead approves.",
+        "applies_to": ["op-refund"],
+        "until": [
+          {
+            "operation": "op-refund",
+            "status": "approved"
+          }
+        ]
+      }
+    ]
+  }
+}

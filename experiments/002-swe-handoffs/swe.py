@@ -2,8 +2,8 @@
 """Experiment 002: handoffs on SWE-bench Verified tasks.
 
   python swe.py sample N                 choose N tasks (fixed seed) -> tasks.json
-  python swe.py source ID                run the source session, interrupted after its first file edit
   python swe.py reference ID             run the source uninterrupted (reference solve rate)
+  python swe.py source ID                run the source session, stopped at half the reference's tool calls
   python swe.py handoffs ID              prose summary and checkpoint from the source transcript
   python swe.py run AGENT ID CONDITION   continue from the interrupted workspace (A, B2, C, D)
   python swe.py evaluate                 build predictions for every finished run and run the harness

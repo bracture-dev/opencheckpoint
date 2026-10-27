@@ -6,16 +6,16 @@ checkpoint, and a different coding agent continues in a fresh checkout.
 
 ## What to notice
 
-- **An uncertain operation.** `op-push` was issued but its result was not observed. Pushing is
+- **An uncertain operation.** The agent issued `op-push` but never saw its result. Pushing is
   idempotent, so the source recommends `verify_first`: check the remote, then push if needed.
 - **A moved base.** `r-main` was observed at `4e1a9c7`; precondition `pre-main` requires
-  fetching and rebasing before trusting the fix.
+  fetching main and, if it has moved, rebasing before trusting the fix.
 - **Compaction made visible.** `derivation` records the parent checkpoint, the ACP session it
   came from, the omitted 6 MB trace (recoverable from `r-trace`), and the condensed exploration of
-  pool settings, which survives as a retracted hypothesis rather than disappearing.
+  pool settings, which survives as a retracted hypothesis.
 - **External opinion stays external.** A contributor's suggestion to raise the timeout
-  (`s-ext-issue`) contradicts the user's decision `s-dec-replica`; it is recorded as external
-  content, not as a decision.
+  (`s-ext-issue`) contradicts the user's decision `s-dec-replica`; the checkpoint records it
+  as external content.
 - **Local paths are an incompatibility.** The `file:///workspace` URIs are meaningful only on the
   source machine, and `continuation.incompatibilities` says so.
 

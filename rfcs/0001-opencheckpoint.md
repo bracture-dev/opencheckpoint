@@ -14,13 +14,12 @@ authors: OpenCheckpoint maintainers
 OpenCheckpoint lets a person pick up unfinished AI-assisted work with a different AI, agent, or
 application without starting over or explaining everything again. This RFC proposes version 0.1
 of the format: the problem, who has it, the scope, the design decisions behind the
-[specification](../spec/versions/v0.1.md), and the risks and open questions reviewers are asked
-to weigh in on. It is the only RFC until v0.1 is accepted; until then the specification changes
+[specification](../spec/versions/v0.1.md), and the risks and open questions for reviewers. It is the only RFC until v0.1 is accepted; until then the specification changes
 directly by pull request.
 
 ## The problem
 
-AI-assisted work increasingly spans more than one session, agent, model, or application:
+AI-assisted work often spans more than one session, agent, model, or application:
 
 - A financial analyst starts a variance analysis in one assistant, runs out of context, and
   has to re-explain the ledger structure, the materiality threshold, and the three accounts
@@ -48,8 +47,8 @@ runtime's internal format, or in someone's head. Moving it means one of:
    side effects such as sending an email twice.
 
 Research on handoffs between coding agents quantifies the cost: carrying context cut agent
-events by 20–59% and prompt tokens by 42–63% ([Prior art](../docs/src/content/docs/prior-art.md)). The same research shows that more
-context is not automatically better, which argues for structure over volume.
+events by 20–59% and prompt tokens by 42–63% ([Prior art](../docs/src/content/docs/prior-art.md)). The same research finds that more
+context does not always help, so the format favors structure over volume.
 
 ## Principle
 
@@ -82,7 +81,7 @@ A solution must:
    distinguishable.
 4. Make unsafe states explicit: side effects whose outcome is unknown, approvals that are only
    records, evidence that may be stale, capabilities the destination lacks.
-5. Never transfer authority. A checkpoint describes; it does not authorize.
+5. Never transfer authority. A checkpoint records state and grants no permission.
 6. Support degraded continuation when the destination lacks some capabilities or resources.
 7. Be small and simple enough that a producer can emit a useful checkpoint with a few fields,
    and complete enough that a careful producer can record everything a destination needs.
@@ -110,15 +109,15 @@ models; runtime internals; transports and storage APIs; an automatic "resume any
 ## Boundary
 
 Checkpoints are captured at **well-defined execution boundaries**: points where nothing is
-mid-write from the producer's point of view. The format does not attempt to capture a process
-in flight. Anything started and unconfirmed at the boundary is recorded as uncertain, with
+mid-write from the producer's point of view. The format does not capture a process in flight.
+The producer records anything started and unconfirmed at the boundary as uncertain, along with
 what repeating it would do.
 
 ## Decisions
 
 ### D1. A complementary document format
 
-OpenCheckpoint is a self-contained document format that existing protocols carry, not a
+OpenCheckpoint is a self-contained document format that existing protocols carry. It defines no
 protocol, profile, or transport. [Prior art](../docs/src/content/docs/prior-art.md) gives the evidence. Consequences: the specification
 defines no RPC or storage API; session history stays in the systems that own it and is
 referenced through `source.session_refs`.
@@ -130,14 +129,14 @@ bindings.
 
 - For: full control over the model; no dependency on another project's release cycle.
 - Against: risks duplicating concepts (resources, task states, extension conventions) that
-  existing standards already define; a new transport would compete rather than complement.
+  existing standards already define; a new transport would compete with the existing ones.
 
 **B. Profile or extension of an existing session standard.** For example, an ASP projection,
 an A2A extension, or an MCP extension.
 
 - For: inherits a community and transport.
-- Against: each candidate represents something else. ASP is a log format and its projections
-  are derived from events; a checkpoint must be authorable without a log, by hand or by an
+- Against: each candidate models something different. ASP is a log format that derives its
+  projections from events; a checkpoint must be authorable without a log, by hand or by an
   application with no agent session at all. A2A and MCP are transports; binding the format to
   one excludes users of the others. ASP is also early (draft, unidentified steward), which
   makes it a risky base. A profile would inherit those constraints and lose
@@ -157,7 +156,7 @@ block, alongside an ASP session) and that points back into their records.
 Alternatives: Protocol Buffers (A2A's normative source), TypeSpec/OpenAPI (Open Responses),
 CDDL, or a TypeScript source of truth (MCP, ASP).
 
-JSON Schema 2020-12 is chosen because it is language-neutral, is the format MCP and ACP
+The format uses JSON Schema 2020-12 because it is language-neutral, is the format MCP and ACP
 publish, has mature validators in every target language (Ajv for JavaScript,
 `santhosh-tekuri/jsonschema` for Go, the `jsonschema` crate for Rust, `jsonschema` for Python), and can express most of
 the format's safety rules directly through `if`/`then`. Protocol Buffers would make JSON a
@@ -166,10 +165,10 @@ make one SDK's language the owner of the contract.
 
 ### D3. A hand-authored schema is the single source of truth
 
-The schema in `spec/schema/` is written by hand, reviewed as part of the specification, and
-consumed verbatim by every SDK. No SDK's types are allowed to redefine it. MCP and ACP generate
-their schema from code; this project inverts that so that no implementation language owns the
-format.
+Maintainers write the schema in `spec/schema/` by hand and review it as part of the
+specification, and every SDK consumes it verbatim. No SDK's types may redefine it. MCP and ACP
+generate their schema from code; OpenCheckpoint inverts that, so no implementation language owns
+the format.
 
 ### D4. One statement type with a `kind`
 
@@ -179,7 +178,7 @@ A single `statements` array with a `kind` discriminator keeps provenance (`origi
 `verification`, `evidence`) uniform, so compaction and security rules apply the same way to
 everything, and keeps the number of object types small. Kind-specific rules (an instruction's
 origin must be the user or system; a hypothesis cannot be verified; a decision needs a
-rationale) are expressed as schema conditionals and tested by fixtures.
+rationale) live in schema conditionals, and fixtures test them.
 
 The kinds are the smallest set that keeps apart what a summary blurs and a destination must
 treat differently: `instruction`, `constraint`, `decision`, `observation`, `hypothesis`,
@@ -188,9 +187,9 @@ treat differently: `instruction`, `constraint`, `decision`, `observation`, `hypo
 ### D5. One namespace for local identifiers
 
 All local objects share one id namespace, unique across the document. References need no type
-tag, and `blocked_by` can point at a question, an operation, a resource, or a requirement. The
-cost is that producers must avoid collisions between object types, which prefixes (`r-`,
-`s-`, `op-`) make easy.
+tag, and `blocked_by` can point at a question, an operation, a resource, or a requirement. In
+exchange, producers must avoid collisions between object types; prefixes (`r-`, `s-`, `op-`)
+make that easy.
 
 ### D6. No blocker object
 
@@ -202,18 +201,17 @@ avoids a second representation of the same fact.
 
 Alternatives: allow unknown properties everywhere (lenient), or prefix them (`x-`).
 
-Core objects reject undefined properties so typos and invented fields are caught, and all
+Core objects reject undefined properties so validators catch typos and invented fields, and all
 extension data lives in `extensions` maps keyed by reverse-DNS names (the convention MCP uses
 for `_meta`). Consumers ignore unknown extensions and preserve them on re-serialization.
-Forward compatibility comes from the version policy (D10), not from tolerating arbitrary
-fields. An extension that is needed to interpret a document is declared as a continuation
-requirement of kind `extension`, which serves the purpose of a "critical extensions" list
-without a new field.
+The version policy (D10) provides forward compatibility. A producer declares an extension needed
+to interpret a document as a continuation requirement of kind `extension`, which serves as a
+"critical extensions" list without a new field.
 
 ### D8. Operations carry side-effect semantics; approvals are records
 
-Runtime checkpoints (LangGraph pending writes, OpenAI `RunState` interruptions) show that the
-dangerous moment in resumption is a side effect whose outcome is unknown. Operations therefore
+Runtime checkpoints (LangGraph pending writes, OpenAI `RunState` interruptions) show that
+resumption is most dangerous at a side effect whose outcome is unknown. Operations therefore
 record `effect` (`none`, `idempotent`, `non_idempotent`, `unknown`) and a recommended `resume`,
 and the schema rejects an uncertain, possibly non-idempotent operation that recommends
 `retry`. An approval outcome must cite evidence in a system of record, and the specification
@@ -222,9 +220,9 @@ states that the record never authorizes the destination.
 ### D9. Application context is located, not modeled
 
 Application context names the application, the view, selected and open resources, filters,
-drafts, and application-defined `state` described by a `state_schema` URI. It does not define a
-UI model. This captures state that never appeared in chat while leaving each application in
-charge of its own semantics.
+drafts, and application-defined `state` described by a `state_schema` URI. The format defines
+no UI model. It captures state that never appeared in chat and leaves each application in charge
+of its own semantics.
 
 ### D10. Version policy
 
@@ -235,9 +233,9 @@ version's schema is immutable at a stable URL.
 ### D11. Field naming
 
 Field names are `snake_case`, as in Open Responses. MCP and A2A's JSON use `camelCase`. Either
-works; one had to be chosen, and `snake_case` avoids ambiguity with acronyms and reads
-naturally to people and models. This is listed as an open question because alignment with
-carrier protocols has some value.
+works, and the format needs one. `snake_case` avoids ambiguity with acronyms and reads naturally
+to people and models. It stays an open question because matching carrier protocols has some
+value.
 
 ### D12. One repository
 
@@ -257,12 +255,12 @@ Evaluated per language:
 | Rust       | Generated Serde types (e.g. `typify`), `serde_json::Map` for extensions.                                            | `jsonschema` crate with the embedded schema file.           | Builders, semantic rules, error enums.            |
 | Python     | Generated typed dictionaries (e.g. `datamodel-code-generator`), plain `dict` documents so round trips are lossless. | `jsonschema` with the packaged schema file.                 | Builder, semantic rules, exception types.         |
 
-Generated types are reviewed and may be wrapped for idiom, but never edited to diverge from the
-schema; CI regenerates and diffs them. Every SDK validates with the canonical schema rather
-than re-encoding its rules, so level-1 behavior is identical by construction. The semantic
+Maintainers review generated types and may wrap them for idiom, but never edit them to diverge
+from the schema; CI regenerates and diffs them. Every SDK validates with the canonical schema
+instead of re-encoding its rules, so level-1 behavior matches across SDKs by construction. The semantic
 rules (§8.2 of the specification) are the only per-language logic, and the shared conformance
-manifest tests them. Restoration into a particular runtime is the job of adapters, outside the
-SDKs' core.
+manifest tests them. Adapters, outside the SDKs' core, handle restoration into a
+particular runtime.
 
 ### D14. Documentation derives from the specification
 
@@ -274,8 +272,8 @@ explain concepts link to the normative text rather than restate it.
 
 A checkpoint can be forked: several new checkpoints share one parent and are continued
 independently, to compare agents, run regression or adversarial tests, explore hypotheses in
-parallel, or brief subagents. Forking within one runtime is common; a readable, portable
-baseline is what this format adds. Forks set `derivation.method` to `forked`, so a destination
+parallel, or brief subagents. Runtimes already fork internally; this format adds a readable,
+portable baseline. Forks set `derivation.method` to `forked`, so a destination
 knows siblings may exist, and each pending action with a side effect stays actionable in at most
 one fork (specification §9.3), because every fork inherits the baseline's pending operations.
 The [Forking a baseline](../docs/src/content/docs/forking.md) page records the audit behind this
@@ -284,16 +282,38 @@ decision, including where forking does not pay off.
 ### D16. Tools before SDKs
 
 The first people to use checkpoints are mid-conversation: the agent they are talking to writes
-the checkpoint, and another agent restores it. That needs a skill that teaches agents the capture
+the checkpoint, and another agent restores it. They need a skill that teaches agents the capture
 and restore procedures, and tools that validate, inspect, render, and move checkpoints: a CLI and
 an MCP server. Both are built on one library, in TypeScript, which also runs the validator in the
 browser and shares its rules with the conformance harness. Libraries in other languages follow
 when runtime authors integrate natively. The [Using OpenCheckpoint](../docs/src/content/docs/using.md)
 page describes the flows and which piece serves whom.
 
+### D17. Software can enforce operations and stop conditions
+
+A guard in front of the tools can enforce a checkpoint without a model, if the fields say which
+call to refuse and when to stop refusing. An `action` operation can record its `call`: the tool
+as the interface declares it, and the arguments. A call to the same tool with the same recorded
+arguments repeats the operation, so a guard can refuse to repeat a completed payment. A stop
+condition can name the operations it forbids (`applies_to`) and the operations and statuses that
+lift it (`until`); the consumer checks `until` in the system of record, never in the checkpoint,
+at the operation's `record`, the resource where its status lives.
+Both are optional, and the description stays authoritative for a model. Experiment 005 found
+each gap: a guard compiled from v0.1 fields could not stop a repeated payment, and it refused a
+correct refund after the approval arrived because the stop condition's release was prose.
+
+#### Alternatives considered
+
+- **A general expression language for conditions.** Rejected for v0.1: every observed case was
+  "until this operation reaches this status", and an expression language needs an evaluator
+  every consumer must share.
+- **Matching calls by `target` alone.** Experiment 005's guard did this. A resource identifies
+  what an action changes, not which call changed it, so the guard blocked legitimate calls on
+  the same record.
+
 ## Risks
 
-- **Adoption.** A format with no producers is not a standard. Mitigation: keep the minimal
+- **Adoption.** The format needs producers in several ecosystems. Mitigation: keep the minimal
   checkpoint tiny; build converters from existing session formats (pi compaction summaries,
   ASP projections) as early demonstrations; seek reviewers from carrier-protocol communities.
 - **Over-modeling.** Each field is a burden on producers. Mitigation: every object beyond
@@ -336,4 +356,4 @@ Version 0.1 succeeds if:
 - Reviewers from at least two unaffiliated organizations find the model sound or propose
   concrete changes.
 
-The ultimate measure is independent implementations adopting the format.
+Past v0.1, success means independent implementations adopting the format.

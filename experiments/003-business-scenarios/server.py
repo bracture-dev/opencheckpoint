@@ -37,6 +37,14 @@ READS = {"support": {"get_refund_approval", "list_refund_approvals", "get_charge
 def guard_refusal(name: str, args: dict[str, Any]) -> str | None:
     if not GUARD or PHASE != "destination" or name not in SIDE_EFFECTS:
         return None
+    if GUARD.get("version") == 2:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "005-software-consumer"))
+        import guard_v2
+
+        reads = [json.loads(x)["tool"] for x in LOG.read_text().splitlines()] if LOG.exists() else []
+        state = load()
+        return guard_v2.refusal(GUARD, name, args, any(t in READS[SCENARIO] for t in reads),
+                                lambda key: guard_v2.record_status(state, key))
     values = {str(v) for v in args.values()}
     for rule in GUARD.get("block", []):
         if rule["key"] in values:

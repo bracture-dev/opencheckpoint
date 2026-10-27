@@ -9,8 +9,8 @@ manager continues the next day from a general-purpose assistant on their phone.
 
 - **Application state that did not come from chat.** `app-scheduler` records the week-grid view,
   the focused Friday closing slot, the selected employee, the filters the manager had applied,
-  and a saved but unpublished draft. None of this was said in conversation; the destination
-  learns it only from the checkpoint.
+  and a saved but unpublished draft. The manager never mentioned any of it in conversation; the
+  destination learns it only from the checkpoint.
 - **Partial completion.** Completed steps record exactly which stores are published and notified
   (`c-publish-3`, `c-notify-3`), so a destination does not republish or re-notify them. Success
   criterion `sc-notify` says "notified once".
@@ -20,6 +20,7 @@ manager continues the next day from a general-purpose assistant on their phone.
 - **A pending request for input.** `op-boise-answer` waits on the regional manager, and
   publishing the remaining stores depends on it.
 - **A verified observation from the application.** `s-obs-spokane` comes from the scheduler's
-  availability view (`origin.type: application`) and must be re-checked before acting.
+  availability view (`origin.type: application`), and its `revalidate: before_action` tells the
+  destination to re-check it before acting.
 
 Scenario: [`tests/scenarios/business-operations.md`](../../tests/scenarios/business-operations.md).

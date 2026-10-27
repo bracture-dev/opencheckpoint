@@ -3,7 +3,7 @@
 Each directory holds a complete checkpoint from a different domain and a short explanation of
 what it demonstrates. CI validates every `checkpoint.json` against the schema and the semantic
 rules. Each example has a matching behavioral scenario in [`tests/scenarios/`](../tests/scenarios/)
-that describes how a destination is expected to continue it.
+that describes how a destination should continue it.
 
 | Example                                       | Demonstrates                                                                                                                                                                                           |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

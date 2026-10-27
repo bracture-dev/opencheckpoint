@@ -1,0 +1,9 @@
+{
+  "block": [],
+  "verify_first": [
+    {
+      "key": "ch_2",
+      "reason": "op-approval-ra1192: Billing lead approval to refund $1,188.00 of duplicate charge ch_2."
+    }
+  ]
+}

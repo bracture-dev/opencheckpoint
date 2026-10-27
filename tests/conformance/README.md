@@ -25,7 +25,8 @@ reading [`manifest.json`](manifest.json) and checking each case.
     `errors` (level 2). An implementation must report exactly those codes.
 - `expect.warnings` lists the warning codes an implementation must report. Absent means none.
 
-Schema failures are not matched by message or path, because validators word them differently.
+A schema failure matches on the `schema` result alone. Validators word messages and paths
+differently, so a case never compares them.
 
 ## What an implementation must do
 
@@ -46,8 +47,8 @@ references, and credential leakage.
 ## Cross-language consistency
 
 Every SDK runs this manifest in CI. Two implementations that pass it agree on validity and on
-semantic error codes for every case. That is necessary for interoperability, not sufficient:
-behavioral continuation is tested separately by [`tests/scenarios`](../scenarios/).
+semantic error codes for every case. Interoperability needs that agreement, and also needs the
+destination to continue the task correctly, which [`tests/scenarios`](../scenarios/) tests.
 
 ## Reference harness
 

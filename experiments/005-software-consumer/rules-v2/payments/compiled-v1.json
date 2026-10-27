@@ -1,0 +1,18 @@
+{
+  "block": [
+    {
+      "key": "INV-105",
+      "reason": "op-pay-105: Pay INV-105 (Umbrella Logistics, 2275.00) after INV-103 is settled."
+    },
+    {
+      "key": "INV-104",
+      "reason": "op-release-104: The user's release of the hold on INV-104 (Northwind Traders, short-delivery dispute)."
+    }
+  ],
+  "verify_first": [
+    {
+      "key": "INV-103",
+      "reason": "op-pay-103: Pay INV-103 (Initech Services, 8900.00). The bank gateway timed out after 30 s, so the outcome is unknown. Check the payment list for INV-103 before any resend."
+    }
+  ]
+}

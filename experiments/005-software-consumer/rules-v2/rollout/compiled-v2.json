@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "block": [],
+  "verify_first": [
+    {
+      "key": "GEG",
+      "reason": "op-ar-30918: Store manager's approval of overtime for E-4471 at GEG to cover the 6am-10pm Friday close."
+    }
+  ],
+  "hold": [
+    {
+      "tool": "publish_holiday_hours",
+      "arguments": {
+        "store_id": "BOI"
+      },
+      "reason": "stop-boi: Do not publish hours for, notify, or otherwise change BOI until the user confirms.",
+      "until": []
+    },
+    {
+      "tool": "notify_manager",
+      "arguments": {
+        "store_id": "GEG"
+      },
+      "reason": "stop-geg: Take no further GEG action (no republish, no notice, no schedule) until the user has answered q-geg-schedule. A person must lift this.",
+      "until": []
+    }
+  ]
+}

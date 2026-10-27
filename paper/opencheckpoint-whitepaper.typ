@@ -7,7 +7,7 @@
   authors: (
     (name: "Mathew Goldsborough", email: "mat@nimblebrain.ai", affiliation: "github.com/opencheckpoint"),
   ),
-  abstract: [Work that one AI agent starts often continues with another: a different model, vendor, runtime, or application. We describe OpenCheckpoint, an open JSON format for the working state of an unfinished task, and evaluate it in eight experiments with 424 continuation sessions across agents from two vendors. Without a handoff, agents re-paid invoices, paid an invoice the user had put on hold, and reported unfinished work as complete; with a handoff from a capable model, no payment run committed a violation (0 of 48, against 12 of 12 without). In one long session, a summary or checkpoint cost 31% less than replaying the transcript; on 20 SWE-bench Verified tasks, handoffs cut tool calls by 12–23% without changing the solve rate. Prose summaries and checkpoints performed alike when capable models wrote and read them. The checkpoint's structure mattered in three places: agents followed a forged user instruction from every summary and from no checkpoint, a weak model's checkpoints failed validation while its summaries gave no sign of error, and software enforced checkpoint fields without a model. We identify two gaps in the format.],
+  abstract: [Work that one AI agent starts often continues with another: a different model, vendor, runtime, or application. We describe OpenCheckpoint, an open JSON format for the working state of an unfinished task, and evaluate it in eight experiments with 424 continuation sessions across agents from two vendors. Without a handoff, agents re-paid invoices, paid an invoice the user had put on hold, and reported unfinished work as complete; with a handoff from a capable model, no payment run committed a violation (0 of 48, against 12 of 12 without). In one long session, a summary or checkpoint cost 31% less than replaying the transcript; on 20 SWE-bench Verified tasks, handoffs cut tool calls by 12–23% without changing the solve rate. Prose summaries and checkpoints performed alike when capable models wrote and read them. The checkpoint's structure mattered in three places: agents followed a forged user instruction from every summary and from no checkpoint, a weak model's checkpoints failed validation while its summaries gave no sign of error, and software enforced checkpoint fields without a model. We identify two gaps in that enforcement and, in an exploratory follow-up, test fields that close them.],
 )
 
 = Introduction
@@ -20,7 +20,7 @@ This paper describes OpenCheckpoint [16], an open JSON format for the working st
 
 + *A format* that records the state of work at a boundary: the task, progress, statements with typed provenance, resources, application context, pending operations with their side-effect semantics, and what to check before continuing. It separates validation, which establishes that a document is well-formed and consistent, from permission to act, which a checkpoint never grants.
 + *An evaluation method* for handoffs: real interruptions, mock systems with deliberate traps, destinations from two vendors, rubrics committed before the runs, and disclosed corrections.
-+ *Measurements* across eight experiments and 424 continuation sessions, covering cost, completion, safety, tampering, weak producers, software consumers, forking, and software tasks at scale.
++ *Measurements* across eight experiments and 424 continuation sessions, plus 24 follow-up runs, covering cost, completion, safety, tampering, weak producers, software consumers, forking, and software tasks at scale.
 
 Without a handoff, agents re-paid invoices, paid an invoice on hold, and reported unfinished work as complete. In one long session, a structured handoff cost a third less than replay. The same checkpoints worked with agents from two vendors, and a checkpoint's explicit provenance changed how agents treated a forged instruction. We expected a checkpoint to beat a good prose summary on safety and completion in general. It did not: with capable models writing and reading the handoff, the two performed alike.
 
@@ -49,13 +49,13 @@ A checkpoint is a JSON document described by a JSON Schema (Draft 2020-12) [17] 
 - *Task and progress*: objective, outcome, status, success criteria, scope; completed steps, the current focus, and recommended next steps, each able to name what blocks it.
 - *Statements*: instructions, constraints, decisions, observations, hypotheses, questions, and external content, each with an origin (`user`, `system`, `agent`, `tool`, `application`, `external`) and an optional verification state.
 - *Resources*: files, records, and documents by URI or by a system-type-key locator, with revisions and digests so a destination can detect change.
-- *Operations*: approvals, requests for input, actions, and waits, each with a status. An action records what repeating it would do (`effect`) and what the producer recommends (`resume`).
-- *Continuation*: requirements, preconditions, stop conditions, and recovery steps.
+- *Operations*: approvals, requests for input, actions, and waits, each with a status. An action records what repeating it would do (`effect`), what the producer recommends (`resume`), and optionally the `call` it stands for: the tool and its arguments. An operation can name its `record`, the resource in a system of record where its status can be checked.
+- *Continuation*: requirements, preconditions, stop conditions, and recovery steps. A stop condition can name the operations it forbids (`applies_to`) and the operations and statuses that lift it (`until`), which a consumer checks at each operation's `record`, never in the checkpoint.
 - *Derivation*: how the producer made the checkpoint and what it omitted.
 
 The schema enforces the combinations that matter for safety: an instruction comes only from the user or the operating system; a hypothesis is never marked verified; external content is never attributed to the user; an action with an unknown outcome that may not be idempotent cannot recommend a blind retry; and an approval's outcome must cite evidence in a system of record. A producer can fork a checkpoint, and each pending action with a side effect stays actionable in at most one fork.
 
-Validation has two levels: syntactic (the schema) and semantic (eight error rules and four warnings with stable codes). The specification names three properties that validation does not establish: whether resources are available, whether the destination may act, and whether the task continues to completion. A checkpoint is untrusted input and transfers no authority.
+Validation has two levels: syntactic (the schema) and semantic (nine error rules and four warnings with stable codes). The specification names three properties that validation does not establish: whether resources are available, whether the destination may act, and whether the task continues to completion. A checkpoint is untrusted input and transfers no authority.
 
 = Evaluation Method
 
@@ -179,6 +179,23 @@ A platform guard compiled from checkpoint fields, with no model involved, refuse
 
 The guard also refused the correct refund in all six support runs. The stop condition meant "until the approval arrives", but stop conditions are prose, so the compiled rule could not lift. A guard supplies no missing knowledge: in the rollout, guarded bare runs left the same five managers without notice. In an offline replay of 96 recorded runs, rules that Haiku extracted from either format blocked more harmful calls than compiled rules but also 54–85% of legitimate payment calls, against 27%.
 
+*Follow-up with the added fields.* We added `call`, `applies_to`, and `until` to the format, and Opus wrote new checkpoints from the same source transcripts with an unchanged prompt that names none of them. It used all three. Compiling them showed a third gap: a guard must check an `until` operation's status somewhere, and Opus had targeted the support approval at the charge it approves. We added `record` before any live run, and Opus wrote the checkpoints again. One `record` pointed at a tool rather than a payment record; a separate rule set corrects that one field. @tab-005v2 compares the guards on the same 96 recorded runs and in 24 new live runs.
+
+#figure(
+  table(
+    columns: (auto, 1fr, auto, auto),
+    [Scenario], [Rules], [Harmful calls blocked], [Legitimate calls blocked],
+    [payments], [v1, original checkpoint], [9 of 15], [3 of 36],
+    [payments], [v2, new checkpoint], [15 of 15], [36 of 36],
+    [payments], [v2, `record` corrected], [15 of 15], [0 of 36],
+    [support], [v1, original checkpoint], [0 of 0], [26 of 67],
+    [support], [v2, new checkpoint], [0 of 0], [0 of 67],
+  ),
+  caption: [Offline replay of experiments 003 and 004's recorded runs through guards compiled from checkpoint fields. Rollout is unchanged (23 of 143 legitimate calls in every rule set).],
+) <tab-005v2>
+
+In the live runs, three per cell, no guarded payment run paid an invoice twice or paid the held invoice (0 of 12, against 1 of 6 with the version 1 guard). Each remaining violation was a payment attempted before reading the bank, which the guard refused. The support refund that the version 1 guard refused in all six runs went through in all six. As produced, the payment checkpoint held INV-105 until a record no system could report, so the guard held it in all six runs and none completed; with the corrected `record`, all six completed. A guard fails closed on a producer's mistake: the cost fell on completion, and no payment went wrong. Rollout completion was unchanged.
+
 == Forking against shared systems (experiment 008, 12 pairs)
 
 Two agents from different vendors continued sibling forks at the same time against one payment system. With naive copies, 2 of 6 pairs paid the same invoice twice. In the other naive pairs, Claude paid first and Codex found the payment when it checked the bank, so avoiding the duplicate depended on timing. With ownership applied (a stop condition in the checkpoint fork, or a written note in the summary), no pair paid twice, whichever agent owned the payment. The difference is not significant at this size (2 of 6 against 0 of 6, p = 0.45), so this experiment demonstrates the mechanism and does not estimate a rate.
@@ -222,9 +239,9 @@ With Opus or Haiku as the producer and capable destinations, summaries and check
 - *Enforcement without a model.* A platform compiled fields into rules and enforced them whatever the model decided.
 - *Mechanical forking.* A tool applied ownership, and the validator flagged an unguarded fork.
 
-== Gaps in the format
+== Fields that software can enforce
 
-Experiment 005 points to two additions: a call identity for operations, so a guard can block a repeat of completed or in-flight work, and machine-readable conditions on stop conditions and blocked steps, so a guard can lift a rule when the system of record changes.
+Experiment 005 found two gaps: no call identity for operations, so a guard could not block a repeat of completed work, and no machine-readable condition on a stop condition, so a guard could not lift a rule when the system of record changed. The follow-up closed both with `call`, `applies_to`, and `until`, and showed that `until` also needs `record`, the place where a consumer checks an operation's status. A capable producer used the fields without being told to. The remaining risk sits with the producer: a `record` that names nothing a system can check makes the guard hold work indefinitely, and a validator cannot detect that, because whether a resource has a status is a fact about the target system.
 
 == Cost depends on the session a handoff replaces
 
@@ -243,10 +260,11 @@ No valid handoff authorized anything. Destinations verified approvals in the sys
 - Model and tool versions are those current in October 2026; both destinations loaded the operator's global instructions in every condition.
 - Token counts include each tool's own overhead; compare within an agent.
 - Each experiment's documentation discloses scorer corrections made after its runs.
+- Experiment 005's follow-up is exploratory: we added `record` after seeing the producer's first output, corrected one field in a separate rule set, and ran three runs per cell with one producer.
 
 = Future Work
 
-- Add operation call identity and machine-readable conditions to the format, and rerun experiment 005.
+- Measure how often producers write a `call` and `record` that a consumer can use, across producers and target systems.
 - Test a validating consumer's fallback when it rejects a checkpoint: asking the user, or replaying.
 - Separate the two explanations for the forgery result, and test a prose summary with provenance labels.
 - Run enough forked pairs to estimate the duplicate rate under naive copies.
@@ -254,7 +272,7 @@ No valid handoff authorized anything. Destinations verified approvals in the sys
 
 = Conclusion
 
-Across 424 continuation sessions, some handoff was necessary wherever the work lived in conversation or in side effects the systems did not record. Without one, capable agents repeated payments, paid held invoices, and reported unfinished work as done. Where the systems recorded the work, a handoff saved rediscovery. With capable producers, structured and prose handoffs gave the same results, and prose cost less to write. A checkpoint added explicit provenance that changed how agents treated a forged instruction, validation that rejected a weak producer's output, and fields that software can enforce without a model. A call identity for operations and machine-readable conditions would let software enforce more.
+Across 424 continuation sessions, some handoff was necessary wherever the work lived in conversation or in side effects the systems did not record. Without one, capable agents repeated payments, paid held invoices, and reported unfinished work as done. Where the systems recorded the work, a handoff saved rediscovery. With capable producers, structured and prose handoffs gave the same results, and prose cost less to write. A checkpoint added explicit provenance that changed how agents treated a forged instruction, validation that rejected a weak producer's output, and fields that software can enforce without a model. In a follow-up, a call identity, machine-readable stop conditions, and a record for each operation's status let a guard stop repeated payments and release a held refund once the approval arrived.
 
 #heading(numbering: none)[Competing Interests]
 
@@ -284,6 +302,9 @@ Per-run results are in `experiments/*/results.json` in the OpenCheckpoint reposi
     [A 3B producer's checkpoints fail validation; its summaries pass as text], [007], [Validity; safety checks], [6 handoffs, 12 runs],
     [A compiled guard cuts payment violations from 6 of 6 to 1 of 6], [005], [Safety checks; Fisher], [12 runs],
     [Compiled stop conditions cannot lift], [005], [Refund completed under guard], [6 runs],
+    [With `call`, a guard blocks every harmful payment call in replay], [005 follow-up], [Harmful calls blocked], [96 recorded runs],
+    [With `until` and `record`, a guard releases the approved refund], [005 follow-up], [Refund completed under guard], [6 runs],
+    [No guarded payment run repeats a payment or pays the held invoice], [005 follow-up], [Safety checks], [12 runs],
     [Fork ownership removes timing-dependent duplicates (not significant)], [008], [Duplicate payments; Fisher], [12 pairs],
     [Handoffs do not change the SWE-bench solve rate], [002], [Resolved; McNemar], [160 runs],
     [Handoffs cut SWE-bench tool calls by 12–23%], [002], [Tool calls; Wilcoxon], [160 runs],

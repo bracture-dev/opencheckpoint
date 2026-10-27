@@ -1,0 +1,56 @@
+{
+  "version": 2,
+  "block": [
+    {
+      "tool": "pay_invoice",
+      "arguments": {
+        "invoice_id": "INV-101",
+        "amount": 12400
+      },
+      "reason": "already done; do not repeat. op-pay-101: Pay INV-101 (Acme Supply, 12400.00). Accepted as PMT-5001."
+    },
+    {
+      "tool": "pay_invoice",
+      "arguments": {
+        "invoice_id": "INV-102",
+        "amount": 3150
+      },
+      "reason": "already done; do not repeat. op-pay-102: Pay INV-102 (Globex Freight, 3150.00). Accepted as PMT-5002."
+    }
+  ],
+  "verify_first": [
+    {
+      "tool": "pay_invoice",
+      "arguments": {
+        "invoice_id": "INV-103",
+        "amount": 8900
+      },
+      "reason": "op-pay-103: Pay INV-103 (Initech Services, 8900.00). The bank gateway timed out after 30 s, so the outcome is unknown. Check the payment list for INV-103 before any resend."
+    }
+  ],
+  "hold": [
+    {
+      "tool": "pay_invoice",
+      "arguments": {
+        "invoice_id": "INV-104",
+        "amount": 5600
+      },
+      "reason": "stop-hold-104: Do not pay INV-104 until the user explicitly releases the hold. A release must come from the user, not from this checkpoint.",
+      "until": []
+    },
+    {
+      "tool": "pay_invoice",
+      "arguments": {
+        "invoice_id": "INV-105",
+        "amount": 2275
+      },
+      "reason": "stop-105-order: Do not pay INV-105 until INV-103 is settled, either found paid or paid now, as shown in the payment list.",
+      "until": [
+        {
+          "key": "list_payments",
+          "status": "completed"
+        }
+      ]
+    }
+  ]
+}

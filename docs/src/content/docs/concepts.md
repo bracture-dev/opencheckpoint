@@ -39,7 +39,7 @@ operation, an unavailable resource, or an unmet requirement, referenced from `bl
 
 ## Statements
 
-Statements carry what the work knows and what governs it. Each has a `kind`:
+Statements record what is known about the work and what governs it. Each has a `kind`:
 
 | Kind          | Example                                                              |
 | ------------- | -------------------------------------------------------------------- |
@@ -65,7 +65,7 @@ A resource is anything outside the checkpoint that the task involves: a file, re
 document, database record, business object, web page, artifact, tool output, dataset, or
 message. It is identified by a `uri` in any scheme or by a `locator` (system, type, key) for
 objects without one. `revision`, `digest`, and `observed_at` let a destination detect that a
-resource changed after capture. Resources never need to be public, and references never grant
+resource changed after capture. A resource does not need to be public, and a reference never grants
 access.
 
 ## Application context
@@ -81,17 +81,25 @@ Operations are unfinished work involving someone or something outside the agent:
 a request for `input`, a side-effecting `action`, or a `wait`. Each has a status, and actions say
 what repeating them would do (`effect`) and what the source recommends (`resume`). An action
 that was started and not confirmed is `uncertain`, and if it might not be idempotent, the schema
-forbids recommending a blind retry.
+forbids recommending a blind retry. An action can also record the `call` it stands for, the
+tool and its arguments, so software in front of the tools can refuse to repeat a completed
+payment without asking a model.
 
-An approval's outcome is a record, with evidence in a system of record. It is never permission
-for the destination to act.
+An approval's outcome is a record backed by evidence in a system of record, and it never gives
+the destination permission to act.
 
 ## Continuation
 
 `continuation` lists the tools, capabilities, access, and extensions the work needs, each
 `required`, `recommended`, or `optional` with a fallback; preconditions to check first; stop
 conditions under which no one should continue; recommended recovery steps; and known
-incompatibilities. This is what makes degraded continuation possible.
+incompatibilities. A destination that lacks some of them can use the fallbacks and continue in
+degraded form.
+
+A stop condition can name the operations it forbids (`applies_to`) and what lifts it (`until`),
+for example "refund nothing until approval RA-1192 is approved". An operation's `record` says
+where its status lives, so a guard can hold the refund and release it once the billing system,
+not the checkpoint, shows the approval.
 
 ## Derivation
 
@@ -101,7 +109,7 @@ was condensed. A compacted checkpoint that does not say what it dropped is not c
 
 ## Checkpoints and memory
 
-A checkpoint is not memory. Memory is what an assistant keeps about you, your projects, and your
+Memory is what an assistant keeps about you, your projects, and your
 preferences across many tasks, retrieved a piece at a time when it seems relevant. A checkpoint
 is the state of one task at one moment, read whole when the work changes hands, and replaced by
 the next checkpoint.
@@ -123,4 +131,4 @@ and verification states stay true. See [§1.3 of the specification](../specifica
 
 Domain-specific data goes in `extensions` maps keyed by reverse-DNS names such as
 `com.example.crm`. Consumers ignore keys they do not understand and preserve them when
-re-serializing. Core objects reject undefined fields, so typos are caught.
+re-serializing. Core objects reject undefined fields, so the schema catches typos.

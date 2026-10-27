@@ -1,0 +1,17 @@
+{
+  "attempts": [
+    {
+      "capture": {
+        "input": 35107,
+        "output": 5545,
+        "cost": 0.391748,
+        "seconds": 48.735
+      },
+      "validation": {
+        "level": "ok",
+        "errors": [],
+        "warnings": []
+      }
+    }
+  ]
+}
