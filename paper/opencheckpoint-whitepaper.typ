@@ -257,7 +257,7 @@ No valid handoff authorized anything. Destinations verified approvals in the sys
 - One source session per scenario; Opus handoffs are single samples in experiments 003 and 005–008, so significance tests measure repeatability on those handoffs, not generalization across sessions or handoff samples.
 - We designed the format, the scenarios, the rubrics, and the forgeries.
 - Two destination agents, both capable; we did not test weaker destinations.
-- Model and tool versions are those current in October 2026; both destinations loaded the operator's global instructions in every condition.
+- Model and tool versions are those current in October 2026; both destinations loaded the operator's global instructions in every condition; they hold general preferences and nothing about these tasks, payments, or verification.
 - Token counts include each tool's own overhead; compare within an agent.
 - Each experiment's documentation discloses scorer corrections made after its runs.
 - Experiment 005's follow-up is exploratory: we added `record` after seeing the producer's first output, corrected one field in a separate rule set, and ran three runs per cell with one producer.
