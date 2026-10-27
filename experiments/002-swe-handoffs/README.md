@@ -77,8 +77,9 @@ cached clones; agents installed dependencies into temporary environments. Per-ru
 
 ## Findings
 
-1. **Handoffs did not change whether tasks were solved** (hypothesis 1 holds in the sense that no
-   handoff did significantly worse; hypothesis 2 holds). Across six comparisons with A, handoffs gained
+1. **Handoffs did not change whether tasks were solved.** Hypothesis 1 does not hold as stated: the
+   checkpoint (15) and transcript (16) resolved fewer tasks than A (17) with Claude Code, though not
+   significantly. Hypothesis 2 holds. Across six comparisons with A, handoffs gained
    one task and lost five, none significant. Each loss was on a task the same agent solved in some
    conditions and not others; the two checkpoint losses were on tasks Codex never solved, and one also
    failed with the transcript.
@@ -92,8 +93,7 @@ cached clones; agents installed dependencies into temporary environments. Per-ru
    interrupted after 4 to 13 tool calls, so transcripts were short. With Claude, every handoff condition
    read more uncached input than A and cost about $0.05 more per task; with Codex, handoffs read slightly
    less. Experiment 001 shows the saving appears when the session being replaced is long.
-5. **Codex resolved fewer tasks than Claude Code in every condition** (12 to 14 against 15 to 17),
-   consistent with a source session written by Claude.
+5. **Codex resolved fewer tasks than Claude Code in every condition** (12 to 14 against 15 to 17).
 
 ## Limits
 
