@@ -1,0 +1,7 @@
+cache/
+runs/
+evaluation/
+harness-check/
+__pycache__/
+handoffs/*/source-events.jsonl
+handoffs/*/stderr.txt
