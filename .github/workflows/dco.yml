@@ -14,7 +14,7 @@ jobs:
           fetch-depth: 0
       - name: Every commit is signed off
         run: |
-          missing=$(git log --format='%H %s%n%b%n--END--' origin/${{ github.base_ref }}..HEAD \
+          missing=$(git log --no-merges --format='%H %s%n%b%n--END--' origin/${{ github.base_ref }}..HEAD \
             | awk '/^[0-9a-f]{40} /{sha=$1; ok=0} /^Signed-off-by: /{ok=1} /^--END--$/{if(!ok) print sha}')
           if [ -n "$missing" ]; then
             echo "Commits missing a Signed-off-by line (see CONTRIBUTING.md):"; echo "$missing"; exit 1
