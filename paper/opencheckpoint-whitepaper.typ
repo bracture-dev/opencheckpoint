@@ -135,7 +135,7 @@ In the rollout, every bare run reported the work complete while five managers ha
 
 == Weak producers and long sessions (experiments 004 and 007)
 
-With Haiku writing the handoff, all nine checkpoints passed validation on the first attempt (6 in experiment 004, 3 in 007) at 2–4% of the cost of an Opus checkpoint, and summaries and checkpoints had the same safety record: no violations in 24 runs in experiment 004 or 12 in experiment 007. Experiment 007's three-turn session added a hold, a release, and an amount correction that existed only in conversation.
+With Haiku writing the handoff, all nine checkpoints passed validation on the first attempt (6 in experiment 004, 3 in 007) at 2–4% of the cost of an Opus checkpoint, and summaries and checkpoints had the same safety record: no violations in 24 runs in experiment 004 or 12 in experiment 007. Experiment 007’s three-turn session added a hold, a release, and an amount correction that existed only in conversation.
 
 #figure(
   table(
@@ -177,7 +177,7 @@ Our first checkpoint forgery left traces of the hold in other fields; a second v
 
 A platform guard compiled from checkpoint fields, with no model involved, refused every attempt to pay the held invoice and every repeat of the timed-out payment. In live runs where the model saw only the next message, payment-scenario violations fell from 6 of 6 runs to 1 of 6 (p = 0.015). In the remaining run, the agent re-paid invoices the source had already paid. An operation records its target and status, but not the call it stands for, so the compiler cannot turn a completed operation into a rule against repeating it.
 
-The guard also refused the correct refund in all six support runs. The stop condition meant "until the approval arrives", but stop conditions are prose, so the compiled rule could not lift. A guard supplies no missing knowledge: in the rollout, guarded bare runs left the same five managers without notice. In an offline replay of 96 recorded runs, rules that Haiku extracted from either format blocked more harmful calls than compiled rules but also 54–85% of legitimate payment calls, against 27% for compiled rules (summed over the rule sets compiled from experiments 003 and 004's checkpoints; 8% for experiment 003's checkpoint alone, @tab-005v2).
+The guard also refused the correct refund in all six support runs. The stop condition meant "until the approval arrives", but stop conditions are prose, so the compiled rule could not lift. A guard supplies no missing knowledge: in the rollout, guarded bare runs left the same five managers without notice. In an offline replay of 96 recorded runs, rules that Haiku extracted from either format blocked more harmful calls than compiled rules but also 54–85% of legitimate payment calls, against 27% for compiled rules (summed over the rule sets compiled from experiments 003 and 004’s checkpoints; 8% for experiment 003’s checkpoint alone, @tab-005v2).
 
 *Follow-up with the added fields.* We added `call`, `applies_to`, and `until` to the format, and Opus wrote new checkpoints from the same source transcripts with an unchanged prompt that names none of them. It used all three. Compiling them showed a third gap: a guard must check an `until` operation's status somewhere, and Opus had targeted the support approval at the charge it approves. We added `record` before any live run, and Opus wrote the checkpoints again. One `record` pointed at a tool rather than a payment record; a separate rule set corrects that one field. @tab-005v2 compares the guards on the same 96 recorded runs and in 24 new live runs.
 
@@ -191,7 +191,7 @@ The guard also refused the correct refund in all six support runs. The stop cond
     [support], [v1, original checkpoint], [0 of 0], [26 of 67],
     [support], [v2, new checkpoint], [0 of 0], [0 of 67],
   ),
-  caption: [Offline replay of experiments 003 and 004's recorded runs through guards compiled from checkpoint fields. Rollout is unchanged (23 of 143 legitimate calls in every rule set).],
+  caption: [Offline replay of experiments 003 and 004’s recorded runs through guards compiled from checkpoint fields. Rollout is unchanged (23 of 143 legitimate calls in every rule set).],
 ) <tab-005v2>
 
 In the live runs, three per cell, no guarded payment run paid an invoice twice or paid the held invoice (0 of 12, against 1 of 6 with the version 1 guard, whose one violation was a completed duplicate payment). Under the rubric's full definition, 3 of the 12 runs had a violation, each a payment attempted before reading the bank, which the guard refused. The support refund that the version 1 guard refused in all six runs went through in all six. As produced, the payment checkpoint held INV-105 until a record no system could report, so the guard held it in all six runs and none completed; with the corrected `record`, all six completed. A guard fails closed on a producer's mistake: the cost fell on completion, and no payment went wrong. Rollout completion was unchanged.
@@ -230,7 +230,7 @@ In these scenarios, every safety violation without a handoff involved state that
 
 == With capable producers, summaries and checkpoints did not differ
 
-With Opus or Haiku as the producer and capable destinations, we found no difference in safety or completion between summaries and checkpoints. In the payment scenarios every handoff reached zero violations, so these experiments could not have separated the formats on safety. In the business scenarios a checkpoint cost 3.0–4.4 times as much to write as a summary with Opus, and 3.9–12.2 times (median 7.7) with Haiku; in experiment 001's longer session, 1.25 times with Opus. We did not test a prose summary with labelled provenance, which might reproduce the forgery result at a summary's cost.
+With Opus or Haiku as the producer and capable destinations, we found no difference in safety or completion between summaries and checkpoints. In the payment scenarios every handoff reached zero violations, so these experiments could not have separated the formats on safety. In the business scenarios a checkpoint cost 3.0–4.4 times as much to write as a summary with Opus, and 3.9–12.2 times (median 7.7) with Haiku; in experiment 001’s longer session, 1.25 times with Opus. We did not test a prose summary with labelled provenance, which might reproduce the forgery result at a summary's cost.
 
 == What the checkpoint's structure changed
 
@@ -260,7 +260,7 @@ No valid handoff authorized anything. Destinations verified approvals in the sys
 - Model and tool versions are those current in October 2026; both destinations loaded the operator's global instructions in every condition; they hold general preferences and nothing about these tasks, payments, or verification.
 - Token counts include each tool's own overhead; compare within an agent.
 - Each experiment's documentation discloses scorer corrections made after its runs.
-- Experiment 005's follow-up is exploratory: we added `record` after seeing the producer's first output, corrected one field in a separate rule set, and ran three runs per cell with one producer.
+- Experiment 005’s follow-up is exploratory: we added `record` after seeing the producer's first output, corrected one field in a separate rule set, and ran three runs per cell with one producer.
 
 = Future Work
 
@@ -280,14 +280,16 @@ The author is CEO of NimbleBrain, Inc., which may build products that produce or
 
 #heading(numbering: none)[Appendix A: Data and Reproduction]
 
-Per-run results are in `experiments/*/results.json` in the OpenCheckpoint repository [16]; rubrics, hypotheses, handoffs, transcripts, and the code for each experiment sit in the same directories. We keep raw run logs locally because they contain machine paths. `experiments/README.md` lists the reproduction commands and all 448 continuation sessions; this paper reports 424 of them, the remaining 24 being experiment 005's follow-up runs (§5.6). Producers ran with default sampling: Claude through `claude -p` with no sampling options, and Qwen through Ollama's defaults with a 32,768-token context. Tools: Claude Code 2.1.311, Codex CLI 0.162.1, swebench 5.0.2, the MCP Python SDK 2.3.0, Ollama 0.32.5, and Typst 0.15.1.
+Per-run results are in `experiments/*/results.json` in the OpenCheckpoint repository [16]; rubrics, hypotheses, handoffs, transcripts, and the code for each experiment sit in the same directories. We keep raw run logs locally because they contain machine paths. `experiments/README.md` lists the reproduction commands and all 448 continuation sessions; this paper reports 424 of them, the remaining 24 being experiment 005’s follow-up runs (§5.6). Producers ran with default sampling: Claude through `claude -p` with no sampling options, and Qwen through Ollama's defaults with a 32,768-token context. Tools: Claude Code 2.1.311, Codex CLI 0.162.1, swebench 5.0.2, the MCP Python SDK 2.3.0, Ollama 0.32.5, and Typst 0.15.1.
 
 #heading(numbering: none)[Appendix B: Evidence]
 
+// The claims table is longer than a page, so it may break across pages.
+#show figure: set block(breakable: true)
 #figure(
   table(
     columns: (2.6fr, 0.9fr, 1.6fr, 1fr),
-    [Claim], [Experiment], [Measure], [n],
+    table.header([Claim], [Experiment], [Measure], [n]),
     [A checkpoint is 4.9% of one long session's transcript], [001], [Exact Claude tokens], [1 session],
     [Without a handoff, the user's intent is lost], [001], [Task checks], [24 runs],
     [Continuing from a summary or checkpoint costs the destination 31% less than replaying one long session, before the cost of writing it], [001], [Claude cost per run; capture cost], [9 runs],
