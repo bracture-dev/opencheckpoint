@@ -22,3 +22,8 @@ experiments/002-swe-handoffs/evaluation/
 experiments/002-swe-handoffs/harness-check/
 experiments/002-swe-handoffs/handoffs/
 brand/
+# Experiment inputs and outputs are kept byte-exact.
+experiments/*/handoffs/
+experiments/*/results.json
+experiments/*/rules/
+experiments/*/crude/
