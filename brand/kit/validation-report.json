@@ -1,0 +1,13 @@
+{
+  "svgCount": 17,
+  "svgParsing": "passed",
+  "svgRendering": "passed",
+  "outlines": "no live text or nonfinite values",
+  "desktopThemes": [
+    "light",
+    "dark"
+  ],
+  "mobileWidth": 390,
+  "mobileOverflow": false,
+  "consoleErrors": []
+}

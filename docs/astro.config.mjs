@@ -15,8 +15,23 @@ export default defineConfig({
       title: "OpenCheckpoint",
       description:
         "An open format for carrying unfinished work between AI models, agents, and applications.",
-      logo: { src: "./src/assets/mark.svg", alt: "" },
+      logo: {
+        light: "./src/assets/lockup-horizontal-light.svg",
+        dark: "./src/assets/lockup-horizontal-dark.svg",
+        alt: "OpenCheckpoint",
+        replacesTitle: true,
+      },
       favicon: "/favicon.svg",
+      head: [
+        {
+          tag: "link",
+          attrs: { rel: "icon", type: "image/png", sizes: "32x32", href: `${base}/favicon-32.png` },
+        },
+        {
+          tag: "link",
+          attrs: { rel: "icon", type: "image/png", sizes: "16x16", href: `${base}/favicon-16.png` },
+        },
+      ],
       customCss: ["./src/styles/theme.css"],
       social: [
         {

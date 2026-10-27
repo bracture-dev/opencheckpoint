@@ -1,44 +1,69 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
-/* Dark (Starlight default). Slate grays with a teal trail-marker accent. */
+/* Public Sans, SIL Open Font License 1.1 (src/fonts/PublicSans-OFL.txt). */
+@font-face {
+  font-family: "Public Sans";
+  src: url("../fonts/PublicSans.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Brand colors from brand/kit/tokens.css. */
+/* Public Sans: SIL OFL 1.1. Dark is Starlight's default.
+ * gray-5/6/7 are surfaces or decorative dividers, never text.
+ * gray-4 is the essential UI border; --oc-step-border uses it. */
 :root {
-  --sl-color-accent-low: #0b2f2c;
-  --sl-color-accent: #14b8a6;
-  --sl-color-accent-high: #a7f3e7;
+  --sl-color-accent-low: #1d3428;
+  --sl-color-accent: #9bcbaa;
+  --sl-color-accent-high: #d4eedd;
   --sl-color-white: #ffffff;
-  --sl-color-gray-1: #e6ebef;
-  --sl-color-gray-2: #c3ccd4;
-  --sl-color-gray-3: #8b98a5;
-  --sl-color-gray-4: #56626e;
-  --sl-color-gray-5: #35404a;
-  --sl-color-gray-6: #1d252d;
-  --sl-color-black: #12181e;
-  --oc-step-border: var(--sl-color-gray-5);
+  --sl-color-gray-1: #e9edf2;
+  --sl-color-gray-2: #c8d0da;
+  --sl-color-gray-3: #a0adbc;
+  --sl-color-gray-4: #8593a4;
+  --sl-color-gray-5: #394656;
+  --sl-color-gray-6: #222d3b;
+  --sl-color-gray-7: #192331;
+  --sl-color-black: #121a24;
+  --oc-step-border: var(--sl-color-gray-4);
 }
 
 :root[data-theme="light"] {
-  --sl-color-accent-low: #ccf2ec;
-  --sl-color-accent: #0f766e;
-  --sl-color-accent-high: #0b3d39;
-  --sl-color-white: #12181e;
-  --sl-color-gray-1: #1d252d;
-  --sl-color-gray-2: #35404a;
-  --sl-color-gray-3: #56626e;
-  --sl-color-gray-4: #8b98a5;
-  --sl-color-gray-5: #c3ccd4;
-  --sl-color-gray-6: #eef2f5;
-  --sl-color-gray-7: #f6f8fa;
+  --sl-color-accent-low: #e3f0e8;
+  --sl-color-accent: #386b50;
+  --sl-color-accent-high: #214832;
+  --sl-color-white: #18212b;
+  --sl-color-gray-1: #26313c;
+  --sl-color-gray-2: #3c4753;
+  --sl-color-gray-3: #536171;
+  --sl-color-gray-4: #6f7c8b;
+  --sl-color-gray-5: #ccd3dc;
+  --sl-color-gray-6: #eff2f6;
+  --sl-color-gray-7: #f7f9fb;
   --sl-color-black: #ffffff;
-  --oc-step-border: var(--sl-color-gray-5);
+  --oc-step-border: var(--sl-color-gray-4);
+}
+
+:root {
+  --sl-font: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6),
+.hero h1,
+h1#_top {
+  font-weight: 600;
 }
 
 /* Homepage handoff walkthrough. */
 .handoff {
   display: grid;
+  /* minmax(0, 1fr) lets long code lines scroll inside a step instead of widening the page. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   margin-top: 1.5rem;
 }
 .handoff-step {
+  min-width: 0;
   border: 1px solid var(--oc-step-border);
   border-radius: 0.5rem;
   padding: 1rem 1.25rem;

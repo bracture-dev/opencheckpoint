@@ -1,0 +1,229 @@
+{
+  "direction": "Nested / balanced / forest green",
+  "pairs": [
+    {
+      "mode": "light",
+      "fg": "white",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 16.263131530883538
+    },
+    {
+      "mode": "light",
+      "fg": "gray-1",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 13.23261609403096
+    },
+    {
+      "mode": "light",
+      "fg": "gray-2",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 9.4665649234823
+    },
+    {
+      "mode": "light",
+      "fg": "gray-3",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 6.3326857890394415
+    },
+    {
+      "mode": "light",
+      "fg": "accent",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 6.200056271694003
+    },
+    {
+      "mode": "light",
+      "fg": "white",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 14.483295152054142
+    },
+    {
+      "mode": "light",
+      "fg": "gray-1",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 11.784439187479178
+    },
+    {
+      "mode": "light",
+      "fg": "gray-2",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 8.43054448662067
+    },
+    {
+      "mode": "light",
+      "fg": "gray-3",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 5.6396369428424755
+    },
+    {
+      "mode": "light",
+      "fg": "accent",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 5.521522393873805
+    },
+    {
+      "mode": "light",
+      "fg": "accent-high",
+      "bg": "accent-low",
+      "min": 4.5,
+      "role": "Callout text",
+      "ratio": 8.782309933375032
+    },
+    {
+      "mode": "light",
+      "fg": "gray-4",
+      "bg": "black",
+      "min": 3,
+      "role": "Essential UI border",
+      "ratio": 4.25809906675303
+    },
+    {
+      "mode": "light",
+      "fg": "gray-4",
+      "bg": "gray-6",
+      "min": 3,
+      "role": "Essential UI border",
+      "ratio": 3.792092897567555
+    },
+    {
+      "mode": "light",
+      "fg": "black",
+      "bg": "accent",
+      "min": 4.5,
+      "role": "Solid button text",
+      "ratio": 6.200056271694003
+    },
+    {
+      "mode": "dark",
+      "fg": "white",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 17.515290718743532
+    },
+    {
+      "mode": "dark",
+      "fg": "gray-1",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 14.896807561391025
+    },
+    {
+      "mode": "dark",
+      "fg": "gray-2",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 11.252000615450466
+    },
+    {
+      "mode": "dark",
+      "fg": "gray-3",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 7.671958155743285
+    },
+    {
+      "mode": "dark",
+      "fg": "accent",
+      "bg": "black",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 9.605504507253523
+    },
+    {
+      "mode": "dark",
+      "fg": "white",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 13.9393724686222
+    },
+    {
+      "mode": "dark",
+      "fg": "gray-1",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 11.855478308984248
+    },
+    {
+      "mode": "dark",
+      "fg": "gray-2",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 8.954794420174013
+    },
+    {
+      "mode": "dark",
+      "fg": "gray-3",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 6.105652713040497
+    },
+    {
+      "mode": "dark",
+      "fg": "accent",
+      "bg": "gray-6",
+      "min": 4.5,
+      "role": "Body text / links",
+      "ratio": 7.6444466281311705
+    },
+    {
+      "mode": "dark",
+      "fg": "accent-high",
+      "bg": "accent-low",
+      "min": 4.5,
+      "role": "Callout text",
+      "ratio": 10.84654305056721
+    },
+    {
+      "mode": "dark",
+      "fg": "gray-4",
+      "bg": "black",
+      "min": 3,
+      "role": "Essential UI border",
+      "ratio": 5.593936515828497
+    },
+    {
+      "mode": "dark",
+      "fg": "gray-4",
+      "bg": "gray-6",
+      "min": 3,
+      "role": "Essential UI border",
+      "ratio": 4.451879555531224
+    },
+    {
+      "mode": "dark",
+      "fg": "black",
+      "bg": "accent",
+      "min": 4.5,
+      "role": "Solid button text",
+      "ratio": 9.605504507253523
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+/* Public Sans: SIL OFL 1.1. Dark is Starlight's default.
+ * gray-5/6/7 are surfaces or decorative dividers, never text.
+ * gray-4 is the essential UI border; --oc-step-border uses it. */
+:root {
+  --sl-color-accent-low: #1D3428;
+  --sl-color-accent: #9BCBAA;
+  --sl-color-accent-high: #D4EEDD;
+  --sl-color-white: #FFFFFF;
+  --sl-color-gray-1: #E9EDF2;
+  --sl-color-gray-2: #C8D0DA;
+  --sl-color-gray-3: #A0ADBC;
+  --sl-color-gray-4: #8593A4;
+  --sl-color-gray-5: #394656;
+  --sl-color-gray-6: #222D3B;
+  --sl-color-gray-7: #192331;
+  --sl-color-black: #121A24;
+  --oc-step-border: var(--sl-color-gray-4);
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #E3F0E8;
+  --sl-color-accent: #386B50;
+  --sl-color-accent-high: #214832;
+  --sl-color-white: #18212B;
+  --sl-color-gray-1: #26313C;
+  --sl-color-gray-2: #3C4753;
+  --sl-color-gray-3: #536171;
+  --sl-color-gray-4: #6F7C8B;
+  --sl-color-gray-5: #CCD3DC;
+  --sl-color-gray-6: #EFF2F6;
+  --sl-color-gray-7: #F7F9FB;
+  --sl-color-black: #FFFFFF;
+  --oc-step-border: var(--sl-color-gray-4);
+}

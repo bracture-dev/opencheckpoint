@@ -1,0 +1,10 @@
+{
+  "name": "OpenCheckpoint",
+  "direction": "Nested / balanced",
+  "palette": "Forest green",
+  "typeface": "Public Sans",
+  "wordmarkWeight": 600,
+  "tagline": "Pick up where another AI left off.",
+  "status": "selected",
+  "source": "compression-refinements/nested-balanced"
+}

@@ -1,4 +1,9 @@
-# OpenCheckpoint
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/kit/lockup-horizontal-dark.svg">
+    <img src="brand/kit/lockup-horizontal-light.svg" alt="OpenCheckpoint" width="360">
+  </picture>
+</h1>
 
 **Pick up where another AI left off.**
 
@@ -89,5 +94,7 @@ changes go through the [RFC process](rfcs/README.md). Report security issues as 
 
 Code, the specification, the schema, fixtures, and examples are licensed under the
 [Apache License 2.0](LICENSE). Documentation prose under `docs/src/content/` is licensed under
-[Creative Commons Attribution 4.0](LICENSE-DOCS). Contributions require a
+[Creative Commons Attribution 4.0](LICENSE-DOCS). The brand assets and usage rules are in
+[`brand/kit/`](brand/kit/); the Public Sans typeface is licensed under the
+[SIL Open Font License 1.1](brand/kit/fonts/PublicSans-OFL.txt). Contributions require a
 [DCO](https://developercertificate.org/) sign-off.
