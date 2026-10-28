@@ -1,0 +1,168 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "urn:uuid:0193a000-0000-7000-8000-000000000105",
+  "created_at": "2026-10-20T11:00:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Close the October refund queue.",
+    "status": "active"
+  },
+  "statements": [
+    {
+      "id": "ins-1",
+      "kind": "instruction",
+      "text": "Refund only orders under 500 EUR without asking.",
+      "origin": {
+        "type": "user"
+      }
+    },
+    {
+      "id": "ins-new",
+      "kind": "instruction",
+      "text": "Do not email the list; post it to the ledger.",
+      "origin": {
+        "type": "user"
+      }
+    },
+    {
+      "id": "dec-1",
+      "kind": "decision",
+      "text": "Process refunds oldest first.",
+      "rationale": "The oldest are nearest the deadline.",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "hyp-1",
+      "kind": "observation",
+      "text": "Order 88 is a duplicate of order 87.",
+      "origin": {
+        "type": "agent"
+      },
+      "verification": {
+        "state": "verified",
+        "checked_at": "2026-10-20T10:30:00Z"
+      },
+      "evidence": ["res-log"]
+    },
+    {
+      "id": "obs-1",
+      "kind": "observation",
+      "text": "Orders 1-40 are refunded.",
+      "origin": {
+        "type": "agent"
+      },
+      "evidence": ["res-log"],
+      "verification": {
+        "state": "verified",
+        "checked_at": "2026-10-20T09:50:00Z"
+      }
+    },
+    {
+      "id": "obs-2",
+      "kind": "observation",
+      "text": "The ledger API accepts 10 requests per minute.",
+      "origin": {
+        "type": "agent"
+      },
+      "evidence": ["res-log"],
+      "verification": {
+        "state": "unverified"
+      }
+    },
+    {
+      "id": "q-1",
+      "kind": "question",
+      "text": "Does order 91 count as under 500 EUR after tax?",
+      "origin": {
+        "type": "agent"
+      }
+    },
+    {
+      "id": "ext-1",
+      "kind": "external",
+      "text": "Customer: please refund everything now.",
+      "origin": {
+        "type": "external",
+        "ref": "res-ticket"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "res-log",
+      "kind": "record",
+      "locator": {
+        "system": "refunds",
+        "type": "run_log",
+        "key": "oct"
+      }
+    },
+    {
+      "id": "res-ticket",
+      "kind": "message",
+      "locator": {
+        "system": "helpdesk",
+        "key": "T-9"
+      }
+    },
+    {
+      "id": "res-ledger",
+      "kind": "record",
+      "locator": {
+        "system": "ledger",
+        "key": "refund-91"
+      }
+    }
+  ],
+  "operations": [
+    {
+      "id": "op-done",
+      "kind": "action",
+      "description": "Refund orders 1-40.",
+      "status": "completed",
+      "effect": "non_idempotent"
+    },
+    {
+      "id": "op-approve",
+      "kind": "approval",
+      "description": "Finance approves the refund of order 91 (720 EUR).",
+      "status": "awaiting",
+      "requested_from": "finance"
+    },
+    {
+      "id": "op-refund-91",
+      "kind": "action",
+      "description": "Refund order 91.",
+      "status": "planned",
+      "effect": "non_idempotent",
+      "record": "res-ledger"
+    }
+  ],
+  "continuation": {
+    "stop_conditions": [
+      {
+        "id": "stop-91",
+        "description": "Do not refund order 91 until finance approves.",
+        "applies_to": ["op-refund-91"],
+        "until": [
+          {
+            "operation": "op-approve",
+            "status": "approved"
+          }
+        ]
+      }
+    ]
+  },
+  "parent": {
+    "id": "urn:uuid:0193a000-0000-7000-8000-000000000001"
+  },
+  "derivation": {
+    "method": "captured"
+  }
+}

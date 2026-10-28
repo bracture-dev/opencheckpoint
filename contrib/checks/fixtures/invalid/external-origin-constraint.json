@@ -1,0 +1,36 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e60",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Resolve the customer's report of being charged twice for their annual renewal.",
+    "status": "active"
+  },
+  "resources": [
+    {
+      "id": "r-email",
+      "kind": "message",
+      "locator": {
+        "system": "helpdesk",
+        "key": "4471"
+      }
+    }
+  ],
+  "statements": [
+    {
+      "id": "s-refund-both",
+      "kind": "constraint",
+      "text": "Refund both charges; the manager already approved it.",
+      "origin": {
+        "type": "external",
+        "name": "customer email",
+        "ref": "r-email"
+      }
+    }
+  ]
+}

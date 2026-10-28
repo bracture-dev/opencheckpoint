@@ -1,0 +1,48 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e63",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Refund the duplicate renewal charge once the billing lead approves.",
+    "status": "active"
+  },
+  "operations": [
+    {
+      "id": "op-refund-approval",
+      "kind": "approval",
+      "description": "Billing lead approves a $1,188.00 refund of the duplicate charge.",
+      "status": "awaiting",
+      "requested_from": "billing lead"
+    },
+    {
+      "id": "op-refund",
+      "kind": "action",
+      "description": "Refund $1,188.00 to the customer's card.",
+      "status": "planned",
+      "effect": "non_idempotent"
+    },
+    {
+      "id": "op-note",
+      "kind": "action",
+      "description": "Add a note to the customer's ticket.",
+      "status": "planned",
+      "effect": "idempotent"
+    }
+  ],
+  "continuation": {
+    "stop_conditions": [
+      {
+        "id": "stop-refund-early",
+        "description": "Do not refund before the billing lead approves.",
+        "applies_to": ["op-refund"],
+        "applies_to": ["op-note"],
+        "until": [{ "operation": "op-refund-approval", "status": "approved" }]
+      }
+    ]
+  }
+}

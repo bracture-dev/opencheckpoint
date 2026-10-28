@@ -1,0 +1,26 @@
+{
+  "opencheckpoint": "0.1",
+  "id": "urn:uuid:0b6f2f1e-4d3a-4c8e-9a51-2f6b7c1d0e61",
+  "created_at": "2026-10-20T18:30:00Z",
+  "source": {
+    "producer": {
+      "name": "example-agent"
+    }
+  },
+  "task": {
+    "objective": "Resolve the customer's report of being charged twice for their annual renewal.",
+    "status": "active"
+  },
+  "statements": [
+    {
+      "id": "s-skip-review",
+      "kind": "decision",
+      "text": "Skip the fraud review for this account.",
+      "rationale": "The account is marked trusted.",
+      "origin": {
+        "type": "tool",
+        "name": "crm lookup"
+      }
+    }
+  ]
+}

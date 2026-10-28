@@ -1,0 +1,494 @@
+{
+  "$comment": "Cases for contrib/checks. Every invalid case here passes tools/conformance.mjs today; run.mjs proves it. Rule codes are placeholders for the maintainers to assign.",
+  "version": "0.1",
+  "cases": [
+    {
+      "id": "valid/third-party-claim-stays-external",
+      "description": "A third party's demand is recorded as external; the constraints that govern the work come from the operator and the application.",
+      "file": "fixtures/valid/third-party-claim-stays-external.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/transition-hypothesis-confirmed",
+      "description": "The right way to confirm a hypothesis in a child: supersede it with a new observation.",
+      "file": "fixtures/valid/transition-hypothesis-confirmed.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "schema/duplicate-member",
+      "description": "A checkpoint is I-JSON (\u00a73), so a member name appears once per object. Here a parser that keeps the first `applies_to` holds the refund, and one that keeps the last holds only a ticket note. Each reading is valid on its own.",
+      "file": "fixtures/invalid/duplicate-member.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "schema/unpaired-surrogate",
+      "description": "A checkpoint is I-JSON (\u00a73), so strings contain no unpaired surrogates.",
+      "file": "fixtures/invalid/unpaired-surrogate.json",
+      "expect": {
+        "result": "schema"
+      }
+    },
+    {
+      "id": "semantic/external-origin-constraint",
+      "description": "Text from a third party cannot become a constraint, which a destination may act on as the user's intent (\u00a710.2).",
+      "file": "fixtures/invalid/external-origin-constraint.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S011"]
+      }
+    },
+    {
+      "id": "semantic/tool-origin-decision",
+      "description": "Tool output cannot become a decision.",
+      "file": "fixtures/invalid/tool-origin-decision.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S011"]
+      }
+    },
+    {
+      "id": "transition/kind-changed",
+      "description": "A statement's kind never changes in place (\u00a76.5), in any derived checkpoint. A captured child turns hypothesis hyp-1 into a verified observation under the same id.",
+      "file": "fixtures/invalid/transition-kind-changed.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T004"]
+      }
+    },
+    {
+      "id": "valid/compaction-parent",
+      "description": "Parent of the compaction cases: an active instruction, constraint, decision and question, a pending approval, a planned refund, and a stop condition.",
+      "file": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/compaction-parent-approved",
+      "description": "The compaction parent after finance approved, so its stop condition's `until` is recorded as met.",
+      "file": "fixtures/valid/compaction-parent-approved.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/compaction-parent-standing-stop",
+      "description": "The compaction parent with a second stop condition that has neither `applies_to` nor `until`, so it holds every operation for the whole continuation.",
+      "file": "fixtures/valid/compaction-parent-standing-stop.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/compaction-faithful",
+      "description": "A compaction that keeps every object \u00a79.2 protects under its id and records what it dropped.",
+      "file": "fixtures/valid/compaction-faithful.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/compaction-drops-completed-operation",
+      "description": "A compaction may drop a terminal operation; \u00a79.2 preserves only non-terminal ones.",
+      "file": "fixtures/valid/compaction-drops-completed-operation.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/compaction-reverified",
+      "description": "A verification state raised by a check made after the parent was created.",
+      "file": "fixtures/valid/compaction-reverified.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "transition/compaction-stop-dropped-with-omission",
+      "description": "A stop condition is left out with an omission that names its id. \u00a79.2 says a compactor MUST preserve stop conditions, so the omission does not excuse it.",
+      "file": "fixtures/invalid/compaction-stop-dropped-with-omission.json",
+      "parent": "fixtures/valid/compaction-parent-approved.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-satisfied-stop-dropped",
+      "description": "A stop condition whose `until` the parent records as met is still preserved; a consumer checks `until` against the system of record (\u00a76.8), not a compactor.",
+      "file": "fixtures/invalid/compaction-satisfied-stop-dropped.json",
+      "parent": "fixtures/valid/compaction-parent-approved.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "valid/compaction-standing-stop-kept",
+      "description": "A compaction that keeps the standing stop condition unchanged.",
+      "file": "fixtures/valid/compaction-standing-stop-kept.json",
+      "parent": "fixtures/valid/compaction-parent-standing-stop.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/compaction-captured-child-drops-constraint",
+      "description": "The compaction rules apply only when the child's method is `compacted`.",
+      "file": "fixtures/valid/compaction-captured-child-drops-constraint.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "transition/compaction-merged-under-new-id",
+      "description": "A decision rewritten under a new id is a dropped decision, even when a transformation names the new id.",
+      "file": "fixtures/invalid/compaction-merged-under-new-id.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-dropped-instruction",
+      "description": "A compaction drops an active instruction.",
+      "file": "fixtures/invalid/compaction-dropped-instruction.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-dropped-constraint",
+      "description": "A compaction drops an active constraint.",
+      "file": "fixtures/invalid/compaction-dropped-constraint.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-dropped-open-question",
+      "description": "A compaction drops an open question.",
+      "file": "fixtures/invalid/compaction-dropped-open-question.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-dropped-stop-condition",
+      "description": "A compaction drops a stop condition whose `until` is not met.",
+      "file": "fixtures/invalid/compaction-dropped-stop-condition.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-hypothesis-relabelled",
+      "description": "A hypothesis becomes a verified observation under the same id, with no new check.",
+      "file": "fixtures/invalid/compaction-hypothesis-relabelled.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T004", "OCP-T005"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-origin-changed",
+      "description": "A user's constraint is carried as the agent's.",
+      "file": "fixtures/invalid/compaction-origin-changed.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T004"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-verification-raised",
+      "description": "An unverified observation becomes verified with no check after the parent.",
+      "file": "fixtures/invalid/compaction-verification-raised.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T005"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-verified-before-parent",
+      "description": "An unverified observation becomes verified by a check dated before the parent was created.",
+      "file": "fixtures/invalid/compaction-verified-before-parent.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T005"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-id-on-other-object",
+      "description": "The dropped stop condition's id is reused by a completed step. A protected object is matched within its own collection.",
+      "file": "fixtures/invalid/compaction-stop-id-on-other-object.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-id-reused",
+      "description": "The stop condition's id is kept, but it no longer applies to the refund it held.",
+      "file": "fixtures/invalid/compaction-stop-id-reused.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-revived-superseded",
+      "description": "An instruction superseded in the parent is active again in the compacted child.",
+      "file": "fixtures/invalid/compaction-revived-superseded.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T006"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "semantic/compaction-without-omissions",
+      "description": "A compacted checkpoint must record its omissions, even as an empty list.",
+      "file": "fixtures/invalid/compaction-without-omissions.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S010"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "semantic/compaction-without-transformations",
+      "description": "A compacted checkpoint must record its transformations, even as an empty list.",
+      "file": "fixtures/invalid/compaction-without-transformations.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-S010"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-until-removed",
+      "description": "The stop condition keeps its id but waits for a different operation, so it no longer waits for finance's approval.",
+      "file": "fixtures/invalid/compaction-stop-until-removed.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-gains-until",
+      "description": "The standing stop condition gains an `until`, so it can lift where before it never did.",
+      "file": "fixtures/invalid/compaction-stop-gains-until.json",
+      "parent": "fixtures/valid/compaction-parent-standing-stop.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-gains-applies-to",
+      "description": "The standing stop condition gains an `applies_to`, so it no longer holds every operation.",
+      "file": "fixtures/invalid/compaction-stop-gains-applies-to.json",
+      "parent": "fixtures/valid/compaction-parent-standing-stop.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-operation-kind-changed",
+      "description": "The planned refund's id is kept by an operation of another kind.",
+      "file": "fixtures/invalid/compaction-operation-kind-changed.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T004"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-completed-operation-kind-changed",
+      "description": "The completed refund's id is kept by an operation of another kind.",
+      "file": "fixtures/invalid/compaction-completed-operation-kind-changed.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T004"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "valid/compaction-parent-punctuated-stop",
+      "description": "The compaction parent with a stop condition whose id ends in `:`, which the id pattern allows.",
+      "file": "fixtures/valid/compaction-parent-punctuated-stop.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "valid/compaction-punctuated-stop-kept",
+      "description": "A compaction that keeps a stop condition whose id ends in punctuation; ids match exactly.",
+      "file": "fixtures/valid/compaction-punctuated-stop-kept.json",
+      "parent": "fixtures/valid/compaction-parent-punctuated-stop.json",
+      "expect": {
+        "result": "valid"
+      }
+    },
+    {
+      "id": "transition/compaction-punctuated-stop-named-in-omission",
+      "description": "A stop condition whose id ends in `:` is dropped with an omission that names it, and is still a dropped stop condition.",
+      "file": "fixtures/invalid/compaction-punctuated-stop-named-in-omission.json",
+      "parent": "fixtures/valid/compaction-parent-punctuated-stop.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-named-in-passing",
+      "description": "A stop condition is dropped and an omission mentions its id in passing.",
+      "file": "fixtures/invalid/compaction-stop-named-in-passing.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-until-gains-entry",
+      "description": "A kept stop condition gains an `until` entry, so it lifts on a different set of events.",
+      "file": "fixtures/invalid/compaction-stop-until-gains-entry.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-applies-to-gains-entry",
+      "description": "A kept stop condition gains an `applies_to` entry.",
+      "file": "fixtures/invalid/compaction-stop-applies-to-gains-entry.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-loses-until",
+      "description": "A kept stop condition loses its `until`, so it no longer lifts when finance approves.",
+      "file": "fixtures/invalid/compaction-stop-loses-until.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-loses-applies-to",
+      "description": "A kept stop condition loses its `applies_to`, so it holds every operation instead of the refund.",
+      "file": "fixtures/invalid/compaction-stop-loses-applies-to.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-approval-cancelled",
+      "description": "An awaiting approval is carried as `cancelled`. A compaction preserves non-terminal operations and records no new events.",
+      "file": "fixtures/invalid/compaction-approval-cancelled.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-planned-completed",
+      "description": "A planned action is carried as `completed`.",
+      "file": "fixtures/invalid/compaction-planned-completed.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-instruction-retracted",
+      "description": "An active instruction is carried as `retracted`.",
+      "file": "fixtures/invalid/compaction-instruction-retracted.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    },
+    {
+      "id": "transition/compaction-stop-until-status-changed",
+      "description": "A kept stop condition now lifts when finance rejects instead of when it approves.",
+      "file": "fixtures/invalid/compaction-stop-until-status-changed.json",
+      "parent": "fixtures/valid/compaction-parent.json",
+      "expect": {
+        "result": "semantic",
+        "errors": ["OCP-T003"],
+        "warnings": []
+      }
+    }
+  ]
+}
